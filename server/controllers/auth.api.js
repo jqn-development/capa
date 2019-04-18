@@ -7,6 +7,7 @@ const errors = require('./error');
 const Users = require('../models/Users');
 
 router.post('/signup', (req, res) => {
+	console.log(req.body);
 	auth
 		.registerUser(
 			req.body.first,

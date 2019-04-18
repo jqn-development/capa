@@ -1,259 +1,190 @@
 import React from 'react';
-import {
-  Image,
-  ImageBackground,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
-} from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { Input, Button } from 'react-native-elements';
-import { login, checkAuthTest } from '../modules/auth/auth.service';
-import { MonoText } from '../components/StyledText';
-
-const BG_IMAGE = require('../assets/images/splash.jpg');
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-
-class SignInScreen extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
-
-  render() {
-    const { handleSubmit } = this.props;
-    const submitForm = e => {
-        this.props.login(e.email, e.password);
-    };
-    return (
-        <View style={styles.container}>
-            <ImageBackground source={BG_IMAGE} style={styles.bgImage}>
-                <Field name="email" component={renderEmail} />
-                <Field name="password" component={renderPassword} />
-
-                <View style={styles.errorMessage}>
-                    <Text>{this.props.errorMessage}</Text>
-                </View>
-
-                <View style={styles.authBtnWrap}>
-                    <Button
-                        testID="login"
-                        onPress={handleSubmit(submitForm)}
-                        //buttonStyle={[globalStyle.btn, styles.authBtn]}
-                        //titleStyle={globalStyle.btnText}
-                        title="Login"
-                    />
-                </View>
-
-                {this.props.loggedIn ? (
-                    <Text style={styles.loggedInDesc}>
-                        You are logged in with token: {this.props.authToken}
-                    </Text>
-                ) : null}
-            </ImageBackground >
-        </View>
-    );
-  }
-}
-
-const renderEmail = ({ input: { onChange, ...restInput } }) => {
-	return (
-		<Input
-            testID="email"
-			placeholder="Email"
-			inputContainerStyle={styles.input}
-			inputStyle={styles.placeholder}
-			onChangeText={onChange}
-			{...restInput}
-		/>
-	);
-};
-const renderPassword = ({ input: { onChange, ...restInput } }) => {
-	return (
-		<Input
-            testID="password"
-			placeholder="Password"
-			name="password"
-			inputContainerStyle={styles.input}
-			inputStyle={styles.placeholder}
-			onChangeText={onChange}
-			secureTextEntry={true}
-			{...restInput}
-		/>
-	);
-};
-
-function mapStateToProps(store, ownProps) {
-	return {
-		errorMessage: store.auth.loginError,
-		loggedIn: store.auth.loggedIn,
-		authToken: store.auth.authToken
-	};
-}
-function mapDispatchToProps(dispatch, ownProps) {
-	return {
-		login: (email, password) => {
-			dispatch(login(email, password)).then(res => {
-                ownProps.navigation.navigate('App');
-            });
-		},
-		checkAuthTest: () => {
-			dispatch(checkAuthTest());
-		}
-	};
-}
-
-let LoginConnect = connect(mapStateToProps, mapDispatchToProps)(SignInScreen);
-
-export default reduxForm({
-	form: 'loginForm'
-})(LoginConnect);
+import { Ionicons } from '@expo/vector-icons';
+import PropTypes from 'prop-types';
+import { login } from '../modules/auth/auth.service';
+import { Colors, InputField, Container } from '../styles';
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        ...Container.flexVerticalCenter,
+        ...Colors.background,
     },
-    bgImage: {
-        flex: 1,
-        top: 0,
-        left: 0,
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
-        justifyContent: 'center',
-        alignItems: 'center',
+    header: {
+        flex: 0.5,
+        justifyContent: 'flex-end',
     },
-	container: {
-		flex: 1,
-		flexDirection: 'column',
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: 10
-	},
-	input: {
-		borderBottomWidth: 0,
-		marginBottom: 10,
-		borderRadius: 2,
-		paddingVertical: 5,
-		width: '100%'
-	},
-	placeholder: {
-		fontSize: 12
-	},
-	errorMessage: {
-		marginTop: 40
-	},
-	loggedInDesc: {
-		marginTop: 40
-	},
-	authBtnWrap: {
-		flexDirection: 'row',
-		justifyContent: 'space-around',
-		width: '100%',
-		paddingHorizontal: 15
-	},
-	authBtn: {
-		marginHorizontal: 0,
-		marginVertical: 18,
-		width: '80%',
-		alignSelf: 'center'
-	},
-	accessBtn: {
-		marginHorizontal: 0,
-		marginVertical: 30,
-		width: '100%',
-		alignSelf: 'center'
-	},
-
-  container: {
-    //paddingTop: 200,
-    flex: 1,
-    //backgroundColor: '#000',
-  },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(1,1,1,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+    body: {
+        ...Container.flexVerticalCenter,
+        paddingTop: 20,
+    },
+    headerText: {
+        fontSize: 54,
+        marginLeft: 20,
+        letterSpacing: 20,
+        ...Colors.whiteText,
+    },
+    subheaderText: {
+        marginBottom: 15,
+        fontSize: 10,
+        marginLeft: 20,
+        ...Colors.whiteText,
+    },
+    text: {
+        marginLeft: 40,
+        fontSize: 11,
+        ...Colors.whiteText,
+    },
+    input: {
+        marginLeft: 30,
+        marginBottom: 40,
+        width: 150,
+        borderBottomWidth: 0,
+    },
+    squareButtonPos: {
+        marginTop: -50,
+        marginLeft: '75%',
+    },
+    squareButton: {
+        height: 70,
+        width: 70,
+    },
+    imageContainer: {
+        ...Container.flexVerticalCenter,
+        paddingTop: 130,
+        width: '100%',
+    },
+    clearButton: {
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+    },
+    newaccount: {
+        marginTop: 50,
+        marginLeft: 30,
+    },
 });
+
+const renderEmail = ({ input: { onChange, ...restInput } }) => {
+    return (
+        <Input
+            testID="email"
+            placeholder="example@email.com"
+            placeholderTextColor="white"
+            inputContainerStyle={styles.input}
+            inputStyle={[Colors.whiteText, InputField.inputText]}
+            onChangeText={onChange}
+            {...restInput}
+        />
+    );
+};
+
+renderEmail.propTypes = {
+    input: PropTypes.shape({}).isRequired,
+};
+
+const renderPassword = ({ input: { onChange, ...restInput } }) => {
+    return (
+        <Input
+            testID="password"
+            name="password"
+            placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+            placeholderTextColor="white"
+            inputContainerStyle={styles.input}
+            inputStyle={[Colors.whiteText, InputField.inputText]}
+            onChangeText={onChange}
+            secureTextEntry
+            {...restInput}
+        />
+    );
+};
+
+renderPassword.propTypes = {
+    input: PropTypes.shape({}).isRequired,
+};
+
+class SignInScreen extends React.Component {
+    static navigationOptions = {
+        header: null,
+    };
+
+    render() {
+        const { handleSubmit, dispatchLogin, errorMessage } = this.props;
+        const submitForm = e => {
+            dispatchLogin(e.email, e.password);
+        };
+        return (
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>CAPA</Text>
+                    <Text style={styles.subheaderText}>#analog #nofilter #filmsnotdead</Text>
+                </View>
+                <View style={styles.body}>
+                    <ImageBackground  resizeMode="cover" // or cover
+                        style={styles.imageContainer}
+                        source={require('../assets/images/signIn.jpg')}
+                    >
+                        <Text style={styles.text}>{'Email'.toUpperCase()}</Text>
+                        <Field label="Email" name="email" component={renderEmail} />
+                        <Text style={styles.text}>{'Password'.toUpperCase()}</Text>
+                        <Field name="password" component={renderPassword} />
+                        <View>
+                            <Text>{errorMessage}</Text>
+                        </View>
+                        <View>
+                            <Button
+                                icon={
+                                    <Ionicons name="md-arrow-dropright" size={26} color="white" />
+                                }
+                                style={styles.squareButtonPos}
+                                buttonStyle={styles.squareButton}
+                                testID="login"
+                                onPress={handleSubmit(submitForm)}
+                            />
+                        </View>
+                        <Button
+                            type="clear"
+                            buttonStyle={[styles.clearButton, styles.newaccount]}
+                            testID="newaccount"
+                            title="NEW ACCOUNT"
+                            //onPress={handleSubmit(submitForm)}
+                        />
+                    </ImageBackground>
+                </View>
+            </View>
+        );
+    }
+}
+
+SignInScreen.propTypes = {
+    handleSubmit: PropTypes.func.isRequired,
+    dispatchLogin: PropTypes.func.isRequired,
+    errorMessage: PropTypes.bool.isRequired,
+};
+
+function mapStateToProps(store) {
+    return {
+        errorMessage: store.auth.loginError,
+        loggedIn: store.auth.loggedIn,
+        authToken: store.auth.authToken,
+    };
+}
+function mapDispatchToProps(dispatch, ownProps) {
+    return {
+        dispatchLogin: (email, password) => {
+            dispatch(login(email, password)).then(() => {
+                ownProps.navigation.navigate('App');
+            });
+        },
+    };
+}
+
+const LoginConnect = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SignInScreen);
+
+export default reduxForm({
+    form: 'loginForm',
+})(LoginConnect);
