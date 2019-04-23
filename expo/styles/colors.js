@@ -6,4 +6,8 @@ const whiteText = {
     color: 'white',
 };
 
-export { background, whiteText };
+const errorText = {
+    color: 'red',
+};
+
+export { background, whiteText, errorText };

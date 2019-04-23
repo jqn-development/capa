@@ -1,11 +1,13 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { AppLoading, Asset, Font, Icon } from 'expo';
+import { AppLoading, Font, Icon } from 'expo';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-elements';
 import AppNavigator from './navigation/AppNavigator';
+import NavigationService from './navigation/service';
 import configureStore from './store/configureStore';
 import theme from './styles/theme';
+import spaceMono from './assets/fonts/SpaceMono-Regular.ttf';
 
 export const store = configureStore();
 
@@ -21,23 +23,17 @@ export default class App extends React.Component {
         isLoadingComplete: false,
     };
 
-    loadResourcesAsync = async () => {
-        return Promise.all([
-            Asset.loadAsync([
-                require('./assets/images/robot-dev.png'),
-                require('./assets/images/robot-prod.png'),
-            ]),
-            Font.loadAsync({
-                ...Icon.Ionicons.font,
-                'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-            }),
-        ]);
+    startAppLoggedIn = () => {
+        this.navigation.navigate('App');
     };
 
-    handleLoadingError = error => {
-        // In this case, you might want to report the error to your error
-        // reporting service, for example Sentry
-        console.warn(error);
+    loadResourcesAsync = async () => {
+        return Promise.all([
+            Font.loadAsync({
+                ...Icon.Ionicons.font,
+                'space-mono': spaceMono,
+            }),
+        ]);
     };
 
     handleFinishLoading = () => {
@@ -45,10 +41,11 @@ export default class App extends React.Component {
     };
 
     render() {
-        if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
+        const { isLoadingComplete, skipLoadingScreen } = this.state;
+        if (!isLoadingComplete && !skipLoadingScreen) {
             return (
-        <AppLoading
-          startAsync={this.loadResourcesAsync}
+                <AppLoading
+                    startAsync={this.loadResourcesAsync}
                     onError={this.handleLoadingError}
                     onFinish={this.handleFinishLoading}
                 />
@@ -59,7 +56,11 @@ export default class App extends React.Component {
                 <Provider store={store}>
                     <View style={styles.container}>
                         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-                        <AppNavigator />
+                        <AppNavigator
+                            ref={navigatorRef => {
+                                NavigationService.setTopLevelNavigator(navigatorRef);
+                            }}
+                        />
                     </View>
                 </Provider>
             </ThemeProvider>

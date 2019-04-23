@@ -3,8 +3,6 @@ import { handleTokenErrors } from '../errors/error.service';
 
 class AuthApi {
 	static login(email, password) {
-        console.log('config: ');
-        console.log(config);
 		return fetch(`${config.url}/api/auth/login`, {
 			method: 'POST',
 			body: JSON.stringify({ email: email, password: password }),

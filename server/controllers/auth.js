@@ -29,7 +29,7 @@ let registerUser = (first, last, email, password) => {
 let loginUser = (email, password) => {
 	return new Promise((res1, rej1) => {
 		if (!email || !password) {
-			return rej1('You must send the username and the password.');
+			return rej1('No username/password.');
 		}
 		return Users.findOne({ email: email.toLowerCase() })
 			.then(user => {

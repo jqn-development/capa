@@ -44,7 +44,7 @@ let initialState = {
 	authPending: false,
 	loggedIn: false,
 	registered: false,
-	loginError: false,
+	loginError: null,
 	regError: false,
 	authToken: null,
 	refreshToken: null,
@@ -64,7 +64,7 @@ export default function(state = initialState, action) {
 			...state,
 			authPending: false,
 			loggedIn: true,
-			loginError: false,
+			loginError: null,
 			authToken: action.authToken,
 			refreshToken: action.refreshToken
 		};

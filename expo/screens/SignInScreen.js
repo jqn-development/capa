@@ -64,6 +64,12 @@ const styles = StyleSheet.create({
         marginTop: 50,
         marginLeft: 30,
     },
+    errorMessage: {
+        ...Colors.errorText,
+        width: 200,
+        fontSize: 10,
+        marginLeft: 40,
+    },
 });
 
 const renderEmail = ({ input: { onChange, ...restInput } }) => {
@@ -130,7 +136,7 @@ class SignInScreen extends React.Component {
                         <Text style={styles.text}>{'Password'.toUpperCase()}</Text>
                         <Field name="password" component={renderPassword} />
                         <View>
-                            <Text>{errorMessage}</Text>
+                            <Text style={styles.errorMessage}>{errorMessage}</Text>
                         </View>
                         <View>
                             <Button
@@ -160,7 +166,7 @@ class SignInScreen extends React.Component {
 SignInScreen.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
     dispatchLogin: PropTypes.func.isRequired,
-    errorMessage: PropTypes.bool.isRequired,
+    errorMessage: PropTypes.string,
 };
 
 function mapStateToProps(store) {
@@ -173,9 +179,7 @@ function mapStateToProps(store) {
 function mapDispatchToProps(dispatch, ownProps) {
     return {
         dispatchLogin: (email, password) => {
-            dispatch(login(email, password)).then(() => {
-                ownProps.navigation.navigate('App');
-            });
+            dispatch(login(email, password));
         },
     };
 }

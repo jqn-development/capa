@@ -4,7 +4,8 @@ import moment from 'moment';
 import AuthApi from './auth.api';
 import { asyncError, generalError } from '../errors/error.service';
 import * as AuthReducer from './auth.reducer';
-import App from '../../app';
+import NavigationService from '../../navigation/service';
+
 
 const _saveItem = async (item, selectedValue) => {
 	try {
@@ -51,7 +52,7 @@ export const logout = () => async dispatch => {
 	dispatch(AuthReducer.setLogout());
 	try {
 		await AsyncStorage.removeItem('authToken');
-		App.startApp();
+		//App.startApp();
 	} catch (error) {
 		dispatch(asyncError(error));
 	}
@@ -73,19 +74,20 @@ export const register = (first, last, email, password) => dispatch => {
 };
 
 export const login = (email, password) => dispatch => {
-	dispatch(AuthReducer.setAuthPending());
-	return AuthApi.login(email, password)
-		.then(response => {
-			if (response.success) {
-				dispatch(
-					AuthReducer.setLoginSuccess(response.authToken, response.refreshToken)
-				);
-				_saveItem('authToken', response.authToken)
-					.then(resp => {
-						_saveItem('refreshToken', response.refreshToken)
-							.then(resp => {
-								//App.startAppLoggedIn();
-							})
+    dispatch(AuthReducer.setAuthPending());
+    return AuthApi.login(email, password)
+        .then(response => {
+            if (response.success) {
+                dispatch(AuthReducer.setLoginSuccess(response.authToken, response.refreshToken));
+                _saveItem('authToken', response.authToken)
+                    .then(resp => {
+                        _saveItem('refreshToken', response.refreshToken)
+                            .then(() => {
+                                NavigationService.navigate('Home', {});
+                            })
+                            .catch(() => {
+                                //dispatch(asyncError(error));
+                            });
 					})
 					.catch(error => {
 						dispatch(asyncError(error));
