@@ -1,4 +1,4 @@
-import { logout, refreshToken } from '../modules/auth/auth.service';
+import { logout, saveRefreshToken } from '../modules/auth/auth.service';
 
 let buffer = [];
 
@@ -13,7 +13,7 @@ export const jwt = store => next => action => {
 		) {
 			if (!theStore.auth.pendingRefreshingToken) {
 				store.dispatch({ type: 'REFRESHING_TOKEN' });
-				store.dispatch(refreshToken(theStore.auth.refreshToken)).then(() => {
+				store.dispatch(saveRefreshToken(theStore.auth.refreshToken)).then(() => {
 					// this will fire even if the refresh token is still valid or not.
 					// if the refresh token is not valid (and therefore not able to retrieve
 					// a new auth token), the REFRESH_EXPIRED action is fired from errors.api.

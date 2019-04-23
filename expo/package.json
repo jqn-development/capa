@@ -12,7 +12,7 @@
   },
   "detox": {
     "configurations": {
-      "ios.sim": {
+      "ios.sim.debug": {
         "binaryPath": "bin/Exponent.app",
         "type": "ios.simulator",
         "name": "iPhone 8"

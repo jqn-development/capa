@@ -2,21 +2,21 @@ import config from '../../config';
 import { handleTokenErrors } from '../errors/error.service';
 
 class AuthApi {
-	static login(email, password) {
-		return fetch(`${config.url}/api/auth/login`, {
-			method: 'POST',
-			body: JSON.stringify({ email: email, password: password }),
-			headers: {
-        		Accept: 'application/json',
-        		'Content-Type': 'application/json'
-        	}
-		})
-			.then(response => response.json())
-			.then(handleTokenErrors)
-			.catch(error => {
-				throw error;
-			});
-	}
+    static login(email, password) {
+        return fetch(`${config.url}/api/auth/login`, {
+            method: 'POST',
+            body: JSON.stringify({ email: email, password: password }),
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(handleTokenErrors)
+            .catch(error => {
+                throw error;
+            });
+    }
 	static register(first, last, email, password) {
 		return fetch(`${config.url}/api/auth/signup`, {
 			method: 'POST',
