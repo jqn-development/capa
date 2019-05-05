@@ -1,12 +1,16 @@
 import React from 'react';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
-import { reduxForm, Field } from 'redux-form';
-import { Input, Button } from 'react-native-elements';
+import { reduxForm } from 'redux-form';
+import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import PropTypes from 'prop-types';
 import { login } from '../modules/auth/auth.service';
-import { Colors, InputField, Container } from '../styles';
+import EmailField from '../components/fields/emailField';
+import PasswordField from '../components/fields/passwordField';
+import { Colors, Container } from '../styles';
+
+const signInGfx = require('../assets/images/signIn.jpg');
 
 const styles = StyleSheet.create({
     container: {
@@ -20,6 +24,7 @@ const styles = StyleSheet.create({
     body: {
         ...Container.flexVerticalCenter,
         paddingTop: 20,
+        paddingLeft: 0,
     },
     headerText: {
         fontSize: 54,
@@ -34,13 +39,10 @@ const styles = StyleSheet.create({
         ...Colors.whiteText,
     },
     text: {
-        marginLeft: 40,
         fontSize: 11,
         ...Colors.whiteText,
     },
     input: {
-        marginLeft: 30,
-        marginBottom: 40,
         width: 150,
         borderBottomWidth: 0,
     },
@@ -55,6 +57,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         ...Container.flexVerticalCenter,
         paddingTop: 130,
+        paddingLeft: 0,
         width: '100%',
     },
     clearButton: {
@@ -70,45 +73,10 @@ const styles = StyleSheet.create({
         fontSize: 10,
         marginLeft: 40,
     },
+    inputView: {
+        marginLeft: 30,
+    },
 });
-
-const renderEmail = ({ input: { onChange, ...restInput } }) => {
-    return (
-        <Input
-            testID="email"
-            placeholder="example@email.com"
-            placeholderTextColor="white"
-            inputContainerStyle={styles.input}
-            inputStyle={[Colors.whiteText, InputField.inputText]}
-            onChangeText={onChange}
-            {...restInput}
-        />
-    );
-};
-
-renderEmail.propTypes = {
-    input: PropTypes.shape({}).isRequired,
-};
-
-const renderPassword = ({ input: { onChange, ...restInput } }) => {
-    return (
-        <Input
-            testID="password"
-            name="password"
-            placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-            placeholderTextColor="white"
-            inputContainerStyle={styles.input}
-            inputStyle={[Colors.whiteText, InputField.inputText]}
-            onChangeText={onChange}
-            secureTextEntry
-            {...restInput}
-        />
-    );
-};
-
-renderPassword.propTypes = {
-    input: PropTypes.shape({}).isRequired,
-};
 
 class SignInScreen extends React.Component {
     static navigationOptions = {
@@ -116,10 +84,11 @@ class SignInScreen extends React.Component {
     };
 
     render() {
-        const { handleSubmit, dispatchLogin, errorMessage } = this.props;
+        const { handleSubmit, dispatchLogin, errorMessage, navigation } = this.props;
         const submitForm = e => {
             dispatchLogin(e.email, e.password);
         };
+
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -127,14 +96,23 @@ class SignInScreen extends React.Component {
                     <Text style={styles.subheaderText}>#analog #nofilter #filmsnotdead</Text>
                 </View>
                 <View style={styles.body}>
-                    <ImageBackground  resizeMode="cover" // or cover
+                    <ImageBackground
+                        resizeMode="cover" // or cover
                         style={styles.imageContainer}
-                        source={require('../assets/images/signIn.jpg')}
+                        source={signInGfx}
                     >
-                        <Text style={styles.text}>{'Email'.toUpperCase()}</Text>
-                        <Field label="Email" name="email" component={renderEmail} />
-                        <Text style={styles.text}>{'Password'.toUpperCase()}</Text>
-                        <Field name="password" component={renderPassword} />
+                        <View style={styles.inputView}>
+                            <EmailField
+                                placeholder="example@email.com"
+                                label="email"
+                                inputContainerStyle={styles.input}
+                            />
+                            <PasswordField
+                                placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+                                label="email"
+                                inputContainerStyle={styles.input}
+                            />
+                        </View>
                         <View>
                             <Text style={styles.errorMessage}>{errorMessage}</Text>
                         </View>
@@ -154,7 +132,7 @@ class SignInScreen extends React.Component {
                             buttonStyle={[styles.clearButton, styles.newaccount]}
                             testID="newaccount"
                             title="NEW ACCOUNT"
-                            //onPress={handleSubmit(submitForm)}
+                            onPress={() => navigation.navigate('SignUp')}
                         />
                     </ImageBackground>
                 </View>
@@ -167,6 +145,11 @@ SignInScreen.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
     dispatchLogin: PropTypes.func.isRequired,
     errorMessage: PropTypes.string,
+    navigation: PropTypes.shape({}).isRequired,
+};
+
+SignInScreen.defaultProps = {
+    errorMessage: null,
 };
 
 function mapStateToProps(store) {
@@ -176,7 +159,7 @@ function mapStateToProps(store) {
         authToken: store.auth.authToken,
     };
 }
-function mapDispatchToProps(dispatch, ownProps) {
+function mapDispatchToProps(dispatch) {
     return {
         dispatchLogin: (email, password) => {
             dispatch(login(email, password));
