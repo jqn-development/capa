@@ -1,5 +1,7 @@
 const inputText = {
     fontSize: 12,
+    marginLeft: 0,
+    paddingLeft: 0,
 };
 
 const inputUnderline = {
@@ -7,4 +9,9 @@ const inputUnderline = {
     borderColor: 'white',
 };
 
-export { inputText, inputUnderline };
+const inputLabel = {
+    fontSize: 11,
+    fontWeight: 'normal',
+};
+
+export { inputText, inputUnderline, inputLabel };
