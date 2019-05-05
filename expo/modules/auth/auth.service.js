@@ -52,7 +52,9 @@ export const logout = () => async dispatch => {
     }
 };
 
-export const register = (first, last, email, password) => dispatch => {
+export const register = (name, email, password) => dispatch => {
+    const first = name;
+    const last = name;
     dispatch(AuthReducer.setAuthPending());
     return AuthApi.register(first, last, email, password)
         .then(response => {

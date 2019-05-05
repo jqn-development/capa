@@ -6,6 +6,7 @@ const Users = require('../models/Users');
 const LoginActivity = require('../models/LoginActivity');
 
 let registerUser = (first, last, email, password) => {
+	email = email.toLowerCase();
 	return new Promise((res, rej) => {
 		if (!first || !last || !email || !password) {
 			return rej('You must send all details.');

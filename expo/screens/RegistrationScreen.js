@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
-import { register } from '../modules/auth/auth.service';
+import { register, login } from '../modules/auth/auth.service';
 import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
 import GenericField from '../components/fields/genericField';
@@ -74,6 +74,10 @@ class RegistrationScreen extends React.Component {
     };
 
     render() {
+        const { handleSubmit, navigation, dispatchRegister, dispatchLogin } = this.props;
+        const submitForm = e => {
+            dispatchRegister(e.name, e.email, e.password);
+        };
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -83,7 +87,7 @@ class RegistrationScreen extends React.Component {
                             icon={<Ionicons name="md-close" size={26} color="white" />}
                             style={styles.closeButtonPos}
                             testID="close"
-                            // onPress={handleSubmit(submitForm)}
+                            onPress={() => navigation.navigate('SignIn')}
                         />
                     </View>
                 </View>
@@ -101,7 +105,7 @@ class RegistrationScreen extends React.Component {
                         buttonStyle={[styles.clearButton]}
                         testID="nextstep"
                         title="NEXT STEP"
-                        onPress={() => navigation.navigate('SignUp')}
+                        onPress={handleSubmit(submitForm)}
                     />
                 </View>
             </View>
@@ -111,7 +115,7 @@ class RegistrationScreen extends React.Component {
 
 function mapStateToProps(store) {
     return {
-        // errorMessage: store.auth.registrationError,
+        errorMessage: store.auth.registrationError,
         // loggedIn: store.auth.loggedIn,
         // authToken: store.auth.authToken,
     };
@@ -119,8 +123,21 @@ function mapStateToProps(store) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        dispatchRegister: (email, password) => {
-            dispatch(register(email, password));
+        dispatchRegister: (name, email, password) => {
+            dispatch(register(name, email, password)).then(() => {
+                    console.log('success register');
+                    console.log(email + "/"+ password);
+                    dispatch(login(email, password)).then(
+                        () => {},
+                        error => {
+                            console.log(error);
+                        }
+                    );
+                },
+                error => {
+                    console.log(error);
+                }
+            );
         },
     };
 }

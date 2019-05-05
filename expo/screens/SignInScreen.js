@@ -155,8 +155,8 @@ SignInScreen.defaultProps = {
 function mapStateToProps(store) {
     return {
         errorMessage: store.auth.loginError,
-        loggedIn: store.auth.loggedIn,
-        authToken: store.auth.authToken,
+        // loggedIn: store.auth.loggedIn,
+        // authToken: store.auth.authToken,
     };
 }
 function mapDispatchToProps(dispatch) {
