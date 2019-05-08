@@ -1,14 +1,17 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-navigation';
+import { vw, vh } from 'react-native-expo-viewport-units';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
+import FullWidthImage from 'react-native-fullwidth-image';
 import { register, login } from '../modules/auth/auth.service';
 import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
 import GenericField from '../components/fields/genericField';
-import { Colors, Container } from '../styles';
+import { Colors, Container, InputField } from '../styles';
 
 const registerGfx = require('../assets/images/register.jpg');
 
@@ -18,20 +21,16 @@ const styles = StyleSheet.create({
         ...Colors.background,
     },
     input: {
-        marginLeft: 0,
-        paddingLeft: 0,
-        marginBottom: 20,
-        width: 250,
-        borderBottomWidth: 1,
-        borderBottomColor: 'white',
+        ...InputField.input,
+        ...InputField.inputUnderline,
     },
     text: {
-        fontSize: 11,
+        fontSize: 12,
         ...Colors.whiteText,
     },
     headerSmallText: {
-        fontSize: 15,
-        marginTop: 45,
+        fontSize: 13,
+        marginTop: vh(2),
         marginLeft: 10,
         letterSpacing: 8,
         flex: 1,
@@ -42,29 +41,29 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         marginTop: 0,
+        marginBottom: vh(3),
         justifyContent: 'space-between',
     },
     nextstep: {
         ...Container.flexVerticalBottom,
-        marginBottom: 60,
-        paddingRight: 80,
+        marginBottom: vh(8),
+        paddingRight: vw(20),
     },
     fieldsView: {
-        paddingLeft: 60,
+        padding: 0,
+        marginLeft: vw(15),
+        marginRight: vw(13),
     },
     registerSplash: {
-        height: 300,
-        paddingLeft: 40,
-        paddingTop: 40,
-    },
-    fieldLabel: {
-        paddingLeft: 5,
-        ...Colors.whiteText,
+        width: vw(75),
+        marginTop: vh(2),
+        marginLeft: vw(10),
+        marginBottom: vh(3),
     },
     closeButtonView: {
         alignSelf: 'flex-end',
-        marginTop: 35,
-        marginRight: 15,
+        marginTop: vh(2),
+        marginRight: vw(4),
     },
 });
 
@@ -79,7 +78,7 @@ class RegistrationScreen extends React.Component {
             dispatchRegister(e.name, e.email, e.password);
         };
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
                     <Text style={styles.headerSmallText}>CAPA</Text>
                     <View style={styles.closeButtonView}>
@@ -92,7 +91,7 @@ class RegistrationScreen extends React.Component {
                     </View>
                 </View>
                 <View style={styles.registerSplash}>
-                    <Image style={{ width: 280, height: 198 }} source={registerGfx} />
+                    <FullWidthImage source={registerGfx} ratio={10 / 16} />
                 </View>
                 <View style={styles.fieldsView}>
                     <GenericField label="NAME" name="name" inputContainerStyle={styles.input} />
@@ -108,7 +107,7 @@ class RegistrationScreen extends React.Component {
                         onPress={handleSubmit(submitForm)}
                     />
                 </View>
-            </View>
+            </SafeAreaView>
         );
     }
 }
@@ -116,17 +115,14 @@ class RegistrationScreen extends React.Component {
 function mapStateToProps(store) {
     return {
         errorMessage: store.auth.registrationError,
-        // loggedIn: store.auth.loggedIn,
-        // authToken: store.auth.authToken,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         dispatchRegister: (name, email, password) => {
-            dispatch(register(name, email, password)).then(() => {
-                    console.log('success register');
-                    console.log(email + "/"+ password);
+            dispatch(register(name, email, password)).then(
+                () => {
                     dispatch(login(email, password)).then(
                         () => {},
                         error => {
