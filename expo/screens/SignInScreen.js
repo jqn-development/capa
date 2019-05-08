@@ -22,8 +22,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     body: {
-        ...Container.flexVerticalCenter,
-        paddingTop: 20,
+        ...Container.flexVerticalBottom,
         paddingLeft: 0,
     },
     headerText: {
@@ -45,9 +44,10 @@ const styles = StyleSheet.create({
     input: {
         width: 150,
         borderBottomWidth: 0,
+        marginBottom: 10,
     },
     squareButtonPos: {
-        marginTop: -50,
+        marginTop: '-30%',
         marginLeft: '75%',
     },
     squareButton: {
@@ -55,26 +55,24 @@ const styles = StyleSheet.create({
         width: 70,
     },
     imageContainer: {
-        ...Container.flexVerticalCenter,
-        paddingTop: 130,
-        paddingLeft: 0,
-        width: '100%',
+        ...Container.flexVerticalBottom,
+        flex: 1,
+        paddingRight: 0,
+        margin: 0,
+        paddingBottom: '10%',
     },
     clearButton: {
-        backgroundColor: 'rgba(0, 0, 0, 0)',
-    },
-    newaccount: {
-        marginTop: 50,
-        marginLeft: 30,
+        width: 110,
     },
     errorMessage: {
         ...Colors.errorText,
         width: 200,
+        padding: 10,
         fontSize: 10,
-        marginLeft: 40,
     },
     inputView: {
-        marginLeft: 30,
+        paddingHorizontal: '10%',
+        alignContent: 'flex-end',
     },
 });
 
@@ -109,14 +107,10 @@ class SignInScreen extends React.Component {
                             />
                             <PasswordField
                                 placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-                                label="email"
+                                label="password"
                                 inputContainerStyle={styles.input}
                             />
-                        </View>
-                        <View>
                             <Text style={styles.errorMessage}>{errorMessage}</Text>
-                        </View>
-                        <View>
                             <Button
                                 icon={
                                     <Ionicons name="md-arrow-dropright" size={26} color="white" />
@@ -126,14 +120,14 @@ class SignInScreen extends React.Component {
                                 testID="login"
                                 onPress={handleSubmit(submitForm)}
                             />
+                            <Button
+                                type="clear"
+                                buttonStyle={[styles.clearButton]}
+                                testID="newaccount"
+                                title="NEW ACCOUNT"
+                                onPress={() => navigation.navigate('SignUp')}
+                            />
                         </View>
-                        <Button
-                            type="clear"
-                            buttonStyle={[styles.clearButton, styles.newaccount]}
-                            testID="newaccount"
-                            title="NEW ACCOUNT"
-                            onPress={() => navigation.navigate('SignUp')}
-                        />
                     </ImageBackground>
                 </View>
             </View>
