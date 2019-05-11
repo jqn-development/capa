@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { vw, vh } from 'react-native-expo-viewport-units';
@@ -65,6 +66,12 @@ const styles = StyleSheet.create({
         marginTop: vh(2),
         marginRight: vw(4),
     },
+    errorMessage: {
+        ...Colors.errorText,
+        width: 200,
+        paddingTop: 20,
+        fontSize: 10,
+    },
 });
 
 class RegistrationScreen extends React.Component {
@@ -73,7 +80,7 @@ class RegistrationScreen extends React.Component {
     };
 
     render() {
-        const { handleSubmit, navigation, dispatchRegister, dispatchLogin } = this.props;
+        const { handleSubmit, navigation, dispatchRegister, errorMessage } = this.props;
         const submitForm = e => {
             dispatchRegister(e.name, e.email, e.password);
         };
@@ -97,6 +104,7 @@ class RegistrationScreen extends React.Component {
                     <GenericField label="NAME" name="name" inputContainerStyle={styles.input} />
                     <EmailField inputContainerStyle={styles.input} />
                     <PasswordField inputContainerStyle={styles.input} />
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
                 </View>
                 <View style={styles.nextstep}>
                     <Button
@@ -112,28 +120,24 @@ class RegistrationScreen extends React.Component {
     }
 }
 
+RegistrationScreen.propTypes = {
+    handleSubmit: PropTypes.func.isRequired,
+    dispatchRegister: PropTypes.func.isRequired,
+    navigation: PropTypes.shape({}).isRequired,
+};
+
 function mapStateToProps(store) {
     return {
-        errorMessage: store.auth.registrationError,
+        errorMessage: store.auth.regError,
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         dispatchRegister: (name, email, password) => {
-            dispatch(register(name, email, password)).then(
-                () => {
-                    dispatch(login(email, password)).then(
-                        () => {},
-                        error => {
-                            console.log(error);
-                        }
-                    );
-                },
-                error => {
-                    console.log(error);
-                }
-            );
+            dispatch(register(name, email, password)).then(() => {
+                dispatch(login(email, password));
+            });
         },
     };
 }

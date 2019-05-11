@@ -1,10 +1,11 @@
 import React from 'react';
 import { Input } from 'react-native-elements';
+import { Text } from 'react-native';
 import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Colors, InputField } from '../../styles';
 
-const renderEmail = ({ input: { onChange }, ...restInput }) => {
+const renderEmail = ({ input: { onChange }, meta: { touched, error, warning }, ...restInput }) => {
     return (
         <Input
             testID="email"
@@ -21,7 +22,7 @@ renderEmail.propTypes = {
 };
 
 export default function emailField(props) {
-    const { inputContainerStyle, placeholder } = props;
+    const { inputContainerStyle, placeholder, email } = props;
 
     return (
         <Field
@@ -30,6 +31,7 @@ export default function emailField(props) {
             placeholder={placeholder}
             labelStyle={InputField.inputLabel}
             name="email"
+            validate={email}
             component={renderEmail}
         />
     );
