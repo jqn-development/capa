@@ -52,7 +52,7 @@ export const logout = () => async dispatch => {
     }
 };
 
-export const register = (name, email, password) => dispatch => {
+export const register = (name, email, password) => async dispatch => {
     const first = name;
     const last = name;
     dispatch(AuthReducer.setAuthPending());
@@ -60,13 +60,14 @@ export const register = (name, email, password) => dispatch => {
         .then(response => {
             if (response.success) {
                 dispatch(AuthReducer.setRegisterSuccess());
-            } else {
-                dispatch(AuthReducer.setRegisterError(response.message));
+                return Promise.resolve(true);
             }
+            dispatch(AuthReducer.setRegisterError(response.message));
+            return Promise.reject(new Error('fail'));
         })
         .catch(error => {
             dispatch(generalError(error));
-            return false;
+            return Promise.reject(new Error('fail'));
         });
 };
 

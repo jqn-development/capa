@@ -135,9 +135,13 @@ function mapStateToProps(store) {
 function mapDispatchToProps(dispatch) {
     return {
         dispatchRegister: (name, email, password) => {
-            dispatch(register(name, email, password)).then(() => {
-                dispatch(login(email, password));
-            });
+            dispatch(register(name, email, password))
+                .then(() => {
+                    dispatch(login(email, password));
+                })
+                .catch(() => {
+                    // console.log(err);
+                });
         },
     };
 }
