@@ -4,6 +4,6 @@ import logger from 'redux-logger';
 import rootReducer from './rootReducer';
 import { jwt } from './middleware';
 
-export default function configureStore(initialState) {
-	return createStore(rootReducer, applyMiddleware(jwt, thunk, logger));
+export default function configureStore() {
+    return createStore(rootReducer, applyMiddleware(jwt, thunk, logger));
 }

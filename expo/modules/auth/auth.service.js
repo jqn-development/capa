@@ -52,6 +52,10 @@ export const logout = () => async dispatch => {
     }
 };
 
+export const clearRegError = () => dispatch => {
+    dispatch(AuthReducer.setRegisterError(null));
+};
+
 export const register = (name, email, password) => async dispatch => {
     const first = name;
     const last = name;

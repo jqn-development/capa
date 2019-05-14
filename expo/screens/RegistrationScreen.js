@@ -8,7 +8,7 @@ import { reduxForm } from 'redux-form';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import FullWidthImage from 'react-native-fullwidth-image';
-import { register, login } from '../modules/auth/auth.service';
+import { register, login, clearRegError } from '../modules/auth/auth.service';
 import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
 import GenericField from '../components/fields/genericField';
@@ -68,8 +68,9 @@ const styles = StyleSheet.create({
     },
     errorMessage: {
         ...Colors.errorText,
-        width: 200,
         paddingTop: 20,
+        paddingLeft: 10,
+        margin: 0,
         fontSize: 10,
     },
 });
@@ -80,10 +81,23 @@ class RegistrationScreen extends React.Component {
     };
 
     render() {
-        const { handleSubmit, navigation, dispatchRegister, errorMessage } = this.props;
+        const {
+            handleSubmit,
+            navigation,
+            dispatchRegister,
+            dispatchClearErrors,
+            errorMessage,
+        } = this.props;
+
+        const navigateToHome = () => {
+            dispatchClearErrors();
+            navigation.navigate('SignIn');
+        };
+
         const submitForm = e => {
             dispatchRegister(e.name, e.email, e.password);
         };
+
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
@@ -93,7 +107,7 @@ class RegistrationScreen extends React.Component {
                             icon={<Ionicons name="md-close" size={26} color="white" />}
                             style={styles.closeButtonPos}
                             testID="close"
-                            onPress={() => navigation.navigate('SignIn')}
+                            onPress={() => navigateToHome()}
                         />
                     </View>
                 </View>
@@ -123,7 +137,13 @@ class RegistrationScreen extends React.Component {
 RegistrationScreen.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
     dispatchRegister: PropTypes.func.isRequired,
+    dispatchClearErrors: PropTypes.func.isRequired,
     navigation: PropTypes.shape({}).isRequired,
+    errorMessage: PropTypes.string,
+};
+
+RegistrationScreen.defaultProps = {
+    errorMessage: null,
 };
 
 function mapStateToProps(store) {
@@ -142,6 +162,9 @@ function mapDispatchToProps(dispatch) {
                 .catch(() => {
                     // console.log(err);
                 });
+        },
+        dispatchClearErrors: () => {
+            dispatch(clearRegError());
         },
     };
 }

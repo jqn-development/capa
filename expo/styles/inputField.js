@@ -1,4 +1,4 @@
-import { vw, vh, vmin, vmax } from 'react-native-expo-viewport-units';
+import { vw, vh } from 'react-native-expo-viewport-units';
 
 const input = {
     width: '100%',

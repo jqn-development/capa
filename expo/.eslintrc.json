@@ -1,4 +1,5 @@
 {
+    "globals": {"fetch": false},
     "extends": [
         "airbnb",
         "prettier",
