@@ -1,33 +1,33 @@
 // Actions
 export const asyncError = error => {
-	return {
-		type: 'ASYNC_ERROR',
-		error
-	};
+    return {
+        type: 'ASYNC_ERROR',
+        error,
+    };
 };
 
 export const connectionError = error => {
-	return {
-		type: 'CONNECTION_ERROR',
-		error
-	};
+    return {
+        type: 'CONNECTION_ERROR',
+        error,
+    };
 };
 export const showError = error => {
-	return {
-		type: 'SHOW_ERROR',
-		error
-	};
+    return {
+        type: 'SHOW_ERROR',
+        error,
+    };
 };
 export const removeError = () => {
-	return {
-		type: 'REMOVE_ERROR'
-	};
+    return {
+        type: 'REMOVE_ERROR',
+    };
 };
 
-//Reducer
-let initialState = {
-	error: false,
-	errorMessage: null
+// Reducer
+const initialState = {
+    error: false,
+    errorMessage: null,
 };
 
 export default function(state = initialState, action) {
