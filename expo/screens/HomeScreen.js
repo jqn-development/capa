@@ -1,37 +1,42 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
+import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
-import { MonoText } from '../components/StyledText';
+import CapaHeader from '../components/header';
 
+import { Colors, Container } from '../styles';
+
+const styles = StyleSheet.create({
+    container: {
+        ...Container.flexVerticalTop,
+        ...Colors.background,
+    },
+});
 class HomeScreen extends React.Component {
     static navigationOptions = {
-        title: 'capa',
-        headerTitleStyle: {
-            textAlign: 'left',
-            flexGrow: 1,
-            alignSelf: 'left',
-            fontWeight: 'bold',
-            color: '#fff',
-        },
-        headerStyle: {
-            backgroundColor: '#000',
-            fontFamily: 'space-mono',
-        },
+        header: null,
     };
 
     render() {
-        const { handleSubmit, loggedIn, authToken } = this.props;
+        const { loggedIn, authToken } = this.props;
         return (
-            <View>
+            <SafeAreaView style={styles.container}>
+                <CapaHeader />
                 {loggedIn ? (
                     <Text style={styles.loggedInDesc}>
                         You are logged in with token: {authToken}
                     </Text>
                 ) : null}
-            </View>
+            </SafeAreaView>
         );
     }
 }
+
+HomeScreen.propTypes = {
+    loggedIn: PropTypes.bool.isRequired,
+    authToken: PropTypes.string.isRequired,
+};
 
 function mapStateToProps(store) {
     return {
@@ -42,13 +47,3 @@ function mapStateToProps(store) {
 }
 
 export default connect(mapStateToProps)(HomeScreen);
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10,
-    },
-});

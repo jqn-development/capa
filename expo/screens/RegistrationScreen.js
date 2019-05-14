@@ -9,7 +9,6 @@ import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import FullWidthImage from 'react-native-fullwidth-image';
 import { register, login, clearRegError } from '../modules/auth/auth.service';
-//import { removeErrors } from '../modules/errors/error.service';
 import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
 import GenericField from '../components/fields/genericField';
@@ -69,8 +68,9 @@ const styles = StyleSheet.create({
     },
     errorMessage: {
         ...Colors.errorText,
-        width: 200,
         paddingTop: 20,
+        paddingLeft: 10,
+        margin: 0,
         fontSize: 10,
     },
 });
@@ -139,6 +139,11 @@ RegistrationScreen.propTypes = {
     dispatchRegister: PropTypes.func.isRequired,
     dispatchClearErrors: PropTypes.func.isRequired,
     navigation: PropTypes.shape({}).isRequired,
+    errorMessage: PropTypes.string,
+};
+
+RegistrationScreen.defaultProps = {
+    errorMessage: null,
 };
 
 function mapStateToProps(store) {
