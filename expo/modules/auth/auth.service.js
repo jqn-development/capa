@@ -32,8 +32,11 @@ export const checkAuthStatus = () => async dispatch => {
     try {
         const authToken = await AsyncStorage.getItem('authToken');
         const refreshToken = await AsyncStorage.getItem('refreshToken');
+        console.log(authToken);
+        console.log(refreshToken);
         if (authToken != null && refreshToken != null) {
             dispatch(AuthReducer.setLoginSuccess(authToken, refreshToken));
+            //console.log(authToken);
         }
         return authToken;
     } catch (error) {

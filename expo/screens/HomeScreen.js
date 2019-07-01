@@ -1,16 +1,15 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { SafeAreaView } from 'react-navigation';
+// import { View } from 'react-navigation';
 import { connect } from 'react-redux';
 import CapaHeader from '../components/header';
-
 import { Colors, Container } from '../styles';
 
 const styles = StyleSheet.create({
     container: {
         ...Container.flexVerticalTop,
-        ...Colors.background,
+        //...Colors.background,
     },
 });
 class HomeScreen extends React.Component {
@@ -21,21 +20,21 @@ class HomeScreen extends React.Component {
     render() {
         const { loggedIn, authToken } = this.props;
         return (
-            <SafeAreaView style={styles.container}>
-                <CapaHeader />
+            <View style={styles.container}>
+                <CapaHeader add search />
                 {loggedIn ? (
                     <Text style={styles.loggedInDesc}>
                         You are logged in with token: {authToken}
                     </Text>
                 ) : null}
-            </SafeAreaView>
+            </View>
         );
     }
 }
 
 HomeScreen.propTypes = {
     loggedIn: PropTypes.bool.isRequired,
-    authToken: PropTypes.string.isRequired,
+    authToken: PropTypes.string,
 };
 
 function mapStateToProps(store) {
