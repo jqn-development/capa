@@ -7,7 +7,6 @@ import RegistrationScreen from '../screens/RegistrationScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import MainTabNavigator from './MainTabNavigator';
 
-// const AppStack = createStackNavigator({ Home: HomeScreen, Other: OtherScreen });
 const AuthStack = createStackNavigator({ SignIn: SignInScreen, SignUp: RegistrationScreen });
 
 export default createAppContainer(

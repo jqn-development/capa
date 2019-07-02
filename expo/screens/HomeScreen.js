@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
-// import { View } from 'react-navigation';
 import { connect } from 'react-redux';
 import CapaHeader from '../components/header';
 import { Colors, Container } from '../styles';
@@ -9,7 +8,10 @@ import { Colors, Container } from '../styles';
 const styles = StyleSheet.create({
     container: {
         ...Container.flexVerticalTop,
-        //...Colors.background,
+        ...Colors.background,
+    },
+    loggedInDesc: {
+        ...Colors.whiteText,
     },
 });
 class HomeScreen extends React.Component {
