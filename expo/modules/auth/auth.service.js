@@ -35,10 +35,10 @@ export const checkAuthStatus = () => async dispatch => {
         if (authToken != null && refreshToken != null) {
             dispatch(AuthReducer.setLoginSuccess(authToken, refreshToken));
         }
-        return authToken;
+        // return authToken;
     } catch (error) {
         dispatch(asyncError(error));
-        return false;
+        // return false;
     }
 };
 

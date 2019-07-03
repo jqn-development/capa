@@ -12,10 +12,11 @@ class AuthLoadingScreen extends React.Component {
     // Fetch the token from storage then navigate to our appropriate place
     bootstrapAsync = async () => {
         // This will switch to the App screen or Auth screen and this loading
-        // screen will be unmounted and thrown away.
-        let { dispatch, navigation } = this.props;
-        const authToken = dispatch(checkAuthStatus());
-        navigation.navigate(authToken ? 'App' : 'Auth');
+        const { dispatch, navigation } = this.props;
+        dispatch(checkAuthStatus()).then(() => {
+            const { authToken } = this.props;
+            navigation.navigate(authToken ? 'App' : 'Auth');
+        });
     };
 
     // Render any loading content that you like here
@@ -29,4 +30,10 @@ class AuthLoadingScreen extends React.Component {
     }
 }
 
-export default connect()(AuthLoadingScreen);
+function mapStateToProps(store) {
+    return {
+        authToken: store.auth.authToken,
+    };
+}
+
+export default connect(mapStateToProps)(AuthLoadingScreen);
