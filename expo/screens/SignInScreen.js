@@ -139,7 +139,7 @@ SignInScreen.propTypes = {
     handleSubmit: PropTypes.func.isRequired,
     dispatchLogin: PropTypes.func.isRequired,
     errorMessage: PropTypes.string,
-    navigation: PropTypes.shape({}).isRequired,
+    navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired }).isRequired,
 };
 
 SignInScreen.defaultProps = {
