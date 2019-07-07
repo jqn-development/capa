@@ -11,6 +11,7 @@ aws.config.update({
 
 const s3 = new aws.S3();
 const upload = multer({
+	limits: { fieldSize: 25 * 1024 * 1024 },
 	storage: multerS3({
 		s3: s3,
 		bucket: 'capa-user-photos',
@@ -19,7 +20,6 @@ const upload = multer({
 			cb(null, {fieldName: file.fieldname});
 		},
 		key: function (req, file, cb) {
-			console.log(file);
 			cb(null, Date.now().toString()+path.extname(file.originalname))
 		}
 	})

@@ -25,6 +25,7 @@
     "@expo/samples": "2.1.1",
     "@expo/vector-icons": "^10.0.1",
     "expo": "^32.0.0",
+    "form-data": "^2.5.0",
     "jwt-decode": "^2.2.0",
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",

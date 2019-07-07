@@ -1,42 +1,42 @@
 import React from 'react';
-import {
-    FlatList,
-    Image,
-    View,
-    CameraRoll,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-} from 'react-native';
-import { Colors, Container } from '../styles';
+import { CameraRoll, TouchableOpacity, View } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { connect } from 'react-redux';
+import CapaImagePicker from '../components/CapaImagePicker';
+import { storePhoto } from '../modules/s3/s3.service';
 
-const styles = StyleSheet.create({
-    container: {
-        ...Colors.background,
-        ...Container.flexVerticalCenter,
-    },
-    image: {
-        flex: 1,
-        margin: 1,
-    },
-});
-
-export default class UploadScreen extends React.Component {
-    static navigationOptions = {
+class UploadScreen extends React.Component {
+    static navigationOptions = ({ navigation }) => ({
         headerStyle: {
-            ...Colors.background,
+            backgroundColor: 'black',
+            marginLeft: 15,
+            marginRight: 15,
+            borderBottomWidth: 0,
         },
-    };
+        headerLeft: (
+            <Icon
+                name="close"
+                color="#fff"
+                onPress={() => {
+                    navigation.goBack();
+                }}
+                Component={TouchableOpacity}
+            />
+        ),
+        headerRight: (
+            <Icon
+                name="done"
+                color="#fff"
+                onPress={navigation.getParam('upload')}
+                Component={TouchableOpacity}
+            />
+        ),
+    });
 
     state = { photos: null, selectedPhoto: null };
 
-    constructor(props) {
-        super(props);
-        this.pickPhoto = this.pickPhoto.bind(this);
-        this.renderPhoto = this.renderPhoto.bind(this);
-    }
-
     componentDidMount() {
+        this.props.navigation.setParams({ upload: this.upload });
         this.getPhotosAsync({ first: 10 });
     }
 
@@ -44,58 +44,59 @@ export default class UploadScreen extends React.Component {
         return new Promise((res, rej) =>
             CameraRoll.getPhotos(params)
                 .then(data => {
+                    console.log(data);
                     const assets = data.edges;
                     const photos = assets.map(asset => asset.node.image);
-                    const selectedPhoto = photos[0];
                     this.setState({ photos });
-                    this.setState({ selectedPhoto });
                     res({ photos });
                 })
                 .catch(rej)
         );
     }
 
-    pickPhoto(selectedPhoto) {
-        this.setState({ selectedPhoto });
-    }
+    upload = () => {
+        this.props.dispatchStorePhoto(this.state.selectedPhoto);
+    };
 
-    renderPhoto(photo) {
-        return (
-            <TouchableOpacity onPress={() => this.pickPhoto(photo.item)}>
-                <Image source={{ uri: photo.item.uri }} style={{ width: 120, height: 120 }} />
-            </TouchableOpacity>
-        );
+    imagePickerChange(photo) {
+        this.setState({ selectedPhoto: photo });
     }
 
     render() {
-        const { photos, selectedPhoto } = this.state;
+        const { photos } = this.state;
         return (
-            <View style={{ flex: 1, backgroundColor: 'black' }}>
-                <View style={{ flex: 1, backgroundColor: 'black' }}>
-                    {selectedPhoto && (
-                        <Image
-                            resizeMode="contain"
-                            source={{ uri: selectedPhoto.uri }}
-                            style={{ flex: 1 }}
-                        />
-                    )}
-                </View>
-                <View style={{ justifyContent: 'flex-end', height: 120 }}>
-                    {photos ? (
-                        <FlatList
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            renderItem={photo => {
-                                return this.renderPhoto(photo);
-                            }}
-                            keyExtractor={(photo, index) => index.toString()}
-                            data={photos}
-                        />
-                    ) : (
-                        <Text style={styles.paragraph}>Fetching photos...</Text>
-                    )}
-                </View>
+            <View style={{ flex: 1 }}>
+                {photos && (
+                    <CapaImagePicker
+                        onChange={photo => this.imagePickerChange(photo)}
+                        photos={photos}
+                    />
+                )}
             </View>
         );
     }
 }
+
+function mapDispatchToProps(dispatch) {
+    return {
+        dispatchStorePhoto: photo => {
+            dispatch(
+                storePhoto(photo, {
+                    userId: 1,
+                    caption: 'caption',
+                    lat: 5,
+                    long: 8,
+                })
+            ).catch(error => {
+                console.log(error);
+            });
+        },
+    };
+}
+
+const UploadConnect = connect(
+    null,
+    mapDispatchToProps
+)(UploadScreen);
+
+export default UploadConnect;

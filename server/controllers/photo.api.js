@@ -5,9 +5,10 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/auth.js');
 const photo = require('./photo');
 const upload = require('../services/file-upload');
-const singleUpload = upload.single('image');
+const singleUpload = upload.single('file');
 
-router.use((req, res, next) => {
+
+/*router.use((req, res, next) => {
 	var token = req.headers['authorization'];
 	token = token.replace('Bearer ', '');
 	return jwt.verify(token, config.secret, jwtErr => {
@@ -22,7 +23,7 @@ router.use((req, res, next) => {
 		}
 	});
 });
-
+*/
 router.post('/photos', (req, res) => {
 	singleUpload(req, res, function(err) {
 		if (err) {
