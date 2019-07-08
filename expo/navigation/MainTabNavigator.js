@@ -5,28 +5,14 @@ import UploadScreen from '../screens/UploadScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
-const HomeStack = createStackNavigator(
-    {
-        Home: HomeScreen,
-        Upload: UploadScreen,
-    },
-    {
-        headerStyle: {
-            backgroundColor: 'black',
-        },
-    }
-);
+const HomeStack = createStackNavigator({
+    Home: HomeScreen,
+    Upload: UploadScreen,
+});
 
-const LinksStack = createStackNavigator(
-    {
-        Links: LinksScreen,
-    },
-    {
-        headerStyle: {
-            backgroundColor: 'black',
-        },
-    }
-);
+const LinksStack = createStackNavigator({
+    Links: LinksScreen,
+});
 
 const SettingsStack = createStackNavigator({
     Settings: SettingsScreen,

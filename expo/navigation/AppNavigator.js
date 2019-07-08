@@ -18,7 +18,6 @@ export default createAppContainer(
         },
         {
             initialRouteName: 'AuthLoading',
-            headerTransparent: true,
         }
     )
 );
