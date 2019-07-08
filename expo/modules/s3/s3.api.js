@@ -1,5 +1,7 @@
 import FormData from 'form-data';
+import { debounce } from 'lodash';
 import { Platform } from 'react-native';
+import axios from 'axios';
 import config from '../../config';
 
 const createFormData = (photo, body) => {
@@ -17,20 +19,22 @@ const createFormData = (photo, body) => {
 };
 
 export default class S3Api {
-    static store(token, uri, body) {
+    static store(token, uri, body, callback) {
         const formData = createFormData(uri, body);
-        return fetch(`${config.url}/api/photo/photos`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'multipart/form-data',
-            },
-        }).then( res => {
-            console.log(res);
-        }).catch(error => {
-            console.log(error);
-            throw error;
-        });
+        return axios
+            .post(`${config.url}/api/photo/photos`, formData, {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    authorization: `Bearer ${token}`,
+                },
+                onUploadProgress: callback,
+            })
+            .then(res => {
+                console.log(JSON.stringify(res));
+            })
+            .catch(error => {
+                throw error;
+            });
     }
 }

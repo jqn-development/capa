@@ -2,6 +2,9 @@ import React from 'react';
 import { CameraRoll, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
+import * as Progress from 'react-native-progress';
+import { vw } from 'react-native-expo-viewport-units';
+import * as S3Reducer from '../modules/s3/s3.reducer';
 import CapaImagePicker from '../components/CapaImagePicker';
 import { storePhoto } from '../modules/s3/s3.service';
 
@@ -36,7 +39,8 @@ class UploadScreen extends React.Component {
     state = { photos: null, selectedPhoto: null };
 
     componentDidMount() {
-        this.props.navigation.setParams({ upload: this.upload });
+        const { navigation } = this.props;
+        navigation.setParams({ upload: this.upload });
         this.getPhotosAsync({ first: 10 });
     }
 
@@ -44,7 +48,6 @@ class UploadScreen extends React.Component {
         return new Promise((res, rej) =>
             CameraRoll.getPhotos(params)
                 .then(data => {
-                    console.log(data);
                     const assets = data.edges;
                     const photos = assets.map(asset => asset.node.image);
                     this.setState({ photos });
@@ -55,7 +58,9 @@ class UploadScreen extends React.Component {
     }
 
     upload = () => {
-        this.props.dispatchStorePhoto(this.state.selectedPhoto);
+        const { dispatchStorePhoto } = this.props;
+        const { selectedPhoto } = this.state;
+        dispatchStorePhoto(selectedPhoto);
     };
 
     imagePickerChange(photo) {
@@ -64,8 +69,22 @@ class UploadScreen extends React.Component {
 
     render() {
         const { photos } = this.state;
+        const { uploadProgress } = this.props;
         return (
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, backgroundColor: 'black' }}>
+                {uploadProgress &&
+                    <View>
+                        <Progress.Bar
+                            unfilledColor="black"
+                            borderRadius={0}
+                            borderWidth={0}
+                            height={1}
+                            color="white"
+                            progress={uploadProgress}
+                            width={vw(100)}
+                        />
+                    </View>
+                }
                 {photos && (
                     <CapaImagePicker
                         onChange={photo => this.imagePickerChange(photo)}
@@ -75,6 +94,11 @@ class UploadScreen extends React.Component {
             </View>
         );
     }
+}
+function mapStateToProps(store) {
+    return {
+        uploadProgress: store.s3.uploadProgress,
+    };
 }
 
 function mapDispatchToProps(dispatch) {
@@ -87,15 +111,19 @@ function mapDispatchToProps(dispatch) {
                     lat: 5,
                     long: 8,
                 })
-            ).catch(error => {
-                console.log(error);
-            });
+            )
+                .then(() => {
+                    dispatch(S3Reducer.setUploadProgress(null));
+                })
+                .catch(error => {
+                    console.log(error);
+                });
         },
     };
 }
 
 const UploadConnect = connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
 )(UploadScreen);
 
