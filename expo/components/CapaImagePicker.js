@@ -5,7 +5,7 @@ import { View, Image, FlatList, Text, TouchableOpacity, StyleSheet } from 'react
 const styles = StyleSheet.create({
     flexContainer: {
         flex: 1,
-        backgroundColor: 'black',
+        backgroundColor: '#000',
     },
     flatListContainer: {
         justifyContent: 'flex-end',

@@ -2,16 +2,16 @@ import React from 'react';
 import { CameraRoll, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
-import * as Progress from 'react-native-progress';
-import { vw } from 'react-native-expo-viewport-units';
+import PropTypes from 'prop-types';
 import * as S3Reducer from '../modules/s3/s3.reducer';
+import CapaUploadProgress from '../components/CapaUploadProgress';
 import CapaImagePicker from '../components/CapaImagePicker';
 import { storePhoto } from '../modules/s3/s3.service';
 
 class UploadScreen extends React.Component {
     static navigationOptions = ({ navigation }) => ({
         headerStyle: {
-            backgroundColor: 'black',
+            backgroundColor: '#000',
             marginLeft: 15,
             marginRight: 15,
             borderBottomWidth: 0,
@@ -26,7 +26,7 @@ class UploadScreen extends React.Component {
                 Component={TouchableOpacity}
             />
         ),
-        headerRight: (
+        headerRight: !navigation.getParam('uploadProgress', 0) && (
             <Icon
                 name="done"
                 color="#fff"
@@ -58,8 +58,10 @@ class UploadScreen extends React.Component {
     }
 
     upload = () => {
+        const { navigation } = this.props;
         const { dispatchStorePhoto } = this.props;
         const { selectedPhoto } = this.state;
+        navigation.setParams({ uploadProgress: 1 });
         dispatchStorePhoto(selectedPhoto);
     };
 
@@ -69,22 +71,11 @@ class UploadScreen extends React.Component {
 
     render() {
         const { photos } = this.state;
-        const { uploadProgress } = this.props;
+        const { uploadProgress, uploadFilename, uploadFileSize } = this.props;
+        const progressProps = { uploadProgress, uploadFilename, uploadFileSize };
         return (
-            <View style={{ flex: 1, backgroundColor: 'black' }}>
-                {uploadProgress &&
-                    <View>
-                        <Progress.Bar
-                            unfilledColor="black"
-                            borderRadius={0}
-                            borderWidth={0}
-                            height={1}
-                            color="white"
-                            progress={uploadProgress}
-                            width={vw(100)}
-                        />
-                    </View>
-                }
+            <View style={{ flex: 1 }}>
+                {uploadProgress && <CapaUploadProgress {...progressProps} />}
                 {photos && (
                     <CapaImagePicker
                         onChange={photo => this.imagePickerChange(photo)}
@@ -95,9 +86,26 @@ class UploadScreen extends React.Component {
         );
     }
 }
+
+UploadScreen.propTypes = {
+    uploadProgress: PropTypes.number,
+    uploadFileSize: PropTypes.number,
+    uploadFilename: PropTypes.string,
+    dispatchStorePhoto: PropTypes.func.isRequired,
+    navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired }).isRequired,
+};
+
+UploadScreen.defaultProps = {
+    uploadProgress: null,
+    uploadFileSize: null,
+    uploadFilename: null,
+};
+
 function mapStateToProps(store) {
     return {
         uploadProgress: store.s3.uploadProgress,
+        uploadFilename: store.s3.uploadFilename,
+        uploadFileSize: store.s3.uploadFileSize,
     };
 }
 
