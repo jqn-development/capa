@@ -18,7 +18,7 @@ class HomeScreen extends React.Component {
     static navigationOptions = {
         header: null,
         headerStyle: {
-            backgroundColor: 'black',
+            backgroundColor: '#000',
         },
     };
 

@@ -3,16 +3,23 @@ import * as S3Reducer from './s3.reducer';
 
 export const storePhoto = (photo, body) => async (dispatch, getState) => {
     const state = getState();
-    const flag = [];
+    const progressFlag = [];
     const progressCallback = progressEvent => {
         const percentFraction = progressEvent.loaded / progressEvent.total;
         const percent = Math.floor(percentFraction * 100);
-        if (percent % 10 === 0 && !flag.includes(percent)) {
-            flag.push(percent);
+        if (!progressFlag.includes('size')) {
+            progressFlag.push('size');
+            dispatch(S3Reducer.setUploadFileSize(progressEvent.total / 1000));
+        }
+        if (percent % 10 === 0 && !progressFlag.includes(percent)) {
+            progressFlag.push(percent);
             dispatch(S3Reducer.setUploadProgress(percentFraction));
         }
+        if (percentFraction === 1) {
+            dispatch(S3Reducer.setUploadStatus('processing'));
+        }
     };
-
+    dispatch(S3Reducer.setUploadFilename(photo.filename));
     return S3Api.store(state.auth.authToken, photo, body, progressCallback).catch(error => {
         throw error;
     });
