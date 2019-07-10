@@ -46,7 +46,7 @@ class UploadScreen extends React.Component {
     componentDidMount() {
         const { navigation } = this.props;
         navigation.setParams({ upload: this.upload });
-        this.getPhotosAsync({ first: 10 });
+        this.getPhotosAsync({ first: 100 });
     }
 
     async getPhotosAsync(params) {

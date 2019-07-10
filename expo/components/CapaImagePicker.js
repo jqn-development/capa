@@ -11,6 +11,10 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         height: 120,
     },
+    galleryImage: {
+        width: 120,
+        height: 120,
+    },
 });
 
 export default class CapaImagePicker extends React.Component {
@@ -34,7 +38,7 @@ export default class CapaImagePicker extends React.Component {
                     this.pickPhoto(photo.item);
                 }}
             >
-                <Image source={{ uri: photo.item.uri }} style={{ width: 120, height: 120 }} />
+                <Image source={{ uri: photo.item.uri }} style={ styles.galleryImage } />
             </TouchableOpacity>
         );
     };
