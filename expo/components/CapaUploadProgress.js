@@ -4,6 +4,7 @@ import { Icon } from 'react-native-elements';
 import * as Progress from 'react-native-progress';
 import { vw } from 'react-native-expo-viewport-units';
 import AnimatedEllipsis from 'react-native-animated-ellipsis';
+import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
     container: {
@@ -38,13 +39,14 @@ const CapaUploadProgress = props => {
         <View style={styles.progressContainer}>
             <View style={styles.container}>
                 <View style={styles.itemAlignStart}>
-                    <Icon name="camera" color="#fff" />
+                    <Icon type="material" name="backup" color="#fff" />
                     <Text style={styles.progressText}>
                         {uploadFilename} ({uploadFileSize})
                     </Text>
                 </View>
                 <View style={styles.itemAlignEnd}>
-                    <AnimatedEllipsis style={{
+                    <AnimatedEllipsis
+                        style={{
                             color: '#fff',
                             fontSize: 30,
                             letterSpacing: 0,
@@ -64,6 +66,12 @@ const CapaUploadProgress = props => {
             />
         </View>
     );
+};
+
+CapaUploadProgress.propTypes = {
+    uploadFilename: PropTypes.string.isRequired,
+    uploadFileSize: PropTypes.number.isRequired,
+    uploadProgress: PropTypes.number.isRequired,
 };
 
 export default CapaUploadProgress;

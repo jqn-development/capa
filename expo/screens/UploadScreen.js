@@ -38,8 +38,8 @@ class UploadScreen extends React.Component {
 
     state = { photos: null, selectedPhoto: null };
 
-    constructor(props) {
-        super(props);
+    constructor() {
+        super();
         this.imagePicker = React.createRef();
     }
 
@@ -126,13 +126,9 @@ function mapDispatchToProps(dispatch) {
                     lat: 5,
                     long: 8,
                 })
-            )
-                .then(() => {
-                    dispatch(S3Reducer.setUploadProgress(null));
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+            ).then(() => {
+                dispatch(S3Reducer.setUploadProgress(null));
+            });
         },
     };
 }

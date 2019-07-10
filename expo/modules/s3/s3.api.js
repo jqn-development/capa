@@ -1,5 +1,4 @@
 import FormData from 'form-data';
-import { debounce } from 'lodash';
 import { Platform } from 'react-native';
 import axios from 'axios';
 import config from '../../config';
@@ -30,8 +29,8 @@ export default class S3Api {
                 },
                 onUploadProgress: callback,
             })
-            .then(res => {
-                console.log(JSON.stringify(res));
+            .then(() => {
+                // console.log(JSON.stringify(res));
             })
             .catch(error => {
                 throw error;
