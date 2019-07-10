@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Image, FlatList, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 
 const styles = StyleSheet.create({
     flexContainer: {
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 });
 
 export default class CapaImagePicker extends React.Component {
-    state = { selectedPhoto: null };
+    state = { selectedPhoto: null, bounceValue: new Animated.Value(100)};
 
     componentDidMount() {
         const { photos } = this.props;
@@ -39,6 +39,15 @@ export default class CapaImagePicker extends React.Component {
         );
     };
 
+    toggleGallery() {
+        Animated.spring(this.state.bounceValue, {
+            toValue: 220,
+            velocity: 3,
+            tension: 2,
+            friction: 8,
+        }).start();
+    }
+
     render() {
         const { selectedPhoto } = this.state;
         const { photos } = this.props;
@@ -55,15 +64,22 @@ export default class CapaImagePicker extends React.Component {
                 </View>
                 <View style={styles.flatListContainer}>
                     {photos ? (
-                        <FlatList
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            renderItem={photo => {
-                                return this.renderPhoto(photo);
-                            }}
-                            keyExtractor={(photo, index) => index.toString()}
-                            data={photos}
-                        />
+                        <Animated.View
+                            style={[
+                                { height: 220 },
+                                { transform: [{ translateY: this.state.bounceValue }] },
+                            ]}
+                        >
+                            <FlatList
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                renderItem={photo => {
+                                    return this.renderPhoto(photo);
+                                }}
+                                keyExtractor={(photo, index) => index.toString()}
+                                data={photos}
+                            />
+                        </Animated.View>
                     ) : (
                         <Text>Fetching photos...</Text>
                     )}
