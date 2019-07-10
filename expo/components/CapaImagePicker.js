@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 });
 
 export default class CapaImagePicker extends React.Component {
-    state = { selectedPhoto: null, bounceValue: new Animated.Value(100)};
+    state = { selectedPhoto: null, bounceValue: new Animated.Value(100) };
 
     componentDidMount() {
         const { photos } = this.props;
@@ -40,16 +40,18 @@ export default class CapaImagePicker extends React.Component {
     };
 
     toggleGallery() {
-        Animated.spring(this.state.bounceValue, {
+        const { bounceValue } = this.state;
+        Animated.spring(bounceValue, {
             toValue: 220,
             velocity: 3,
             tension: 2,
             friction: 8,
+            useNativeDriver: true,
         }).start();
     }
 
     render() {
-        const { selectedPhoto } = this.state;
+        const { selectedPhoto, bounceValue } = this.state;
         const { photos } = this.props;
         return (
             <View style={styles.flexContainer}>
@@ -65,10 +67,7 @@ export default class CapaImagePicker extends React.Component {
                 <View style={styles.flatListContainer}>
                     {photos ? (
                         <Animated.View
-                            style={[
-                                { height: 220 },
-                                { transform: [{ translateY: this.state.bounceValue }] },
-                            ]}
+                            style={[{ height: 220 }, { transform: [{ translateY: bounceValue }] }]}
                         >
                             <FlatList
                                 horizontal
