@@ -38,6 +38,11 @@ class UploadScreen extends React.Component {
 
     state = { photos: null, selectedPhoto: null };
 
+    constructor(props) {
+        super(props);
+        this.child = React.createRef();
+    }
+
     componentDidMount() {
         const { navigation } = this.props;
         navigation.setParams({ upload: this.upload });
@@ -62,6 +67,7 @@ class UploadScreen extends React.Component {
         const { dispatchStorePhoto } = this.props;
         const { selectedPhoto } = this.state;
         navigation.setParams({ uploadProgress: 1 });
+        this.child.current.toggleGallery();
         dispatchStorePhoto(selectedPhoto);
     };
 
@@ -78,6 +84,7 @@ class UploadScreen extends React.Component {
                 {uploadProgress && <CapaUploadProgress {...progressProps} />}
                 {photos && (
                     <CapaImagePicker
+                        ref={this.child}
                         onChange={photo => this.imagePickerChange(photo)}
                         photos={photos}
                     />
