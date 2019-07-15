@@ -1,5 +1,4 @@
 import config from '../../config';
-import { handleTokenErrors } from '../errors/error.service';
 
 class AuthApi {
     static login(email, password) {
@@ -12,7 +11,6 @@ class AuthApi {
             },
         })
             .then(response => response.json())
-            .then(handleTokenErrors)
             .catch(error => {
                 throw error;
             });
@@ -25,7 +23,6 @@ class AuthApi {
             headers: config.configHeaders,
         })
             .then(response => response.json())
-            .then(handleTokenErrors)
             .catch(error => {
                 throw error;
             });
@@ -38,7 +35,6 @@ class AuthApi {
             headers: config.configHeaders,
         })
             .then(response => response.json())
-            .then(handleTokenErrors)
             .catch(error => {
                 throw error;
             });
@@ -53,7 +49,6 @@ class AuthApi {
             },
         })
             .then(response => response.json())
-            .then(handleTokenErrors)
             .catch(error => {
                 throw error;
             });

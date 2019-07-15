@@ -25,6 +25,7 @@ const capaHeader = props => {
                     {add && (
                         <Icon
                             name="add"
+                            testID="upload"
                             color="#fff"
                             onPress={() => {
                                 navigation.navigate('Upload');

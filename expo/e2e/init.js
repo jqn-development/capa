@@ -11,7 +11,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-  await reloadApp();
+  await reloadApp({ permissions: { photos: 'YES' } });
 });
 
 afterAll(async () => {

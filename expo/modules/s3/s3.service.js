@@ -1,4 +1,6 @@
+import uuidv4 from 'uuid/v4'
 import S3Api from './s3.api';
+import { handleTokenErrors } from '../errors/error.service';
 import * as S3Reducer from './s3.reducer';
 
 export const storePhoto = (photo, body) => async (dispatch, getState) => {
@@ -19,10 +21,17 @@ export const storePhoto = (photo, body) => async (dispatch, getState) => {
             dispatch(S3Reducer.setUploadStatus('processing'));
         }
     };
+    if (!photo.filename) {
+        photo.filename = uuidv4();
+    }
     dispatch(S3Reducer.setUploadFilename(photo.filename));
-    return S3Api.store(state.auth.authToken, photo, body, progressCallback).catch(error => {
-        throw error;
-    });
+    return S3Api.store(state.auth.authToken, photo, body, progressCallback)
+        .then(() => {
+            dispatch(S3Reducer.setUploadProgress(null));
+        })
+        .catch(error => {
+            dispatch(handleTokenErrors(error.response.data));
+        });
 };
 
 export const deletePhoto = uri => {

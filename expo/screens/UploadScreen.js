@@ -30,13 +30,14 @@ class UploadScreen extends React.Component {
             <Icon
                 name="done"
                 color="#fff"
+                testID="uploadImage"
                 onPress={navigation.getParam('upload')}
                 Component={TouchableOpacity}
             />
         ),
     });
 
-    state = { photos: null, selectedPhoto: null };
+    state = { photos: null, selectedPhoto: null, error: null };
 
     constructor() {
         super();
@@ -126,9 +127,7 @@ function mapDispatchToProps(dispatch) {
                     lat: 5,
                     long: 8,
                 })
-            ).then(() => {
-                dispatch(S3Reducer.setUploadProgress(null));
-            });
+            );
         },
     };
 }

@@ -65,7 +65,7 @@ let createToken = user => {
 let createRefreshToken = user => {
 	//It doesn't always need to be in the /login endpoint route
 	let refreshToken = jwt.sign({ type: 'refresh' }, config.secret, {
-		expiresIn: '20s' // 1 hour
+		expiresIn: 86400 // 1 hour
 	});
 	return Users.findOneAndUpdate(
 		{ email: user.email },
