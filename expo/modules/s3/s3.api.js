@@ -1,6 +1,7 @@
 import FormData from 'form-data';
 import { Platform } from 'react-native';
 import axios from 'axios';
+import { handleTokenErrors } from '../errors/error.service';
 import config from '../../config';
 
 const createFormData = (photo, body) => {
@@ -18,8 +19,8 @@ const createFormData = (photo, body) => {
 };
 
 export default class S3Api {
-    static store(token, uri, body, callback) {
-        const formData = createFormData(uri, body);
+    static store(token, photo, body, callback) {
+        const formData = createFormData(photo, body);
         return axios
             .post(`${config.url}/api/photo/photos`, formData, {
                 headers: {
@@ -28,9 +29,6 @@ export default class S3Api {
                     authorization: `Bearer ${token}`,
                 },
                 onUploadProgress: callback,
-            })
-            .then(() => {
-                // console.log(JSON.stringify(res));
             })
             .catch(error => {
                 throw error;

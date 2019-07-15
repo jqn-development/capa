@@ -12,7 +12,7 @@
   "jest": {
     "preset": "jest-expo",
     "testMatch": [
-    "<rootDir>/__tests__/*.js?(x)"
+      "<rootDir>/__tests__/*.js?(x)"
     ]
   },
   "detox": {
@@ -50,7 +50,8 @@
     "redux": "^4.0.1",
     "redux-form": "^8.1.0",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

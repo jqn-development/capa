@@ -38,7 +38,7 @@ export default class CapaImagePicker extends React.Component {
                     this.pickPhoto(photo.item);
                 }}
             >
-                <Image source={{ uri: photo.item.uri }} style={ styles.galleryImage } />
+                <Image source={{ uri: photo.item.uri }} style={styles.galleryImage} />
             </TouchableOpacity>
         );
     };
@@ -74,6 +74,7 @@ export default class CapaImagePicker extends React.Component {
                             style={[{ height: 220 }, { transform: [{ translateY: bounceValue }] }]}
                         >
                             <FlatList
+                                testID="flatListGallery"
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
                                 renderItem={photo => {

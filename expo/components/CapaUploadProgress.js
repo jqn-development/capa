@@ -37,13 +37,11 @@ const CapaUploadProgress = props => {
     const { uploadFilename, uploadFileSize, uploadProgress } = props;
 
     return (
-        <View style={styles.progressContainer}>
+        <View testID="uploadProgress" style={styles.progressContainer}>
             <View style={styles.container}>
                 <View style={styles.itemAlignStart}>
                     <Icon type="material" name="backup" color="#fff" />
-                    <Text style={styles.progressText}>
-                        {uploadFilename} ({Math.floor(uploadFileSize)} KB)
-                    </Text>
+                    <Text style={styles.progressText}>({Math.floor(uploadFileSize)} KB)</Text>
                 </View>
                 <View style={styles.itemAlignEnd}>
                     <AnimatedEllipsis
