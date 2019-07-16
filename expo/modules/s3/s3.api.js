@@ -1,7 +1,6 @@
 import FormData from 'form-data';
 import { Platform } from 'react-native';
 import axios from 'axios';
-import { handleTokenErrors } from '../errors/error.service';
 import config from '../../config';
 
 const createFormData = (photo, body) => {

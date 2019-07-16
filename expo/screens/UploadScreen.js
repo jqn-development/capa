@@ -3,7 +3,7 @@ import { CameraRoll, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import * as S3Reducer from '../modules/s3/s3.reducer';
+import uuidv4 from 'uuid/v4';
 import CapaUploadProgress from '../components/CapaUploadProgress';
 import CapaImagePicker from '../components/CapaImagePicker';
 import { storePhoto } from '../modules/s3/s3.service';
@@ -37,7 +37,7 @@ class UploadScreen extends React.Component {
         ),
     });
 
-    state = { photos: null, selectedPhoto: null, error: null };
+    state = { photos: null, selectedPhoto: null };
 
     constructor() {
         super();
@@ -73,7 +73,11 @@ class UploadScreen extends React.Component {
     };
 
     imagePickerChange(photo) {
-        this.setState({ selectedPhoto: photo });
+        const selectedPhoto = photo;
+        if (!selectedPhoto.filename) {
+            selectedPhoto.filename = uuidv4();
+        }
+        this.setState({ selectedPhoto });
     }
 
     render() {
@@ -100,7 +104,10 @@ UploadScreen.propTypes = {
     uploadFileSize: PropTypes.number,
     uploadFilename: PropTypes.string,
     dispatchStorePhoto: PropTypes.func.isRequired,
-    navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired }).isRequired,
+    navigation: PropTypes.shape({
+        navigate: PropTypes.func.isRequired,
+        setParams: PropTypes.func.isRequired,
+    }).isRequired,
 };
 
 UploadScreen.defaultProps = {

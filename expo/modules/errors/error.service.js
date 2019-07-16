@@ -10,7 +10,8 @@ export const handleTokenErrors = response => dispatch => {
     if (!response.success) {
         if (response.code && response.code === 'invalidToken') {
             dispatch({ type: 'INVALID_TOKEN' });
-        } if (response.code && response.code === 'refreshExpired') {
+        }
+        if (response.code && response.code === 'refreshExpired') {
             dispatch({ type: 'REFRESH_EXPIRED' });
             dispatch(connectionError('Refresh token expired.'));
         }
