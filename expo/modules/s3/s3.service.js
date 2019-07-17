@@ -2,7 +2,7 @@ import S3Api from './s3.api';
 import { handleTokenErrors } from '../errors/error.service';
 import * as S3Reducer from './s3.reducer';
 
-export const storePhoto = (photo, body) => async (dispatch, getState) => {
+export const storePhoto = (photo, body) => (dispatch, getState) => {
     const state = getState();
     const progressFlag = [];
     const progressCallback = progressEvent => {
@@ -21,11 +21,16 @@ export const storePhoto = (photo, body) => async (dispatch, getState) => {
         }
     };
     dispatch(S3Reducer.setUploadFilename(photo.filename));
+    dispatch(S3Reducer.setUploadStatus('uploading'));
     return S3Api.store(state.auth.authToken, photo, body, progressCallback)
         .then(() => {
             dispatch(S3Reducer.setUploadProgress(null));
+            dispatch(S3Reducer.setUploadStatus(null));
+            dispatch(S3Reducer.setUploadFilename(null));
+            dispatch(S3Reducer.setUploadFileSize(null));
         })
         .catch(error => {
+            // If JWT token is expired, let's refresh it
             dispatch(handleTokenErrors(error.response.data));
         });
 };

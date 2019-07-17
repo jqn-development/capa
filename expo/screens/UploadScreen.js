@@ -130,9 +130,6 @@ function mapDispatchToProps(dispatch) {
             dispatch(
                 storePhoto(photo, {
                     userId: 1,
-                    caption: 'caption',
-                    lat: 5,
-                    long: 8,
                 })
             );
         },
