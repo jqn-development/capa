@@ -2,15 +2,26 @@
     "globals": {"fetch": false},
     "extends": [
         "airbnb",
-        "prettier",
-        "prettier/react",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript",
         "plugin:prettier/recommended",
-        "eslint-config-prettier"
+        "prettier/@typescript-eslint"
     ],
-    "parser": "babel-eslint",
+    "parser": "@typescript-eslint/parser",
     "plugins": [
-        "prettier"
+        "prettier",
+        "@typescript-eslint",
+        "react"
     ],
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "project": "./tsconfig.json",
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        },
+        "useJSXTextNode": true
+    },
     "rules": {
         "import/no-cycle": "off",
         "import/no-unresolved": "off",
