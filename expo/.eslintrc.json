@@ -5,7 +5,8 @@
         "plugin:@typescript-eslint/recommended",
         "plugin:import/typescript",
         "plugin:prettier/recommended",
-        "prettier/@typescript-eslint"
+        "prettier/@typescript-eslint",
+        "prettier-react"
     ],
     "parser": "@typescript-eslint/parser",
     "plugins": [
@@ -23,6 +24,7 @@
         "useJSXTextNode": true
     },
     "rules": {
+        "react/jsx-indent-props": [1, 4],
         "import/no-cycle": "off",
         "import/no-unresolved": "off",
         "prettier/prettier": [
@@ -39,7 +41,8 @@
             {
                 "extensions": [
                     ".js",
-                    ".jsx"
+                    ".jsx",
+                    ".tsx"
                 ]
             }
         ]

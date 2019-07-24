@@ -6,11 +6,8 @@ import { ThemeProvider } from 'react-native-elements';
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
 import configureStore from './store/configureStore';
-import  theme from './styles/theme';
+import theme from './styles/theme';
 import spaceMono from './assets/fonts/SpaceMono-Regular.ttf';
-
-interface Props {
-}
 
 interface State {
     isLoadingComplete: boolean;
@@ -27,30 +24,28 @@ const styles = StyleSheet.create({
 });
 
 export default class App extends React.Component<Props, State> {
-      state = {
+    public state = {
         isLoadingComplete: false,
         skipLoadingScreen: false,
     };
 
-    loadResourcesAsync = async (): Promise<any> => {
-        return Promise.all([
+    public loadResourcesAsync = async (): Promise<void> =>
+        Promise.all([
             Font.loadAsync({
                 ...Icon.Ionicons.font,
                 'space-mono': spaceMono,
             }),
         ]);
-    };
 
-    handleFinishLoading = () => {
+    public handleFinishLoading = (): void => {
         this.setState({ isLoadingComplete: true });
     };
 
-    handleLoadingError = (error: Error) => {
+    public handleLoadingError = (error: Error): void => {
         console.warn(error);
     };
 
-
-    render() {
+    public render(): JSX.Element {
         const { isLoadingComplete, skipLoadingScreen } = this.state;
         if (!isLoadingComplete && !skipLoadingScreen) {
             return (
@@ -67,7 +62,7 @@ export default class App extends React.Component<Props, State> {
                     <View style={styles.container}>
                         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
                         <AppNavigator
-                            ref={navigatorRef => {
+                            ref={(navigatorRef): void => {
                                 NavigationService.setTopLevelNavigator(navigatorRef);
                             }}
                         />
