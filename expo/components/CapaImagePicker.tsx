@@ -25,9 +25,9 @@ interface photo {
 interface State {
     isLoadingComplete?: boolean;
     skipLoadingScreen?: boolean;
-    selectedPhoto: photo;
+    selectedPhoto?: photo | null;
     bounceValue: any;
-}
+}   
 
 interface Props {
     onChange:  (photo: object) => void;

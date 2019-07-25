@@ -7,7 +7,6 @@ import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
 import capaStore  from './store';
 import theme from './styles/theme';
-import spaceMono from './assets/fonts/SpaceMono-Regular.ttf';
 
 interface State {
     isLoadingComplete: boolean;
@@ -15,7 +14,7 @@ interface State {
 }
 
 interface Props {
-    
+    skipLoadingScreen?: boolean;
 }
 
 
@@ -39,7 +38,7 @@ export default class App extends React.Component<Props, State> {
         Promise.all([
             Font.loadAsync({
                 ...Icon.Ionicons.font,
-                'space-mono': spaceMono,
+                'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
             }),
         ]);
 
