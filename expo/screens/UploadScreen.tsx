@@ -1,9 +1,8 @@
-import Types from 'MyTypes';
-import * as React from 'react';
+import React from 'react';
 import { CameraRoll, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { bindActionCreators, Dispatch } from 'redux';
+import { Dispatch, Store } from 'redux';
 import uuidv4 from 'uuid/v4';
 import {
     NavigationScreenProp,
@@ -14,22 +13,29 @@ import {
 import CapaUploadProgress from '../components/CapaUploadProgress';
 import CapaImagePicker from '../components/CapaImagePicker';
 import { storePhoto } from '../modules/s3/s3.service';
+import { AppState } from '../store/rootReducer'
 
 type Navigation = NavigationScreenProp<NavigationState, NavigationParams>;
 
-interface selectedPhoto {
+interface selectedPhoto  {
     filename: string;
+    uri: string;
+} 
+
+interface UploadScreenState {
+    photos: object;
+    selectedPhoto: object;
 }
 
 interface UploadScreenProps {
     navigation: Navigation;
-    dispatchStorePhoto: Dispatch<Types.RootAction>;
+    dispatchStorePhoto: Dispatch;
     uploadProgress: number;
     uploadFilename: string;
     uploadFileSize: number;
 }
 
-class UploadScreen extends React.Component<UploadScreenProps> {
+class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState> {
     public static navigationOptions = ({ navigation }): NavigationScreenOptions => ({
         headerStyle: {
             backgroundColor: '#000',
@@ -48,13 +54,14 @@ class UploadScreen extends React.Component<UploadScreenProps> {
             />
         ),
         headerRight: !navigation.getParam('uploadProgress', 0) && (
-            <Icon
-                name="done"
-                color="#fff"
-                testID="uploadImage"
-                onPress={navigation.getParam('upload')}
-                Component={TouchableOpacity}
-            />
+            <View testID="uploadImage">
+                <Icon
+                    name="done"
+                    color="#fff"
+                    onPress={navigation.getParam('upload')}
+                    Component={TouchableOpacity}
+                />
+            </View>
         ),
     });
 
@@ -62,8 +69,8 @@ class UploadScreen extends React.Component<UploadScreenProps> {
 
     public imagePicker = null;
 
-    public constructor(UploadScreenProps: any) {
-        super(UploadScreenProps);
+    public constructor(props: UploadScreenProps) {
+        super(props);
         this.imagePicker = React.createRef();
     }
 
@@ -114,7 +121,7 @@ class UploadScreen extends React.Component<UploadScreenProps> {
                 {photos && (
                     <CapaImagePicker
                         ref={this.imagePicker}
-                        onChange={(photo): void => this.imagePickerChange(photo)}
+                        onChange={ (photo: selectedPhoto): void => this.imagePickerChange(photo)}
                         photos={photos}
                     />
                 )}
@@ -123,17 +130,17 @@ class UploadScreen extends React.Component<UploadScreenProps> {
     }
 }
 
-function mapStateToProps(store: Types.RootState): any {
+function mapStateToProps(state: AppState): object {
     return {
-        uploadProgress: store.s3.uploadProgress,
-        uploadFilename: store.s3.uploadFilename,
-        uploadFileSize: store.s3.uploadFileSize,
+        uploadProgress: state.s3.uploadProgress,
+        uploadFilename: state.s3.uploadFilename,
+        uploadFileSize: state.s3.uploadFileSize,
     };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<Types.RootAction>): any {
+function mapDispatchToProps(dispatch: Dispatch): object {
     return {
-        dispatchStorePhoto: (photo): void => {
+        dispatchStorePhoto: (photo: selectedPhoto): void => {
             dispatch(
                 storePhoto(photo, {
                     userId: 1,

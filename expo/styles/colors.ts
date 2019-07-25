@@ -1,4 +1,4 @@
-const background = {
+const background: object = {
     backgroundColor: 'black',
 };
 

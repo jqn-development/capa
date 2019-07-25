@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-elements';
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
-import configureStore from './store/configureStore';
+import capaStore  from './store';
 import theme from './styles/theme';
 import spaceMono from './assets/fonts/SpaceMono-Regular.ttf';
 
@@ -14,7 +14,13 @@ interface State {
     skipLoadingScreen?: boolean;
 }
 
-export const store = configureStore();
+interface Props {
+    
+}
+
+
+
+export const store = capaStore();
 
 const styles = StyleSheet.create({
     container: {
@@ -29,7 +35,7 @@ export default class App extends React.Component<Props, State> {
         skipLoadingScreen: false,
     };
 
-    public loadResourcesAsync = async (): Promise<void> =>
+    public loadResourcesAsync = async (): Promise<any> =>
         Promise.all([
             Font.loadAsync({
                 ...Icon.Ionicons.font,

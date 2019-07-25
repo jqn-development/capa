@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Image, FlatList, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { number, string } from 'prop-types';
 
 const styles = StyleSheet.create({
     flexContainer: {
@@ -15,31 +16,40 @@ const styles = StyleSheet.create({
         height: 120,
     },
 });
+
+interface photo {
+    filename: string;
+    uri: string;
+}
+
 interface State {
-    isLoadingComplete: boolean;
+    isLoadingComplete?: boolean;
     skipLoadingScreen?: boolean;
+    selectedPhoto: photo;
+    bounceValue: any;
 }
 
 interface Props {
-
+    onChange:  (photo: object) => void;
+    photos: object,
 }
 
 
-export default class CapaImagePicker extends React.Component {
-    state = { selectedPhoto: null, bounceValue: new Animated.Value(100) };
+export default class CapaImagePicker extends React.Component<Props, State> {
+    state: State = { selectedPhoto: null, bounceValue: new Animated.Value(100) };
 
     componentDidMount() {
         const { photos } = this.props;
         this.pickPhoto(photos[0]);
     }
 
-    pickPhoto(photo) {
+    pickPhoto(photo: photo) {
         const { onChange } = this.props;
         this.setState({ selectedPhoto: photo });
         onChange(photo);
     }
 
-    renderPhoto = photo => {
+    renderPhoto = (photo: any) => {
         return (
             <TouchableOpacity
                 onPress={() => {

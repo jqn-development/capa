@@ -34,7 +34,3 @@ export const storePhoto = (photo, body) => (dispatch, getState) => {
             dispatch(handleTokenErrors(error.response.data));
         });
 };
-
-export const deletePhoto = uri => {
-    return S3Api.delete(uri);
-};

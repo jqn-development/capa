@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
-import PropTypes from 'prop-types';
 import { login } from '../modules/auth/auth.service';
 import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
@@ -76,7 +75,17 @@ const styles = StyleSheet.create({
     },
 });
 
-class SignInScreen extends React.Component {
+interface Props {
+    handleSubmit: any;
+    dispatchLogin: any;
+    errorMessage: any;
+    navigation: any;
+}
+interface State {
+
+}
+
+class SignInScreen extends React.Component<Props, State> {
     static navigationOptions = {
         header: null,
     };
@@ -134,17 +143,6 @@ class SignInScreen extends React.Component {
         );
     }
 }
-
-SignInScreen.propTypes = {
-    handleSubmit: PropTypes.func.isRequired,
-    dispatchLogin: PropTypes.func.isRequired,
-    errorMessage: PropTypes.string,
-    navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired }).isRequired,
-};
-
-SignInScreen.defaultProps = {
-    errorMessage: null,
-};
 
 function mapStateToProps(store) {
     return {
