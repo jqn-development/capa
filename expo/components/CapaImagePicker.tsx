@@ -31,7 +31,7 @@ interface State {
 
 interface Props {
     onChange:  (photo: object) => void;
-    photos: object,
+    photos: photo[],
 }
 
 
