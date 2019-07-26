@@ -4,13 +4,8 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Colors, InputField } from '../../styles';
 
-
-interface IInput {
-    onChange: (text: string) => void;
-}
-
 interface IProps {
-    input: IInput;
+    input: { onChange: (text: string) => void; };
 }
 
 const renderEmail = ({ input: { onChange } , ...restInput }: IProps) => {
