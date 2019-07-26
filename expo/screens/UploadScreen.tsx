@@ -2,7 +2,7 @@ import React from 'react';
 import { CameraRoll, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Dispatch, Store } from 'redux';
+import { Dispatch } from 'redux';
 import uuidv4 from 'uuid/v4';
 import {
     NavigationScreenProp,
@@ -12,10 +12,10 @@ import {
 } from 'react-navigation';
 import CapaUploadProgress from '../components/CapaUploadProgress';
 import CapaImagePicker from '../components/CapaImagePicker';
+import CapaCheckBoxIcon from '../components/CapaCheckBoxIcon';
 import { storePhoto } from '../modules/s3/s3.service';
-import { AppState } from '../store/rootReducer'
-
-type Navigation = NavigationScreenProp<NavigationState, NavigationParams>;
+import { AppState } from '../store/rootReducer';
+import { ThunkDispatch } from 'redux-thunk';
 
 interface selectedPhoto  {
     filename: string;
@@ -28,15 +28,19 @@ interface UploadScreenState {
 }
 
 interface UploadScreenProps {
-    navigation: Navigation;
+    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
     dispatchStorePhoto: Dispatch;
     uploadProgress: number;
     uploadFilename: string;
     uploadFileSize: number;
 }
 
+interface DispatchProps {
+    dispatchStorePhoto: (photo: selectedPhoto) => void;
+}
+
 class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState> {
-    public static navigationOptions = ({ navigation }): NavigationScreenOptions => ({
+    public static navigationOptions = ({ navigation }: NavigationParams): NavigationScreenOptions => ({
         headerStyle: {
             backgroundColor: '#000',
             marginLeft: 15,
@@ -53,15 +57,11 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
                 Component={TouchableOpacity}
             />
         ),
-        headerRight: !navigation.getParam('uploadProgress', 0) && (
-            <View testID="uploadImage">
-                <Icon
-                    name="done"
-                    color="#fff"
-                    onPress={navigation.getParam('upload')}
-                    Component={TouchableOpacity}
-                />
-            </View>
+        headerRight: (
+            <CapaCheckBoxIcon
+                hide={navigation.getParam('uploadProgress', 0)}
+                onPress={navigation.getParam('upload')}
+            />
         ),
     });
 
@@ -138,7 +138,7 @@ function mapStateToProps(state: AppState): object {
     };
 }
 
-function mapDispatchToProps(dispatch: Dispatch): object {
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => {
     return {
         dispatchStorePhoto: (photo: selectedPhoto): void => {
             dispatch(

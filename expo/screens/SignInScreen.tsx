@@ -8,6 +8,8 @@ import { login } from '../modules/auth/auth.service';
 import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
 import { Colors, Container } from '../styles';
+import { AppState } from '../store/rootReducer';
+import { ThunkDispatch } from 'redux-thunk';
 
 const signInGfx = require('../assets/images/signIn.jpg');
 
@@ -75,24 +77,26 @@ const styles = StyleSheet.create({
     },
 });
 
-interface Props {
+interface ScreenProps {
     handleSubmit: any;
-    dispatchLogin: any;
     errorMessage: any;
     navigation: any;
 }
-interface State {
 
+interface DispatchProps {
+  dispatchLogin: (username: string, password: string) => void
 }
 
-class SignInScreen extends React.Component<Props, State> {
+type Props = ScreenProps & DispatchProps
+
+class SignInScreen extends React.Component<Props> {
     static navigationOptions = {
         header: null,
     };
 
     render() {
         const { handleSubmit, dispatchLogin, errorMessage, navigation } = this.props;
-        const submitForm = e => {
+        const submitForm = (e: { email: string; password: string; }): void => {
             dispatchLogin(e.email, e.password);
         };
 
@@ -144,14 +148,14 @@ class SignInScreen extends React.Component<Props, State> {
     }
 }
 
-function mapStateToProps(store) {
+function mapStateToProps(state: AppState) {
     return {
-        errorMessage: store.auth.loginError,
+        errorMessage: state.auth.loginError,
     };
 }
-function mapDispatchToProps(dispatch) {
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => {
     return {
-        dispatchLogin: (email, password) => {
+        dispatchLogin: (email, password ) => {
             dispatch(login(email, password));
         },
     };
