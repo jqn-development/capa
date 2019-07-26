@@ -111,12 +111,12 @@ class SignInScreen extends React.Component<Props, State> {
                         <View style={styles.inputView}>
                             <EmailField
                                 placeholder="example@email.com"
-                                label="email"
+                                label="EMAIL"
                                 inputContainerStyle={styles.input}
                             />
                             <PasswordField
                                 placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-                                label="password"
+                                label="PASSWORD"
                                 inputContainerStyle={styles.input}
                             />
                             <Text style={styles.errorMessage}>{errorMessage}</Text>

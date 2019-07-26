@@ -4,7 +4,16 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Colors, InputField } from '../../styles';
 
-const renderEmail = ({ input: { onChange }, ...restInput }) => {
+
+interface IInput {
+    onChange: (text: string) => void;
+}
+
+interface IProps {
+    input: IInput;
+}
+
+const renderEmail = ({ input: { onChange } , ...restInput }: IProps) => {
     return (
         <Input
             testID="email"
@@ -20,13 +29,19 @@ renderEmail.propTypes = {
     input: PropTypes.shape({}).isRequired,
 };
 
-export default function emailField(props) {
-    const { inputContainerStyle, placeholder } = props;
+interface IFieldProps {
+    inputContainerStyle: object
+    placeholder: string,
+    label: string,
+}
+
+export default function emailField(props: IFieldProps) {
+    const { inputContainerStyle, placeholder, label } = props;
 
     return (
         <Field
             inputContainerStyle={inputContainerStyle}
-            label="EMAIL"
+            label={label}
             placeholder={placeholder}
             labelStyle={InputField.inputLabel}
             name="email"

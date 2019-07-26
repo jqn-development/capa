@@ -4,7 +4,15 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Colors, InputField } from '../../styles';
 
-const renderPassword = ({ input: { onChange }, ...restInput }) => {
+interface IInput {
+    onChange: (text: string) => void;
+}
+
+interface IProps {
+    input: IInput;
+}
+
+const renderPassword = ({ input: { onChange }, ...restInput }: IProps) => {
     return (
         <Input
             testID="password"
@@ -21,15 +29,21 @@ renderPassword.propTypes = {
     input: PropTypes.shape({}).isRequired,
 };
 
-export default function passwordField(props) {
-    const { inputContainerStyle, placeholder } = props;
+interface IFieldProps {
+    inputContainerStyle: object
+    placeholder: string,
+    label: string,
+}
+
+export default function passwordField(props: IFieldProps) {
+    const { inputContainerStyle, placeholder, label } = props;
 
     return (
         <Field
             name="password"
             placeholder={placeholder}
             secureTextEntry
-            label="PASSWORD"
+            label={label}
             labelStyle={InputField.inputLabel}
             inputContainerStyle={inputContainerStyle}
             component={renderPassword}
