@@ -1,5 +1,5 @@
 import React from 'react';
-import { CameraRoll, TouchableOpacity, View } from 'react-native';
+import { CameraRoll, TouchableOpacity, View, GetPhotosReturnType } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -16,27 +16,36 @@ import CapaCheckBoxIcon from '../components/CapaCheckBoxIcon';
 import { storePhoto } from '../modules/s3/s3.service';
 import { AppState } from '../store/rootReducer';
 import { ThunkDispatch } from 'redux-thunk';
+import { S3ActionTypes } from '../modules/s3/types/actions';
 
-interface selectedPhoto  {
+interface CameraRollImage {
+    uri: string;
+    height: number;
+    width: number;
+    playableDuration: number;
+    isStored?: boolean;
+}
+
+interface SelectedPhoto  {
     filename: string;
     uri: string;
 } 
 
 interface UploadScreenState {
-    photos: object;
-    selectedPhoto: object;
+    photos: CameraRollImage[] | null;
+    selectedPhoto: SelectedPhoto | null;
 }
 
 interface UploadScreenProps {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-    dispatchStorePhoto: Dispatch;
+    dispatchStorePhoto: (photo: SelectedPhoto ) => void;
     uploadProgress: number;
     uploadFilename: string;
     uploadFileSize: number;
 }
 
 interface DispatchProps {
-    dispatchStorePhoto: (photo: selectedPhoto) => void;
+    dispatchStorePhoto: (photo: SelectedPhoto) => void;
 }
 
 class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState> {
@@ -65,9 +74,9 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
         ),
     });
 
-    public state = { photos: null, selectedPhoto: null };
+    public state: UploadScreenState = { photos: null, selectedPhoto: null };
 
-    public imagePicker = null;
+    public imagePicker: React.RefObject<CapaImagePicker>;
 
     public constructor(props: UploadScreenProps) {
         super(props);
@@ -84,9 +93,11 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
         return new Promise(
             (res, rej): Promise<any> =>
                 CameraRoll.getPhotos(params)
-                    .then((data): void => {
+                    .then((data:GetPhotosReturnType): void => {
                         const assets = data.edges;
-                        const photos = assets.map((asset): object => asset.node.image);
+                        const photos: CameraRollImage[] = assets.map((asset): CameraRollImage => asset.node.image);
+                        const uri: string = photos[0].uri
+                        this.imagePickerChange( photos[0]['uri'] ); 
                         this.setState({ photos });
                         res({ photos });
                     })
@@ -98,17 +109,18 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
         const { navigation } = this.props;
         const { dispatchStorePhoto } = this.props;
         const { selectedPhoto } = this.state;
+        const pickerRef = this.imagePicker.current;
         navigation.setParams({ uploadProgress: 1 });
-        this.imagePicker.current.toggleGallery();
-        dispatchStorePhoto(selectedPhoto);
+        if(pickerRef) {
+            pickerRef.toggleGallery();
+        }
+        if(selectedPhoto) {
+            dispatchStorePhoto(selectedPhoto);
+        }
     };
 
-    public imagePickerChange(photo: selectedPhoto): void {
-        const selectedPhoto: selectedPhoto = photo;
-        if (!selectedPhoto.filename) {
-            selectedPhoto.filename = uuidv4();
-        }
-        this.setState({ selectedPhoto });
+    public imagePickerChange(uri: string): void {
+        this.setState( { selectedPhoto: { uri: uri, filename: uuidv4() } });
     }
 
     public render(): JSX.Element {
@@ -121,7 +133,7 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
                 {photos && (
                     <CapaImagePicker
                         ref={this.imagePicker}
-                        onChange={ (photo: selectedPhoto): void => this.imagePickerChange(photo)}
+                        onChange={ (photo: SelectedPhoto): void => this.imagePickerChange(photo.uri)}
                         photos={photos}
                     />
                 )}
@@ -138,9 +150,9 @@ function mapStateToProps(state: AppState): object {
     };
 }
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => {
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, S3ActionTypes>): DispatchProps => {
     return {
-        dispatchStorePhoto: (photo: selectedPhoto): void => {
+        dispatchStorePhoto: (photo: SelectedPhoto): void => {
             dispatch(
                 storePhoto(photo, {
                     userId: 1,
@@ -150,7 +162,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps
     };
 }
 
-const UploadConnect = connect(
+const UploadConnect = connect<object>(
     mapStateToProps,
     mapDispatchToProps
 )(UploadScreen);

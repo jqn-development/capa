@@ -16,6 +16,13 @@ const styles = StyleSheet.create({
         height: 120,
     },
 });
+interface CameraRollImage {
+    uri: string;
+    height: number;
+    width: number;
+    playableDuration: number;
+    isStored?: boolean;
+}
 
 interface photo {
     filename: string;
@@ -30,8 +37,8 @@ interface State {
 }   
 
 interface Props {
-    onChange:  (photo: object) => void;
-    photos: photo[],
+    onChange:  (photo: photo) => void;
+    photos: CameraRollImage[],
 }
 
 

@@ -33,7 +33,13 @@ const styles = StyleSheet.create({
     },
 });
 
-const CapaUploadProgress = props => {
+interface UploadProgressProps {
+    uploadFilename: string;
+    uploadFileSize: number;
+    uploadProgress: number;
+}
+
+const CapaUploadProgress: React.SFC<UploadProgressProps> = props => {
     const { uploadFilename, uploadFileSize, uploadProgress } = props;
 
     return (

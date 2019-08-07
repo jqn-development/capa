@@ -1,28 +1,30 @@
-export const setUploadProgress = progress => {
+import { S3ActionTypes } from  "./types/actions";
+
+export const setUploadProgress = (progress: number | null): S3ActionTypes => {
     return {
         type: 'SET_UPLOAD_PROGRESS',
         progress,
     };
 };
 
-export const setUploadFilename = filename => {
+export const setUploadFilename = (filename: string | null): S3ActionTypes => {
     return {
         type: 'SET_UPLOAD_FILENAME',
         filename,
     };
 };
 
-export const setUploadStatus = status => {
+export const setUploadStatus = (status: string | null): S3ActionTypes => {
     return {
         type: 'SET_UPLOAD_STATUS',
         status,
     };
 };
 
-export const setUploadFileSize = size => {
+export const setUploadFileSize = (filesize: number | null): S3ActionTypes => {
     return {
         type: 'SET_UPLOAD_FILE_SIZE',
-        size,
+        filesize,
     };
 };
 
@@ -35,7 +37,7 @@ const initialState = {
     uploadFileSize: null,
 };
 
-export default function(state = initialState, action) {
+export default function(state = initialState, action: S3ActionTypes) {
     switch (action.type) {
         case 'SET_UPLOAD_PROGRESS':
             return {
@@ -56,7 +58,7 @@ export default function(state = initialState, action) {
         case 'SET_UPLOAD_FILE_SIZE':
             return {
                 ...state,
-                uploadFileSize: action.size,
+                uploadFileSize: action.filesize,
             };
         default:
             return state;

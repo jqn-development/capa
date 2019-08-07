@@ -1,11 +1,20 @@
 import S3Api from './s3.api';
 import { handleTokenErrors } from '../errors/error.service';
 import * as S3Reducer from './s3.reducer';
+import { Photo } from './types/photo' 
+import { ErrorsActionTypes } from '../errors/types/actions';
+import { S3ActionTypes } from './types/actions';
+import { ThunkDispatch } from 'redux-thunk'
 
-export const storePhoto = (photo, body) => (dispatch, getState) => {
+interface ProgressEvent {
+    loaded: number;
+    total: number;
+}
+
+export const storePhoto = (photo: Photo, body: object) => (dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | S3ActionTypes>, getState: Function) => {
     const state = getState();
-    const progressFlag = [];
-    const progressCallback = progressEvent => {
+    const progressFlag: any = [];
+    const progressCallback = ( progressEvent: ProgressEvent ) => {
         const percentFraction = progressEvent.loaded / progressEvent.total;
         const percent = Math.floor(percentFraction * 100);
         if (!progressFlag.includes('size')) {

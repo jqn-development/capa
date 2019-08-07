@@ -1,24 +1,26 @@
+import { ErrorsActionTypes} from './types/actions';
+
 // Actions
-export const asyncError = error => {
+export const asyncError = ( error: string ): ErrorsActionTypes => {
     return {
         type: 'ASYNC_ERROR',
         error,
     };
 };
 
-export const connectionError = error => {
+export const connectionError = ( error: string ): ErrorsActionTypes => {
     return {
         type: 'CONNECTION_ERROR',
         error,
     };
 };
-export const showError = error => {
+export const showError = ( error: string ): ErrorsActionTypes => {
     return {
         type: 'SHOW_ERROR',
         error,
     };
 };
-export const removeError = () => {
+export const removeError = (): ErrorsActionTypes => {
     return {
         type: 'REMOVE_ERROR',
     };
