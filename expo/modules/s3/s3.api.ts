@@ -4,14 +4,14 @@ import axios from 'axios';
 import { Photo } from './types/photo' 
 import config from '../../config';
 
-const createFormData = (photo: Photo, body: object) => {
+const createFormData = (photo: Photo, body: { [key: string]: any }) => {
     const data = new FormData();
     data.append('file', {
         name: photo.filename,
         uri: Platform.OS === 'android' ? photo.uri : photo.uri.replace('file://', ''),
     });
 
-    Object.keys(body).forEach(key => {
+    Object.keys(body).forEach((key): void => {
         data.append(key, body[key]);
     });
 
