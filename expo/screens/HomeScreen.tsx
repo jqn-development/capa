@@ -1,6 +1,5 @@
 import React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import CapaHeader from '../components/header';
 import { Colors, Container } from '../styles';
@@ -36,11 +35,6 @@ class HomeScreen extends React.Component {
         );
     }
 }
-
-HomeScreen.propTypes = {
-    loggedIn: PropTypes.bool.isRequired,
-    authToken: PropTypes.string,
-};
 
 function mapStateToProps(store) {
     return {

@@ -1,8 +1,13 @@
 import React from 'react';
-import { CameraRoll, TouchableOpacity, View, GetPhotosReturnType } from 'react-native';
+import {
+    CameraRoll,
+    TouchableOpacity,
+    View,
+    GetPhotosReturnType,
+    GetPhotosParamType,
+} from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
 import uuidv4 from 'uuid/v4';
 import {
     NavigationScreenProp,
@@ -10,12 +15,12 @@ import {
     NavigationState,
     NavigationParams,
 } from 'react-navigation';
+import { ThunkDispatch } from 'redux-thunk';
 import CapaUploadProgress from '../components/CapaUploadProgress';
 import CapaImagePicker from '../components/CapaImagePicker';
 import CapaCheckBoxIcon from '../components/CapaCheckBoxIcon';
 import { storePhoto } from '../modules/s3/s3.service';
 import { AppState } from '../store/rootReducer';
-import { ThunkDispatch } from 'redux-thunk';
 import { S3ActionTypes } from '../modules/s3/types/actions';
 
 interface CameraRollImage {
@@ -26,10 +31,10 @@ interface CameraRollImage {
     isStored?: boolean;
 }
 
-interface SelectedPhoto  {
+interface SelectedPhoto {
     filename: string;
     uri: string;
-} 
+}
 
 interface UploadScreenState {
     photos: CameraRollImage[] | null;
@@ -38,18 +43,20 @@ interface UploadScreenState {
 
 interface UploadScreenProps {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-    dispatchStorePhoto: (photo: SelectedPhoto ) => void;
+    dispatchStorePhoto: (photo: SelectedPhoto) => void;
     uploadProgress: number;
     uploadFilename: string;
     uploadFileSize: number;
 }
 
 interface DispatchProps {
-    dispatchStorePhoto: (photo: SelectedPhoto) => void;
+    return: { dispatchStorePhoto: (photo: SelectedPhoto) => void };
 }
 
 class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState> {
-    public static navigationOptions = ({ navigation }: NavigationParams): NavigationScreenOptions => ({
+    public static navigationOptions = ({
+        navigation,
+    }: NavigationParams): NavigationScreenOptions => ({
         headerStyle: {
             backgroundColor: '#000',
             marginLeft: 15,
@@ -89,17 +96,18 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
         this.getPhotosAsync({ first: 100, groupTypes: 'All', assetType: 'Photos' });
     }
 
-    public async getPhotosAsync(params: any): Promise<any> {
+    public async getPhotosAsync(params: GetPhotosParamType): Promise<CameraRollImage[]> {
         return new Promise(
-            (res, rej): Promise<any> =>
+            (res, rej): Promise<void> =>
                 CameraRoll.getPhotos(params)
-                    .then((data:GetPhotosReturnType): void => {
+                    .then((data: GetPhotosReturnType): void => {
                         const assets = data.edges;
-                        const photos: CameraRollImage[] = assets.map((asset): CameraRollImage => asset.node.image);
-                        const uri: string = photos[0].uri
-                        this.imagePickerChange( photos[0]['uri'] ); 
+                        const photos: CameraRollImage[] = assets.map(
+                            (asset): CameraRollImage => asset.node.image
+                        );
+                        this.imagePickerChange(photos[0].uri);
                         this.setState({ photos });
-                        res({ photos });
+                        res(photos);
                     })
                     .catch(rej)
         );
@@ -111,16 +119,16 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
         const { selectedPhoto } = this.state;
         const pickerRef = this.imagePicker.current;
         navigation.setParams({ uploadProgress: 1 });
-        if(pickerRef) {
+        if (pickerRef) {
             pickerRef.toggleGallery();
         }
-        if(selectedPhoto) {
+        if (selectedPhoto) {
             dispatchStorePhoto(selectedPhoto);
         }
     };
 
     public imagePickerChange(uri: string): void {
-        this.setState( { selectedPhoto: { uri: uri, filename: uuidv4() } });
+        this.setState({ selectedPhoto: { uri, filename: uuidv4() } });
     }
 
     public render(): JSX.Element {
@@ -133,7 +141,9 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
                 {photos && (
                     <CapaImagePicker
                         ref={this.imagePicker}
-                        onChange={ (photo: SelectedPhoto): void => this.imagePickerChange(photo.uri)}
+                        onChange={(photo: { uri: string }): void =>
+                            this.imagePickerChange(photo.uri)
+                        }
                         photos={photos}
                     />
                 )}
@@ -150,17 +160,15 @@ function mapStateToProps(state: AppState): object {
     };
 }
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, S3ActionTypes>): DispatchProps => {
-    return {
-        dispatchStorePhoto: (photo: SelectedPhoto): void => {
-            dispatch(
-                storePhoto(photo, {
-                    userId: 1,
-                })
-            );
-        },
-    };
-}
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): object => ({
+    dispatchStorePhoto: (photo: SelectedPhoto): void => {
+        dispatch(
+            storePhoto(photo, {
+                userId: 1,
+            })
+        );
+    },
+});
 
 const UploadConnect = connect<object>(
     mapStateToProps,

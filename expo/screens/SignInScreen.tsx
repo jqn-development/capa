@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { reduxForm } from 'redux-form';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,7 +10,6 @@ import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
 import { Colors, Container } from '../styles';
 import { AppState } from '../store/rootReducer';
-import { ThunkDispatch } from 'redux-thunk';
 
 const signInGfx = require('../assets/images/signIn.jpg');
 
@@ -84,10 +84,10 @@ interface ScreenProps {
 }
 
 interface DispatchProps {
-  dispatchLogin: (username: string, password: string) => void
+    dispatchLogin: (username: string, password: string) => void;
 }
 
-type Props = ScreenProps & DispatchProps
+type Props = ScreenProps & DispatchProps;
 
 class SignInScreen extends React.Component<Props> {
     static navigationOptions = {
@@ -96,7 +96,7 @@ class SignInScreen extends React.Component<Props> {
 
     render() {
         const { handleSubmit, dispatchLogin, errorMessage, navigation } = this.props;
-        const submitForm = (e: { email: string; password: string; }): void => {
+        const submitForm = (e: { email: string; password: string }): void => {
             dispatchLogin(e.email, e.password);
         };
 
@@ -148,18 +148,16 @@ class SignInScreen extends React.Component<Props> {
     }
 }
 
-function mapStateToProps(state: AppState) {
+function mapStateToProps(state: AppState): object {
     return {
         errorMessage: state.auth.loginError,
     };
 }
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => {
-    return {
-        dispatchLogin: (email, password ) => {
-            dispatch(login(email, password));
-        },
-    };
-}
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => ({
+    dispatchLogin: (email, password) => {
+        dispatch(login(email, password));
+    },
+});
 
 const LoginConnect = connect(
     mapStateToProps,

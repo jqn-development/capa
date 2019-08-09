@@ -39,8 +39,10 @@ interface UploadProgressProps {
     uploadProgress: number;
 }
 
-const CapaUploadProgress: React.SFC<UploadProgressProps> = props => {
-    const { uploadFilename, uploadFileSize, uploadProgress } = props;
+const CapaUploadProgress: React.SFC<UploadProgressProps> = (
+    props: UploadProgressProps
+): JSX.Element => {
+    const { uploadFileSize, uploadProgress } = props;
 
     return (
         <View testID="uploadProgress" style={styles.progressContainer}>
@@ -74,7 +76,6 @@ const CapaUploadProgress: React.SFC<UploadProgressProps> = props => {
 };
 
 CapaUploadProgress.propTypes = {
-    uploadFilename: PropTypes.string.isRequired,
     uploadFileSize: PropTypes.number.isRequired,
     uploadProgress: PropTypes.number.isRequired,
 };

@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-elements';
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
-import capaStore  from './store';
+import capaStore from './store';
 import theme from './styles/theme';
 
 interface State {
@@ -16,8 +16,6 @@ interface State {
 interface Props {
     skipLoadingScreen?: boolean;
 }
-
-
 
 export const store = capaStore();
 
