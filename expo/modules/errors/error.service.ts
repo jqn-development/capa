@@ -1,12 +1,13 @@
 import { connectionError, removeError } from './error.reducer';
+import { Dispatch } from 'redux';
 
-export const removeErrors = () => dispatch => {
+export const removeErrors = () => (dispatch: Dispatch ) => {
     dispatch(removeError());
     return false;
 };
 
 // token errors handled here to keep out of service files
-export const handleTokenErrors = response => dispatch => {
+export const handleTokenErrors = ( response: object ) => ( dispatch: Dispatch ) => {
     if (!response.success) {
         if (response.code && response.code === 'invalidToken') {
             dispatch({ type: 'INVALID_TOKEN' });

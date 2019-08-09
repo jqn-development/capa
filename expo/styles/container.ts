@@ -1,4 +1,4 @@
-const flexVerticalCenter = {
+const flexVerticalCenter: object = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -6,14 +6,14 @@ const flexVerticalCenter = {
     width: '100%',
 };
 
-const flexVerticalTop = {
+const flexVerticalTop: object = {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: '100%',
 };
 
-const flexVerticalBottom = {
+const flexVerticalBottom: object = {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-end',

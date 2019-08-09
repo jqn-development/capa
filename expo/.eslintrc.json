@@ -2,18 +2,33 @@
     "globals": {"fetch": false},
     "extends": [
         "airbnb",
-        "prettier",
-        "prettier/react",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/typescript",
         "plugin:prettier/recommended",
-        "eslint-config-prettier"
+        "prettier/@typescript-eslint",
+        "prettier-react"
     ],
-    "parser": "babel-eslint",
+    "parser": "@typescript-eslint/parser",
     "plugins": [
-        "prettier"
+        "prettier",
+        "@typescript-eslint",
+        "react"
     ],
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "project": "./tsconfig.json",
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        },
+        "useJSXTextNode": true
+    },
     "rules": {
+        "react/jsx-indent-props": [1, 4],
         "import/no-cycle": "off",
         "import/no-unresolved": "off",
+        "@typescript-eslint/explicit-member-accessibility": 0,
+        "@typescript-eslint/explicit-function-return-type": 0,
         "prettier/prettier": [
             "error",
             {
@@ -28,7 +43,8 @@
             {
                 "extensions": [
                     ".js",
-                    ".jsx"
+                    ".jsx",
+                    ".tsx"
                 ]
             }
         ]

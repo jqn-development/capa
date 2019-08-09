@@ -33,8 +33,16 @@ const styles = StyleSheet.create({
     },
 });
 
-const CapaUploadProgress = props => {
-    const { uploadFilename, uploadFileSize, uploadProgress } = props;
+interface UploadProgressProps {
+    uploadFilename: string;
+    uploadFileSize: number;
+    uploadProgress: number;
+}
+
+const CapaUploadProgress: React.SFC<UploadProgressProps> = (
+    props: UploadProgressProps
+): JSX.Element => {
+    const { uploadFileSize, uploadProgress } = props;
 
     return (
         <View testID="uploadProgress" style={styles.progressContainer}>
@@ -68,7 +76,6 @@ const CapaUploadProgress = props => {
 };
 
 CapaUploadProgress.propTypes = {
-    uploadFilename: PropTypes.string.isRequired,
     uploadFileSize: PropTypes.number.isRequired,
     uploadProgress: PropTypes.number.isRequired,
 };

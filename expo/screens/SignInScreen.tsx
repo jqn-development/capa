@@ -1,14 +1,15 @@
-import React from 'react';
+import * as React from 'react';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { reduxForm } from 'redux-form';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
-import PropTypes from 'prop-types';
 import { login } from '../modules/auth/auth.service';
 import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
 import { Colors, Container } from '../styles';
+import { AppState } from '../store/rootReducer';
 
 const signInGfx = require('../assets/images/signIn.jpg');
 
@@ -76,14 +77,26 @@ const styles = StyleSheet.create({
     },
 });
 
-class SignInScreen extends React.Component {
+interface ScreenProps {
+    handleSubmit: any;
+    errorMessage: any;
+    navigation: any;
+}
+
+interface DispatchProps {
+    dispatchLogin: (username: string, password: string) => void;
+}
+
+type Props = ScreenProps & DispatchProps;
+
+class SignInScreen extends React.Component<Props> {
     static navigationOptions = {
         header: null,
     };
 
     render() {
         const { handleSubmit, dispatchLogin, errorMessage, navigation } = this.props;
-        const submitForm = e => {
+        const submitForm = (e: { email: string; password: string }): void => {
             dispatchLogin(e.email, e.password);
         };
 
@@ -102,12 +115,12 @@ class SignInScreen extends React.Component {
                         <View style={styles.inputView}>
                             <EmailField
                                 placeholder="example@email.com"
-                                label="email"
+                                label="EMAIL"
                                 inputContainerStyle={styles.input}
                             />
                             <PasswordField
                                 placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-                                label="password"
+                                label="PASSWORD"
                                 inputContainerStyle={styles.input}
                             />
                             <Text style={styles.errorMessage}>{errorMessage}</Text>
@@ -135,29 +148,16 @@ class SignInScreen extends React.Component {
     }
 }
 
-SignInScreen.propTypes = {
-    handleSubmit: PropTypes.func.isRequired,
-    dispatchLogin: PropTypes.func.isRequired,
-    errorMessage: PropTypes.string,
-    navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired }).isRequired,
-};
-
-SignInScreen.defaultProps = {
-    errorMessage: null,
-};
-
-function mapStateToProps(store) {
+function mapStateToProps(state: AppState): object {
     return {
-        errorMessage: store.auth.loginError,
+        errorMessage: state.auth.loginError,
     };
 }
-function mapDispatchToProps(dispatch) {
-    return {
-        dispatchLogin: (email, password) => {
-            dispatch(login(email, password));
-        },
-    };
-}
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => ({
+    dispatchLogin: (email, password) => {
+        dispatch(login(email, password));
+    },
+});
 
 const LoginConnect = connect(
     mapStateToProps,

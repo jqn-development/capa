@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { View, Image, FlatList, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -16,22 +15,45 @@ const styles = StyleSheet.create({
         height: 120,
     },
 });
+interface CameraRollImage {
+    uri: string;
+    height: number;
+    width: number;
+    playableDuration: number;
+    isStored?: boolean;
+}
 
-export default class CapaImagePicker extends React.Component {
-    state = { selectedPhoto: null, bounceValue: new Animated.Value(100) };
+interface Photo {
+    uri: string;
+}
 
-    componentDidMount() {
+interface State {
+    isLoadingComplete?: boolean;
+    skipLoadingScreen?: boolean;
+    selectedPhoto?: Photo | null;
+    bounceValue: any;
+}
+
+interface Props {
+    onChange: (photo: Photo) => void;
+    photos: CameraRollImage[];
+}
+
+export default class CapaImagePicker extends React.Component<Props, State> {
+    state: State = { selectedPhoto: null, bounceValue: new Animated.Value(100) };
+
+    componentDidMount(): void {
         const { photos } = this.props;
-        this.pickPhoto(photos[0]);
+        this.pickPhoto({ uri: photos[0].uri });
     }
 
-    pickPhoto(photo) {
+    pickPhoto(photo: Photo): void {
         const { onChange } = this.props;
         this.setState({ selectedPhoto: photo });
         onChange(photo);
     }
 
-    renderPhoto = photo => {
+     renderPhoto = (photo: any) => {
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -92,8 +114,3 @@ export default class CapaImagePicker extends React.Component {
         );
     }
 }
-
-CapaImagePicker.propTypes = {
-    onChange: PropTypes.func.isRequired,
-    photos: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-};

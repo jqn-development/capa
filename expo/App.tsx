@@ -5,11 +5,19 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-elements';
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
-import configureStore from './store/configureStore';
+import capaStore from './store';
 import theme from './styles/theme';
-import spaceMono from './assets/fonts/SpaceMono-Regular.ttf';
 
-export const store = configureStore();
+interface State {
+    isLoadingComplete: boolean;
+    skipLoadingScreen?: boolean;
+}
+
+interface Props {
+    skipLoadingScreen?: boolean;
+}
+
+export const store = capaStore();
 
 const styles = StyleSheet.create({
     container: {
@@ -18,29 +26,29 @@ const styles = StyleSheet.create({
     },
 });
 
-export default class App extends React.Component {
-    state = {
+export default class App extends React.Component<Props, State> {
+    public state = {
         isLoadingComplete: false,
+        skipLoadingScreen: false,
     };
 
-    startAppLoggedIn = () => {
-        this.navigation.navigate('App');
-    };
-
-    loadResourcesAsync = async () => {
-        return Promise.all([
+    public loadResourcesAsync = async (): Promise<any> =>
+        Promise.all([
             Font.loadAsync({
                 ...Icon.Ionicons.font,
-                'space-mono': spaceMono,
+                'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
             }),
         ]);
-    };
 
-    handleFinishLoading = () => {
+    public handleFinishLoading = (): void => {
         this.setState({ isLoadingComplete: true });
     };
 
-    render() {
+    public handleLoadingError = (error: Error): void => {
+        console.warn(error);
+    };
+
+    public render(): JSX.Element {
         const { isLoadingComplete, skipLoadingScreen } = this.state;
         if (!isLoadingComplete && !skipLoadingScreen) {
             return (
@@ -57,7 +65,7 @@ export default class App extends React.Component {
                     <View style={styles.container}>
                         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
                         <AppNavigator
-                            ref={navigatorRef => {
+                            ref={(navigatorRef): void => {
                                 NavigationService.setTopLevelNavigator(navigatorRef);
                             }}
                         />

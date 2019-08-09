@@ -4,7 +4,11 @@ import { Field } from 'redux-form';
 import PropTypes from 'prop-types';
 import { Colors, InputField } from '../../styles';
 
-const renderField = ({ input: { onChange }, ...restInput }) => {
+interface IProps {
+    input: { onChange: (text: string) => void; };
+}
+
+const renderField = ({ input: { onChange } , ...restInput }: IProps) => {
     return (
         <Input
             placeholderTextColor="white"
@@ -19,7 +23,12 @@ renderField.propTypes = {
     input: PropTypes.shape({}).isRequired,
 };
 
-export default function genericField(props) {
+interface IFieldProps {
+    inputContainerStyle: object
+    name: string,
+    label: string,
+}
+export default function genericField(props: IFieldProps) {
     const { inputContainerStyle, name, label } = props;
 
     return (
