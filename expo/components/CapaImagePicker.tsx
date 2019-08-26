@@ -53,7 +53,7 @@ export default class CapaImagePicker extends React.Component<Props, State> {
         onChange(photo);
     }
 
-     renderPhoto = (photo: any) => {
+    renderPhoto = (photo: any) => {
         return (
             <TouchableOpacity
                 onPress={() => {

@@ -1,7 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
+
+import {
+    SafeAreaView,
+    NavigationScreenProp,
+    NavigationScreenOptions,
+    NavigationState,
+    NavigationParams,
+} from 'react-navigation';
 import { vw, vh } from 'react-native-expo-viewport-units';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';

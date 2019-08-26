@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
+import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 import { reduxForm } from 'redux-form';
 import { Button } from 'react-native-elements';
@@ -10,8 +11,7 @@ import EmailField from '../components/fields/emailField';
 import PasswordField from '../components/fields/passwordField';
 import { Colors, Container } from '../styles';
 import { AppState } from '../store/rootReducer';
-
-const signInGfx = require('../assets/images/signIn.jpg');
+import signInGfx from '../assets/images/signIn.jpg';
 
 const styles = StyleSheet.create({
     container: {
@@ -77,10 +77,20 @@ const styles = StyleSheet.create({
     },
 });
 
+interface SubmitFormData {
+    email: string;
+    password: string;
+}
+
+interface SubmitForm {
+    (e: SubmitFormData): void;
+}
+
 interface ScreenProps {
-    handleSubmit: any;
-    errorMessage: any;
-    navigation: any;
+    // eslint-disable-next-line
+    handleSubmit: any; // React native onPress redux-form type conflict
+    errorMessage: string;
+    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
 interface DispatchProps {
@@ -96,7 +106,7 @@ class SignInScreen extends React.Component<Props> {
 
     render() {
         const { handleSubmit, dispatchLogin, errorMessage, navigation } = this.props;
-        const submitForm = (e: { email: string; password: string }): void => {
+        const submitForm: SubmitForm = e => {
             dispatchLogin(e.email, e.password);
         };
 
