@@ -1,10 +1,14 @@
+import { ThunkDispatch } from 'redux-thunk';
+import { Dispatch } from 'react';
 import { AsyncStorage } from 'react-native';
 import AuthApi from './auth.api';
-import { asyncError, generalError } from '../errors/error.service';
+import * as ErrorReducer from '../errors/error.reducer';
 import * as AuthReducer from './auth.reducer';
 import NavigationService from '../../navigation/service';
+import { AuthActionTypes } from './types/actions';
+import { ErrorsActionTypes } from '../errors/types/actions';
 
-const saveItem = async (item, selectedValue) => {
+const saveItem = async (item: string, selectedValue: string) => {
     try {
         await AsyncStorage.setItem(item, selectedValue);
     } catch (error) {
@@ -12,23 +16,27 @@ const saveItem = async (item, selectedValue) => {
     }
 };
 
-export const saveRefreshToken = refreshToken => dispatch => {
+export const saveRefreshToken = (refreshToken: string) => (
+    dispatch: Dispatch<AuthActionTypes | ErrorsActionTypes>
+) => {
     return AuthApi.refreshToken(refreshToken)
         .then(response => {
             if (response.success) {
                 dispatch(AuthReducer.saveAppToken(response.authToken));
                 saveItem('authToken', response.authToken).catch(error => {
-                    dispatch(asyncError(error));
+                    dispatch(ErrorReducer.asyncError(error));
                 });
             }
         })
         .catch(error => {
-            dispatch(generalError(error));
+            dispatch(ErrorReducer.showError(error));
         });
 };
 
 // used on app startup
-export const checkAuthStatus = () => async dispatch => {
+export const checkAuthStatus = () => async (
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes>
+) => {
     try {
         const authToken = await AsyncStorage.getItem('authToken');
         const refreshToken = await AsyncStorage.getItem('refreshToken');
@@ -37,26 +45,32 @@ export const checkAuthStatus = () => async dispatch => {
         }
         // return authToken;
     } catch (error) {
-        dispatch(asyncError(error));
+        dispatch(ErrorReducer.asyncError(error));
         // return false;
     }
 };
 
-export const logout = () => async dispatch => {
+export const logout = () => async (
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes>
+) => {
     dispatch(AuthReducer.setLogout());
     try {
         await AsyncStorage.removeItem('authToken');
         // App.startApp();
     } catch (error) {
-        dispatch(asyncError(error));
+        dispatch(ErrorReducer.asyncError(error));
     }
 };
 
-export const clearRegError = () => dispatch => {
+export const clearRegError = () => (
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes>
+) => {
     dispatch(AuthReducer.setRegisterError(null));
 };
 
-export const register = (name, email, password) => async dispatch => {
+export const register = (name: string, email: string, password: string) => async (
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes>
+) => {
     const first = name;
     const last = name;
     dispatch(AuthReducer.setAuthPending());
@@ -70,12 +84,14 @@ export const register = (name, email, password) => async dispatch => {
             return Promise.reject(new Error('fail'));
         })
         .catch(error => {
-            dispatch(generalError(error));
+            dispatch(ErrorReducer.showError(error));
             return Promise.reject(new Error('fail'));
         });
 };
 
-export const login = (email, password) => dispatch => {
+export const login = (email: string, password: string) => (
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes>
+) => {
     dispatch(AuthReducer.setAuthPending());
     return AuthApi.login(email, password)
         .then(response => {
@@ -88,25 +104,27 @@ export const login = (email, password) => dispatch => {
                                 NavigationService.navigate('Home', {});
                             })
                             .catch(error => {
-                                dispatch(asyncError(error));
+                                dispatch(ErrorReducer.asyncError(error));
                             });
                     })
                     .catch(error => {
-                        dispatch(asyncError(error));
+                        dispatch(ErrorReducer.asyncError(error));
                     });
             } else {
                 dispatch(AuthReducer.setLoginError(response.message));
             }
         })
         .catch(error => {
-            dispatch(generalError(error));
+            dispatch(ErrorReducer.showError(error));
         });
 };
 
 // test function on the login and logged in areas to show the JWT is working
-export const checkAuthTest = () => async dispatch => {
+export const checkAuthTest = () => async (
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes>
+) => {
     try {
-        const token = await AsyncStorage.getItem('authToken');
+        const token: string | null = await AsyncStorage.getItem('authToken');
         return AuthApi.checkAuthTest(token).then(response => {
             if (response.success) {
                 // console.log('Success: ', response.message);
@@ -115,7 +133,7 @@ export const checkAuthTest = () => async dispatch => {
             }
         });
     } catch (error) {
-        dispatch(asyncError(error));
+        dispatch(ErrorReducer.asyncError(error));
         return false;
     }
 };

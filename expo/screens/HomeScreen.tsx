@@ -3,6 +3,7 @@ import { Text, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import CapaHeader from '../components/header';
 import { Colors, Container } from '../styles';
+import { AppState } from '../store/rootReducer';
 
 const styles = StyleSheet.create({
     container: {
@@ -13,7 +14,13 @@ const styles = StyleSheet.create({
         ...Colors.whiteText,
     },
 });
-class HomeScreen extends React.Component {
+
+interface HomeScreenProps {
+    loggedIn: boolean;
+    authToken: string;
+}
+
+class HomeScreen extends React.Component<HomeScreenProps> {
     static navigationOptions = {
         header: null,
         headerStyle: {
@@ -36,11 +43,11 @@ class HomeScreen extends React.Component {
     }
 }
 
-function mapStateToProps(store) {
+function mapStateToProps(state: AppState) {
     return {
-        errorMessage: store.auth.loginError,
-        loggedIn: store.auth.loggedIn,
-        authToken: store.auth.authToken,
+        errorMessage: state.auth.loginError,
+        loggedIn: state.auth.loggedIn,
+        authToken: state.auth.authToken,
     };
 }
 

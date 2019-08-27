@@ -3,5 +3,5 @@ export interface ProgressEvent {
     total: number;
 }
 export interface FormDataBody {
-    [key: string]: string;
+    [key: string]: string | number;
 }

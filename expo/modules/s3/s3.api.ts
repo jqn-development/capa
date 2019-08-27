@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import axios from 'axios';
 import { Photo } from './types/photo';
 import config from '../../config';
-import { FormDataBody } from './types/upload';
+import { FormDataBody, ProgressEvent } from './types/upload';
 
 const createFormData = (photo: Photo, body: FormDataBody) => {
     const data = new FormData();
@@ -20,7 +20,12 @@ const createFormData = (photo: Photo, body: FormDataBody) => {
 };
 
 export default class S3Api {
-    static store(token: string, photo: Photo, body: FormDataBody, callback: () => void) {
+    static store(
+        token: string,
+        photo: Photo,
+        body: FormDataBody,
+        callback: (e: ProgressEvent) => void
+    ) {
         const formData = createFormData(photo, body);
         return axios
             .post(`${config.url}/api/photo/photos`, formData, {

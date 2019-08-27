@@ -1,39 +1,41 @@
+import { AuthActionTypes } from './types/actions';
+
 // Actions
-export const setAuthPending = () => {
+export const setAuthPending = (): AuthActionTypes => {
     return {
         type: 'SET_AUTH_PENDING',
     };
 };
-export const setLoginSuccess = (authToken, refreshToken) => {
+export const setLoginSuccess = (authToken: string, refreshToken: string): AuthActionTypes => {
     return {
         type: 'SET_LOGIN_SUCCESS',
         authToken,
         refreshToken,
     };
 };
-export const setLoginError = loginError => {
+export const setLoginError = (loginError: string): AuthActionTypes => {
     return {
         type: 'SET_LOGIN_ERROR',
         loginError,
     };
 };
-export const setRegisterSuccess = () => {
+export const setRegisterSuccess = (): AuthActionTypes => {
     return {
         type: 'SET_REGISTER_SUCCESS',
     };
 };
-export const setRegisterError = regError => {
+export const setRegisterError = (regError: string | null): AuthActionTypes => {
     return {
         type: 'SET_REGISTER_ERROR',
         regError,
     };
 };
-export const setLogout = () => {
+export const setLogout = (): AuthActionTypes => {
     return {
         type: 'SET_LOGOUT',
     };
 };
-export const saveAppToken = authToken => {
+export const saveAppToken = (authToken: string): AuthActionTypes => {
     return {
         type: 'SAVE_APP_TOKEN',
         authToken,
@@ -52,7 +54,7 @@ const initialState = {
     pendingRefreshingToken: null,
 };
 
-export default function(state = initialState, action) {
+export default function(state = initialState, action: AuthActionTypes) {
     switch (action.type) {
         case 'SET_AUTH_PENDING':
             return {

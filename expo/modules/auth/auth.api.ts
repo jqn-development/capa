@@ -1,7 +1,7 @@
 import config from '../../config';
 
 class AuthApi {
-    static login(email, password) {
+    static login(email: string, password: string) {
         return fetch(`${config.url}/api/auth/login`, {
             method: 'POST',
             body: JSON.stringify({ email, password }),
@@ -16,7 +16,7 @@ class AuthApi {
             });
     }
 
-    static register(first, last, email, password) {
+    static register(first: string, last: string, email: string, password: string) {
         return fetch(`${config.url}/api/auth/signup`, {
             method: 'POST',
             body: JSON.stringify({ first, last, email, password }),
@@ -28,7 +28,7 @@ class AuthApi {
             });
     }
 
-    static refreshToken(refreshToken) {
+    static refreshToken(refreshToken: string) {
         return fetch(`${config.url}/api/auth/refreshToken`, {
             method: 'POST',
             body: JSON.stringify({ refreshToken }),
@@ -40,7 +40,7 @@ class AuthApi {
             });
     }
 
-    static checkAuthTest(token) {
+    static checkAuthTest(token: string | null) {
         return fetch(`${config.url}/api/auth/getAll`, {
             method: 'POST',
             headers: {

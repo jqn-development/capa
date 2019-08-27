@@ -82,7 +82,12 @@ const styles = StyleSheet.create({
     },
 });
 
-class RegistrationScreen extends React.Component {
+interface Props {
+    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
+    handleSubmit: any;
+}
+
+class RegistrationScreen extends React.Component<Props> {
     static navigationOptions = {
         header: null,
     };
