@@ -7,8 +7,9 @@
     "noEmit": true,
     "skipLibCheck": true,
     "module": "ES6",
-    "strict": true
+    "strict": true,
   },
+  "includes": ["./declaration.d.ts"],
   "exclude": [
     "node_modules"
   ]

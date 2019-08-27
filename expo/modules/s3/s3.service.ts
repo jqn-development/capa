@@ -1,20 +1,20 @@
+import { ThunkDispatch } from 'redux-thunk';
 import S3Api from './s3.api';
 import { handleTokenErrors } from '../errors/error.service';
 import * as S3Reducer from './s3.reducer';
-import { Photo } from './types/photo' 
+import { Photo } from './types/photo';
 import { ErrorsActionTypes } from '../errors/types/actions';
 import { S3ActionTypes } from './types/actions';
-import { ThunkDispatch } from 'redux-thunk'
+import { FormDataBody, ProgressEvent } from './types/upload';
+import { ResponseObject } from '../errors/types/error';
 
-interface ProgressEvent {
-    loaded: number;
-    total: number;
-}
-
-export const storePhoto = (photo: Photo, body: object) => (dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | S3ActionTypes>, getState: Function) => {
+export const storePhoto = (photo: Photo, body: FormDataBody) => (
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | S3ActionTypes>,
+    getState: Function
+) => {
     const state = getState();
-    const progressFlag: any = [];
-    const progressCallback = ( progressEvent: ProgressEvent ) => {
+    const progressFlag: (string | number)[] = [];
+    const progressCallback = (progressEvent: ProgressEvent) => {
         const percentFraction = progressEvent.loaded / progressEvent.total;
         const percent = Math.floor(percentFraction * 100);
         if (!progressFlag.includes('size')) {
@@ -38,7 +38,7 @@ export const storePhoto = (photo: Photo, body: object) => (dispatch: ThunkDispat
             dispatch(S3Reducer.setUploadFilename(null));
             dispatch(S3Reducer.setUploadFileSize(null));
         })
-        .catch(error => {
+        .catch((error: { response: { data: ResponseObject } }) => {
             // If JWT token is expired, let's refresh it
             dispatch(handleTokenErrors(error.response.data));
         });

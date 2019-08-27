@@ -1,7 +1,7 @@
-export const SET_UPLOAD_PROGRESS = "SET_UPLOAD_PROGRESS";
-export const SET_UPLOAD_FILENAME = "SET_UPLOAD_FILENAME";
-export const SET_UPLOAD_STATUS = "SET_UPLOAD_STATUS";
-export const SET_UPLOAD_FILE_SIZE = "SET_UPLOAD_FILE_SIZE";
+export const SET_UPLOAD_PROGRESS = 'SET_UPLOAD_PROGRESS';
+export const SET_UPLOAD_FILENAME = 'SET_UPLOAD_FILENAME';
+export const SET_UPLOAD_STATUS = 'SET_UPLOAD_STATUS';
+export const SET_UPLOAD_FILE_SIZE = 'SET_UPLOAD_FILE_SIZE';
 
 export interface SetUploadProgressAction {
     type: typeof SET_UPLOAD_PROGRESS;
@@ -23,4 +23,8 @@ export interface SetUploadFileSizeAction {
     filesize: number | null;
 }
 
-export type S3ActionTypes = SetUploadProgressAction | SetUploadFilenameAction | SetUploadStatusAction | SetUploadFileSizeAction;
+export type S3ActionTypes =
+    | SetUploadProgressAction
+    | SetUploadFilenameAction
+    | SetUploadStatusAction
+    | SetUploadFileSizeAction;

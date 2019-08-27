@@ -27,6 +27,7 @@
         "react/jsx-indent-props": [1, 4],
         "import/no-cycle": "off",
         "import/no-unresolved": "off",
+        "arrow-body-style": "off",
         "@typescript-eslint/explicit-member-accessibility": 0,
         "@typescript-eslint/explicit-function-return-type": 0,
         "prettier/prettier": [

@@ -1,3 +1,5 @@
+expocapa.code-workspace
++
 bin
 artifacts
 node_modules/**/*

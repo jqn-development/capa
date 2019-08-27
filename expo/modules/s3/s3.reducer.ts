@@ -1,4 +1,4 @@
-import { S3ActionTypes } from  "./types/actions";
+import { S3ActionTypes } from './types/actions';
 
 export const setUploadProgress = (progress: number | null): S3ActionTypes => {
     return {
