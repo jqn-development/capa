@@ -46,7 +46,7 @@ interface UploadScreenProps {
     dispatchStorePhoto: (photo: SelectedPhoto) => void;
     uploadProgress: number;
     uploadFilename: string;
-    uploadFileSize: number;
+    uploadFileSize: number | null;
 }
 
 interface DispatchProps {

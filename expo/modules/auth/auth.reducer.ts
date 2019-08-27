@@ -1,4 +1,5 @@
 import { AuthActionTypes } from './types/actions';
+import { AuthState } from './types/state';
 
 // Actions
 export const setAuthPending = (): AuthActionTypes => {
@@ -24,7 +25,7 @@ export const setRegisterSuccess = (): AuthActionTypes => {
         type: 'SET_REGISTER_SUCCESS',
     };
 };
-export const setRegisterError = (regError: string | null): AuthActionTypes => {
+export const setRegisterError = (regError: boolean | null): AuthActionTypes => {
     return {
         type: 'SET_REGISTER_ERROR',
         regError,
@@ -42,7 +43,7 @@ export const saveAppToken = (authToken: string): AuthActionTypes => {
     };
 };
 // Reducer
-const initialState = {
+const initialState: AuthState = {
     authPending: false,
     loggedIn: false,
     registered: false,
@@ -92,8 +93,8 @@ export default function(state = initialState, action: AuthActionTypes) {
         case 'SET_LOGOUT':
             return {
                 ...state,
-                authToken: false,
-                refreshToken: false,
+                authToken: null,
+                refreshToken: null,
                 loggedIn: false,
             };
         case 'INVALID_TOKEN':

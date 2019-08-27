@@ -1,4 +1,5 @@
 import { S3ActionTypes } from './types/actions';
+import { S3State } from './types/state';
 
 export const setUploadProgress = (progress: number | null): S3ActionTypes => {
     return {
@@ -21,7 +22,7 @@ export const setUploadStatus = (status: string | null): S3ActionTypes => {
     };
 };
 
-export const setUploadFileSize = (filesize: number | null): S3ActionTypes => {
+export const setUploadFileSize = (filesize: number): S3ActionTypes => {
     return {
         type: 'SET_UPLOAD_FILE_SIZE',
         filesize,
@@ -30,7 +31,7 @@ export const setUploadFileSize = (filesize: number | null): S3ActionTypes => {
 
 // Reducer
 
-const initialState = {
+const initialState: S3State = {
     uploadProgress: null,
     uploadFilename: null,
     uploadStatus: null,

@@ -1,4 +1,5 @@
 import { ErrorsActionTypes } from './types/actions';
+import { ErrorsState } from './types/state';
 
 // Actions
 export const asyncError = (error: string): ErrorsActionTypes => {
@@ -27,7 +28,7 @@ export const removeError = (): ErrorsActionTypes => {
 };
 
 // Reducer
-const initialState = {
+const initialState: ErrorsState = {
     error: false,
     errorMessage: null,
 };

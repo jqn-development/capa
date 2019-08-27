@@ -31,7 +31,7 @@ export interface SetLoginError {
 }
 export interface SetRegisterError {
     type: typeof SET_REGISTER_ERROR;
-    regError: string | null;
+    regError: boolean | null;
 }
 
 export interface SetRegisterSuccess {
@@ -43,9 +43,6 @@ export interface SetRegisterSuccess {
 
 export interface SetLogout {
     type: typeof SET_LOGOUT;
-    authToken?: boolean;
-    refreshToken?: boolean;
-    loggedIn?: boolean;
 }
 
 export interface SetInvalidToken {
