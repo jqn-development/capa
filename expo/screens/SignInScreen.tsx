@@ -12,6 +12,7 @@ import PasswordField from '../components/fields/passwordField';
 import { Colors, Container } from '../styles';
 import { AppState } from '../store/rootReducer';
 import signInGfx from '../assets/images/signIn.jpg';
+import { AuthActionTypes } from '../modules/auth/types/actions';
 
 const styles = StyleSheet.create({
     container: {
@@ -163,7 +164,7 @@ function mapStateToProps(state: AppState): object {
         errorMessage: state.auth.loginError,
     };
 }
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>): DispatchProps => ({
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AuthActionTypes>): DispatchProps => ({
     dispatchLogin: (email, password) => {
         dispatch(login(email, password));
     },

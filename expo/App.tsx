@@ -3,10 +3,12 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Font, Icon } from 'expo';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-elements';
+import { NavigationContainerComponent } from 'react-navigation';
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
 import capaStore from './store';
 import theme from './styles/theme';
+import SpaceMono from './assets/fonts/SpaceMono-Regular.ttf';
 
 interface State {
     isLoadingComplete: boolean;
@@ -32,11 +34,11 @@ export default class App extends React.Component<Props, State> {
         skipLoadingScreen: false,
     };
 
-    public loadResourcesAsync = async (): Promise<any> =>
+    public loadResourcesAsync = async (): Promise<Font> =>
         Promise.all([
             Font.loadAsync({
                 ...Icon.Ionicons.font,
-                'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+                'space-mono': SpaceMono,
             }),
         ]);
 
@@ -65,7 +67,7 @@ export default class App extends React.Component<Props, State> {
                     <View style={styles.container}>
                         {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
                         <AppNavigator
-                            ref={(navigatorRef): void => {
+                            ref={(navigatorRef: NavigationContainerComponent): void => {
                                 NavigationService.setTopLevelNavigator(navigatorRef);
                             }}
                         />
