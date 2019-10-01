@@ -31,8 +31,7 @@ router.post('/login', (req, res) => {
 	auth
 		.loginUser(req.body.email, req.body.password)
 		.then(user => {
-			console.log(user.id);
-      let authToken = auth.createToken(user);
+			let authToken = auth.createToken(user);
 			let refreshToken = auth.createRefreshToken(user);
 			let userActivityLog = auth.logUserActivity(user, 'login');
 			return Promise.all([
@@ -43,8 +42,8 @@ router.post('/login', (req, res) => {
 				return {
 					authToken: tokens[0],
 					refreshToken: tokens[1],
-          user: user
-        };
+					user: user
+				};
 			})
 				.catch(err => {
 					return errors.errorHandler(res, err);
@@ -55,11 +54,11 @@ router.post('/login', (req, res) => {
 				success: true,
 				authToken: success.authToken,
 				refreshToken: success.refreshToken,
-			  id: success.user._id,
-        email: success.user.email,
-        firstName: success.user.first,
-        lastName: success.user.last
-      });
+				id: success.user._id,
+				email: success.user.email,
+				firstName: success.user.first,
+				lastName: success.user.last
+			});
 		})
 		.catch(err => {
 			return errors.errorHandler(res, err);
