@@ -5,7 +5,7 @@ export interface AuthState {
     loginError: string | null;
     regError: boolean | null;
     authToken: string | null;
-    refreshToken: string | null | undefined;
+    refreshToken: string | null;
     tokenIsValid: boolean | null;
     pendingRefreshingToken: boolean | null;
 }

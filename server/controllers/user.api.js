@@ -4,10 +4,10 @@ const errors = require('./error');
 const user = require('./user');
 
 router.get('/users', (req, res) => {
-	user.fetchUser(req.query.userId).then( user1 => {
+	user.fetchUser(req.query.userId).then( userData => {
 		res.send({
 			success: true,
-			user: user1
+			user: userData
 		});
 	})
 		.catch(err => {

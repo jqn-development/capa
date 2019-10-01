@@ -4,8 +4,10 @@ import { AsyncStorage } from 'react-native';
 import AuthApi from './auth.api';
 import * as ErrorReducer from '../errors/error.reducer';
 import * as AuthReducer from './auth.reducer';
+import * as UserReducer from '../user/user.reducer';
 import NavigationService from '../../navigation/service';
 import { AuthActionTypes } from './types/actions';
+import { UserActionTypes } from '../user/types/actions';
 import { ErrorsActionTypes } from '../errors/types/actions';
 
 const saveItem = async (item: string, selectedValue: string) => {
@@ -90,13 +92,22 @@ export const register = (name: string, email: string, password: string) => async
 };
 
 export const login = (email: string, password: string) => (
-    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes>
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes | UserActionTypes>
 ) => {
     dispatch(AuthReducer.setAuthPending());
     return AuthApi.login(email, password)
         .then(response => {
             if (response.success) {
                 dispatch(AuthReducer.setLoginSuccess(response.authToken, response.refreshToken));
+                dispatch(
+                    UserReducer.setUserDetails(
+                        response.id,
+                        response.email,
+                        response.firstName,
+                        response.lastName
+                    )
+                );
+                // Save Tokens
                 saveItem('authToken', response.authToken)
                     .then(() => {
                         saveItem('refreshToken', response.refreshToken)
