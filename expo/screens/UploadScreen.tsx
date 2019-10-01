@@ -44,9 +44,9 @@ interface UploadScreenState {
 interface UploadScreenProps {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
     dispatchStorePhoto: (photo: SelectedPhoto) => void;
-    uploadProgress: number;
-    uploadFilename: string;
-    uploadFileSize: number | null;
+    uploadProgress: number | undefined;
+    uploadFilename: string | null;
+    uploadFileSize: number;
 }
 
 interface DispatchProps {
@@ -96,6 +96,7 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
         this.getPhotosAsync({ first: 100, groupTypes: 'All', assetType: 'Photos' });
     }
 
+    // fetches camera roll images
     public async getPhotosAsync(params: GetPhotosParamType): Promise<CameraRollImage[]> {
         return new Promise(
             (res, rej): Promise<void> =>
@@ -170,7 +171,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): obj
     },
 });
 
-const UploadConnect = connect<object>(
+const UploadConnect = connect(
     mapStateToProps,
     mapDispatchToProps
 )(UploadScreen);

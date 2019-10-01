@@ -41,7 +41,8 @@ router.post('/login', (req, res) => {
 			]).then(tokens => {
 				return {
 					authToken: tokens[0],
-					refreshToken: tokens[1]
+					refreshToken: tokens[1],
+					user: user
 				};
 			})
 				.catch(err => {
@@ -52,7 +53,11 @@ router.post('/login', (req, res) => {
 			res.send({
 				success: true,
 				authToken: success.authToken,
-				refreshToken: success.refreshToken
+				refreshToken: success.refreshToken,
+				id: success.user._id,
+				email: success.user.email,
+				firstName: success.user.first,
+				lastName: success.user.last
 			});
 		})
 		.catch(err => {
