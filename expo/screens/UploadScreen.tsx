@@ -163,11 +163,7 @@ function mapStateToProps(state: AppState): object {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): object => ({
     dispatchStorePhoto: (photo: SelectedPhoto): void => {
-        dispatch(
-            storePhoto(photo, {
-                userId: 1,
-            })
-        );
+        dispatch(storePhoto(photo));
     },
 });
 

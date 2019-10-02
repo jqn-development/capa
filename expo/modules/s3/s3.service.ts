@@ -8,11 +8,12 @@ import { S3ActionTypes } from './types/actions';
 import { FormDataBody, ProgressEvent } from './types/upload';
 import { ResponseObject } from '../errors/types/error';
 
-export const storePhoto = (photo: Photo, body: FormDataBody) => (
+export const storePhoto = (photo: Photo) => (
     dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | S3ActionTypes>,
     getState: Function
 ) => {
     const state = getState();
+    const body: FormDataBody = { userId: state.user.id };
     const progressFlag: (string | number)[] = [];
     const progressCallback = (progressEvent: ProgressEvent) => {
         const percentFraction = progressEvent.loaded / progressEvent.total;

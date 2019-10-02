@@ -22,7 +22,7 @@ export const setUploadStatus = (status: string | null): S3ActionTypes => {
     };
 };
 
-export const setUploadFileSize = (filesize: number): S3ActionTypes => {
+export const setUploadFileSize = (filesize: number | null): S3ActionTypes => {
     return {
         type: 'SET_UPLOAD_FILE_SIZE',
         filesize,

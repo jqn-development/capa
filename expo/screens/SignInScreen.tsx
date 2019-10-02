@@ -13,7 +13,6 @@ import { Colors, Container } from '../styles';
 import { AppState } from '../store/rootReducer';
 import signInGfx from '../assets/images/signIn.jpg';
 import { AuthActionTypes } from '../modules/auth/types/actions';
-import { UserActionTypes } from '../modules/user/types/actions';
 
 const styles = StyleSheet.create({
     container: {
