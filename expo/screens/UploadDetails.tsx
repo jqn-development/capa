@@ -3,14 +3,37 @@ import { connect } from 'react-redux';
 import {
     NavigationScreenProp,
     NavigationScreenOptions,
-    NavigationState,
     NavigationParams,
 } from 'react-navigation';
-import { View, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { vw } from 'react-native-expo-viewport-units';
+import { reduxForm } from 'redux-form';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from '../store/rootReducer';
 import { S3ActionTypes } from '../modules/s3/types/actions';
+import GenericField from '../components/fields/genericField';
+import { Colors, Container, InputField } from '../styles';
+
+const styles = StyleSheet.create({
+    container: {
+        ...Container.flexVerticalTop,
+        ...Colors.background,
+        paddingLeft: vw(5),
+        paddingRight: vw(5),
+    },
+    errorMessage: {
+        ...Colors.errorText,
+        paddingTop: 20,
+        paddingLeft: 10,
+        margin: 0,
+        fontSize: 10,
+    },
+    input: {
+        ...InputField.input,
+        ...InputField.inputUnderline,
+    },
+});
 
 class UploadDetails extends React.Component<UploadDetailsProps, UploadDetailsState> {
     public static navigationOptions = ({
@@ -35,7 +58,16 @@ class UploadDetails extends React.Component<UploadDetailsProps, UploadDetailsSta
     });
 
     public render(): JSX.Element {
-        return <View style={{ flex: 1 }}></View>;
+        return (
+            <View style={styles.container}>
+                <View>
+                    <GenericField label="FILM" name="name" inputContainerStyle={styles.input} />
+                    <GenericField label="Camera" name="name" inputContainerStyle={styles.input} />
+                    <GenericField label="Location" name="name" inputContainerStyle={styles.input} />
+                    <Text style={styles.errorMessage}>Error</Text>
+                </View>
+            </View>
+        );
     }
 }
 
@@ -55,4 +87,6 @@ const UploadDetailsConnect = connect(
     mapDispatchToProps
 )(UploadDetails);
 
-export default UploadDetailsConnect;
+export default reduxForm({
+    form: 'registrationForm',
+})(UploadDetailsConnect);
