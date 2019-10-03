@@ -35,6 +35,9 @@ const styles = StyleSheet.create({
     },
 });
 
+interface UploadDetailsProps {
+}
+
 class UploadDetails extends React.Component<UploadDetailsProps, UploadDetailsState> {
     public static navigationOptions = ({
         navigation,
