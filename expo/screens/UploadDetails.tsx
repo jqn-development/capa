@@ -4,15 +4,16 @@ import {
     NavigationScreenProp,
     NavigationScreenOptions,
     NavigationParams,
+    NavigationState,
 } from 'react-navigation';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Icon, Input } from 'react-native-elements';
+// @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
-import { reduxForm } from 'redux-form';
+import { Formik, withFormik, Field } from 'formik';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from '../store/rootReducer';
 import { S3ActionTypes } from '../modules/s3/types/actions';
-import GenericField from '../components/fields/genericField';
 import { Colors, Container, InputField } from '../styles';
 
 const styles = StyleSheet.create({
@@ -21,6 +22,7 @@ const styles = StyleSheet.create({
         ...Colors.background,
         paddingLeft: vw(5),
         paddingRight: vw(5),
+        paddingTop: 20,
     },
     errorMessage: {
         ...Colors.errorText,
@@ -29,16 +31,60 @@ const styles = StyleSheet.create({
         margin: 0,
         fontSize: 10,
     },
-    input: {
-        ...InputField.input,
-        ...InputField.inputUnderline,
-    },
 });
 
-interface UploadDetailsProps {
+interface Props {
+    // eslint-disable-next-line
+    errorMessage: string;
+    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
-class UploadDetails extends React.Component<UploadDetailsProps, UploadDetailsState> {
+interface DispatchProps {
+    dispatchSaveDetails: (Gear: Gear, Film: Film) => void;
+}
+
+interface Film {
+    id: string;
+    name: string;
+}
+
+interface Gear {
+    id: string;
+    name: string;
+}
+
+interface State {
+    Film: Film | null;
+    Gear: Gear | null;
+}
+
+interface SubmitFormData {
+    Film: string;
+    Gear: string;
+}
+
+interface SubmitForm {
+    (e: SubmitFormData): void;
+}
+const renderField = ({
+    field, // { name, value, onChange, onBlur }
+    form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+    ...props
+}) => {
+    return (
+        <Input
+            placeholderTextColor="white"
+            inputContainerStyle={[InputField.input, InputField.inputUnderline]}
+            containerStyle={[InputField.inputContainer]}
+            inputStyle={[Colors.whiteText, InputField.inputText]}
+            name="Gear"
+            {...field}
+            {...props}
+        />
+    );
+};
+
+class UploadDetails extends React.Component<Props, State> {
     public static navigationOptions = ({
         navigation,
     }: NavigationParams): NavigationScreenOptions => ({
@@ -61,35 +107,50 @@ class UploadDetails extends React.Component<UploadDetailsProps, UploadDetailsSta
     });
 
     public render(): JSX.Element {
+        const { dispatchSaveDetails } = this.props;
         return (
             <View style={styles.container}>
-                <View>
-                    <GenericField label="FILM" name="name" inputContainerStyle={styles.input} />
-                    <GenericField label="Camera" name="name" inputContainerStyle={styles.input} />
-                    <GenericField label="Location" name="name" inputContainerStyle={styles.input} />
-                    <Text style={styles.errorMessage}>Error</Text>
-                </View>
+                <Formik
+                    initialValues={{ Film: 'Ilford HP5', Gear: 'Canon F1 New' }}
+                    onSubmit={values => console.log(values)}
+                >
+                    {({ handleChange, handleSubmit, values }) => (
+                        <View style={Container.flexVerticalTop}>
+                            <Field
+                                onChangeText={handleChange('Film')}
+                                value={values.Film}
+                                label="FILM"
+                                name="Film"
+                                component={renderField}
+                                placeholder=""
+                            />
+                            <Field
+                                onChangeText={handleChange('Gear')}
+                                value={values.Gear}
+                                label="GEAR"
+                                name="Gear"
+                                component={renderField}
+                                placeholder=""
+                            />
+                        </View>
+                    )}
+                </Formik>
             </View>
         );
     }
 }
 
 function mapStateToProps(state: AppState): object {
-    return {
-        uploadProgress: state.s3.uploadProgress,
-        uploadFilename: state.s3.uploadFilename,
-        uploadFileSize: state.s3.uploadFileSize,
-    };
+    return {};
 }
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): object => ({
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): DispatchProps => ({
+    dispatchSaveDetails: () => {
+        console.log(dispatch);
+    },
 });
 
-const UploadDetailsConnect = connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(UploadDetails);
-
-export default reduxForm({
-    form: 'registrationForm',
-})(UploadDetailsConnect);
+)(withFormik({ mapPropsToValues: (props) => ({ categories: props.categories })})(UploadDetails));

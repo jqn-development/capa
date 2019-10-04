@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Colors, InputField } from '../../styles';
 
 interface Props {
-    input: { onChange: (text: string) => void; };
+    input: { onChange: (text: string) => void };
 }
 
 const renderField = ({ input: { onChange }, ...restInput }: Props) => {
@@ -30,7 +30,6 @@ interface FieldProps {
 }
 export default function genericField(props: FieldProps) {
     const { inputContainerStyle, name, label } = props;
-
     return (
         <Field
             label={label}
@@ -41,9 +40,3 @@ export default function genericField(props: FieldProps) {
         />
     );
 }
-
-genericField.propTypes = {
-    inputContainerStyle: PropTypes.shape({}).isRequired,
-    name: PropTypes.string.isRequired,
-    label: PropTypes.string.isRequired,
-};

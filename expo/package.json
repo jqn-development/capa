@@ -41,6 +41,7 @@
     "expo": "^33.0.7",
     "expo-font": "~5.0.1",
     "form-data": "^2.5.0",
+    "formik": "^1.5.8",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",

@@ -9,6 +9,7 @@ import {
     NavigationState,
     NavigationParams,
 } from 'react-navigation';
+// @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
 import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';

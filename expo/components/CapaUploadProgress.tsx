@@ -2,7 +2,9 @@ import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Icon } from 'react-native-elements';
 import * as Progress from 'react-native-progress';
+// @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
+// @ts-ignore
 import AnimatedEllipsis from 'react-native-animated-ellipsis';
 import PropTypes from 'prop-types';
 
