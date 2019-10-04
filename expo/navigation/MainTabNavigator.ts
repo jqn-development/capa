@@ -5,7 +5,7 @@ import UploadScreen from '../screens/UploadScreen';
 import UploadDetails from '../screens/UploadDetails';
 
 const HomeStack = createStackNavigator({
-    Home: UploadDetails,
+    Home: HomeScreen,
     Upload: UploadScreen,
     UploadDetails: UploadDetails,
 });

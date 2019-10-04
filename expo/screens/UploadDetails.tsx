@@ -12,6 +12,7 @@ import { Icon, Input } from 'react-native-elements';
 import { vw } from 'react-native-expo-viewport-units';
 import { Formik, withFormik, Field } from 'formik';
 import { ThunkDispatch } from 'redux-thunk';
+import NavigationService from '../navigation/service';
 import { AppState } from '../store/rootReducer';
 import { S3ActionTypes } from '../modules/s3/types/actions';
 import { Colors, Container, InputField } from '../styles';
@@ -107,13 +108,10 @@ class UploadDetails extends React.Component<Props, State> {
     });
 
     public render(): JSX.Element {
-        const { dispatchSaveDetails } = this.props;
+        const { dispatchSaveDetails, navigation } = this.props;
         return (
             <View style={styles.container}>
-                <Formik
-                    initialValues={{ Film: 'Ilford HP5', Gear: 'Canon F1 New' }}
-                    onSubmit={values => console.log(values)}
-                >
+                <Formik initialValues={this.props.details} onSubmit={values => console.log(values)}>
                     {({ handleChange, handleSubmit, values }) => (
                         <View style={Container.flexVerticalTop}>
                             <Field
@@ -123,6 +121,7 @@ class UploadDetails extends React.Component<Props, State> {
                                 name="Film"
                                 component={renderField}
                                 placeholder=""
+                                onFocus={() => NavigationService.navigate('Home', {})}
                             />
                             <Field
                                 onChangeText={handleChange('Gear')}
@@ -141,7 +140,9 @@ class UploadDetails extends React.Component<Props, State> {
 }
 
 function mapStateToProps(state: AppState): object {
-    return {};
+    return {
+        details: { Film: 'Ilford HP5', Gear: 'Canon F1 New' },
+    };
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): DispatchProps => ({
@@ -153,4 +154,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): Dis
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withFormik({ mapPropsToValues: (props) => ({ categories: props.categories })})(UploadDetails));
+)(withFormik({ mapPropsToValues: (props) => ({ details: props.details })})(UploadDetails));
