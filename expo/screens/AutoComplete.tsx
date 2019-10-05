@@ -1,11 +1,9 @@
 import React from 'react';
-import { Text, StyleSheet, View } from 'react-native';
-import { connect } from 'react-redux';
+import { StyleSheet, View } from 'react-native';
 import { vw } from 'react-native-expo-viewport-units';
 import CapaHeader from '../components/header';
 import { Colors, Container } from '../styles';
 import CapaAutoComplete from '../components/CapaAutoComplete';
-import { AppState } from '../store/rootReducer';
 
 const styles = StyleSheet.create({
     container: {
@@ -21,29 +19,8 @@ const styles = StyleSheet.create({
 });
 
 interface Props {
-    film: any,
-    gear: any,
+    navigation: any,
 }
-
-const data = {
-    film: [
-        {
-            id: 'test',
-            name: 'ILFORD DELTA 100',
-            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-        },
-        {
-            id: 'ilf12',
-            name: 'ILFORD HP5',
-            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-        },
-        {
-            id: 'kodak232',
-            name: 'KODAK PORTRA 100',
-            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-        },
-    ],
-};
 
 class AutoCompleteScreen extends React.Component<Props> {
     static navigationOptions = {
@@ -55,19 +32,14 @@ class AutoCompleteScreen extends React.Component<Props> {
     };
 
     render() {
-        const { film, gear } = this.props;
+        const { navigation } = this.props;
         return (
             <View style={styles.container}>
                 <CapaHeader />
-                <CapaAutoComplete suggestions={data.film} />
+                <CapaAutoComplete suggestions={navigation.state.params.suggestions} />
             </View>
         );
     }
 }
 
-function mapStateToProps(state: AppState) {
-    return {
-    };
-}
-
-export default connect(mapStateToProps)(AutoCompleteScreen);
+export default AutoCompleteScreen;

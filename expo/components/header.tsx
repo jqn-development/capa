@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Header, Icon } from 'react-native-elements';
+// @ts-ignore
 import { withNavigation } from 'react-navigation';
 import PropTypes from 'prop-types';
 

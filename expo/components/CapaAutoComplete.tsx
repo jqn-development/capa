@@ -19,15 +19,15 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         paddingTop: 10,
         width: vw(100),
-        borderBottomColor: 'white',
+        borderBottomColor: '#000',
     },
 });
 
 interface AutoCompleteProps {
-    suggestions: Film[];
+    suggestions: Item[];
 }
 
-interface Film {
+interface Item {
     id: string;
     name: string;
     avatar: string;
@@ -36,10 +36,10 @@ interface Film {
 const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: AutoCompleteProps) => {
     const { suggestions } = props;
     const [input, setInput] = useState('');
-    const filtered = suggestions.filter((item: Film) => {
+    const filtered = suggestions.filter((item: Item) => {
         return item.name.indexOf(input) !== -1;
     });
-    function Item({ item }: { item: Film }) {
+    function Item({ item }: { item: Item }) {
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -56,8 +56,8 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
                     title={item.name}
                     subtitle="120"
                     titleStyle={{ color: 'white', fontWeight: 'bold' }}
-                    subtitleStyle={{ color: 'white' }}
-                    containerStyle={{ width: vw(100), backgroundColor: 'black' }}
+                    subtitleStyle={{ color: '#fff' }}
+                    containerStyle={{ width: vw(100), backgroundColor: '#000' }}
                 />
             </TouchableOpacity>
         );
@@ -76,7 +76,7 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
                 }}
             />
             {filtered.length > 0 && filtered[0].name !== input && (
-                <FlatList<Film>
+                <FlatList<Item>
                     data={filtered}
                     renderItem={({ item }) => <Item item={item} />}
                     keyExtractor={item => item.id}

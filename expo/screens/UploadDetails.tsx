@@ -69,7 +69,6 @@ interface SubmitForm {
 }
 const renderField = ({
     field, // { name, value, onChange, onBlur }
-    form, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
     ...props
 }: any) => {
     return (
@@ -78,11 +77,37 @@ const renderField = ({
             inputContainerStyle={[InputField.input, InputField.inputUnderline]}
             containerStyle={[InputField.inputContainer]}
             inputStyle={[Colors.whiteText, InputField.inputText]}
-            name="Gear"
             {...field}
             {...props}
         />
     );
+};
+
+const data = {
+    camera: [
+        {
+            id: 'test',
+            name: 'CANON F1',
+            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
+        },
+    ],
+    film: [
+        {
+            id: 'test',
+            name: 'ILFORD DELTA 100',
+            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
+        },
+        {
+            id: 'ilf12',
+            name: 'ILFORD HP5',
+            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
+        },
+        {
+            id: 'kodak232',
+            name: 'KODAK PORTRA 100',
+            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
+        },
+    ],
 };
 
 class UploadDetails extends React.Component<Props, State> {
@@ -122,7 +147,11 @@ class UploadDetails extends React.Component<Props, State> {
                                 name="Film"
                                 component={renderField}
                                 placeholder=""
-                                onFocus={() => NavigationService.navigate('AutoComplete', {})}
+                                onFocus={() =>
+                                    NavigationService.navigate('AutoComplete', {
+                                        suggestions: data.film,
+                                    })
+                                }
                             />
                             <Field
                                 onChangeText={handleChange('Gear')}
@@ -131,6 +160,11 @@ class UploadDetails extends React.Component<Props, State> {
                                 name="Gear"
                                 component={renderField}
                                 placeholder=""
+                                onFocus={() =>
+                                    NavigationService.navigate('AutoComplete', {
+                                        suggestions: data.camera,
+                                    })
+                                }
                             />
                         </View>
                     )}
