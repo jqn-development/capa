@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ListRenderItem } from 'react-native';
-import { Icon, Input, Avatar, ListItem } from 'react-native-elements';
+// @ts-ignore
+import { vw } from 'react-native-expo-viewport-units';
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { Input, ListItem } from 'react-native-elements';
 import { Colors, Container, InputField } from '../styles';
-import { vw, vh } from 'react-native-expo-viewport-units';
 
 const styles = StyleSheet.create({
     container: {
@@ -19,7 +20,6 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         width: vw(100),
         borderBottomColor: 'white',
-        borderBottomWidth: .3,
     },
 });
 
@@ -39,11 +39,10 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
     const filtered = suggestions.filter((item: Film) => {
         return item.name.indexOf(input) !== -1;
     });
-    function Item({ item }) {
+    function Item({ item }: { item: Film }) {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    console.log(item.name);
                     setInput(item.name);
                 }}
             >
@@ -58,7 +57,7 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
                     subtitle="120"
                     titleStyle={{ color: 'white', fontWeight: 'bold' }}
                     subtitleStyle={{ color: 'white' }}
-                    containerStyle={{width:vw(100), backgroundColor: 'black'}}
+                    containerStyle={{ width: vw(100), backgroundColor: 'black' }}
                 />
             </TouchableOpacity>
         );
@@ -77,7 +76,7 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
                 }}
             />
             {filtered.length > 0 && filtered[0].name !== input && (
-                <FlatList
+                <FlatList<Film>
                     data={filtered}
                     renderItem={({ item }) => <Item item={item} />}
                     keyExtractor={item => item.id}
