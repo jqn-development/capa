@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
 });
 
 interface Props {
-    // eslint-disable-next-line
     errorMessage: string;
+    details: Record<string, string>;
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
@@ -69,9 +69,9 @@ interface SubmitForm {
 }
 const renderField = ({
     field, // { name, value, onChange, onBlur }
-    form: { touched, errors }, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
+    form, // also values, setXXXX, handleXXXX, dirty, isValid, status, etc.
     ...props
-}) => {
+}: any) => {
     return (
         <Input
             placeholderTextColor="white"
@@ -108,11 +108,11 @@ class UploadDetails extends React.Component<Props, State> {
     });
 
     public render(): JSX.Element {
-        const { dispatchSaveDetails, navigation } = this.props;
+        const { details } = this.props;
         return (
             <View style={styles.container}>
-                <Formik initialValues={this.props.details} onSubmit={values => console.log(values)}>
-                    {({ handleChange, handleSubmit, values }) => (
+                <Formik initialValues={details} onSubmit={values => console.log(values)}>
+                    {({ handleChange, values }) => (
                         <View style={Container.flexVerticalTop}>
                             <Field
                                 onChangeText={handleChange('Film')}
@@ -121,7 +121,7 @@ class UploadDetails extends React.Component<Props, State> {
                                 name="Film"
                                 component={renderField}
                                 placeholder=""
-                                onFocus={() => NavigationService.navigate('Home', {})}
+                                onFocus={() => NavigationService.navigate('AutoComplete', {})}
                             />
                             <Field
                                 onChangeText={handleChange('Gear')}
