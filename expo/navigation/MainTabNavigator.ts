@@ -5,12 +5,15 @@ import UploadScreen from '../screens/UploadScreen';
 import AutoComplete from '../screens/AutoComplete';
 import UploadDetails from '../screens/UploadDetails';
 
-const HomeStack = createStackNavigator({
-    Home: UploadDetails,
-    Upload: UploadScreen,
-    UploadDetails: UploadDetails,
-    AutoComplete: AutoComplete,
-}, {});
+const HomeStack = createStackNavigator(
+    {
+        Home: HomeScreen,
+        Upload: UploadScreen,
+        UploadDetails: UploadDetails,
+        AutoComplete: AutoComplete,
+    },
+    {}
+);
 
 export default createStackNavigator(
     {
