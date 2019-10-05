@@ -7,6 +7,8 @@ const input = {
 
 const inputContainer = {
     marginBottom: 20,
+    paddingLeft: 0,
+    paddingRight: 0,
     borderColor: 'white',
 };
 

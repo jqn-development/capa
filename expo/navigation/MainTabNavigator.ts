@@ -10,7 +10,7 @@ const HomeStack = createStackNavigator({
     Upload: UploadScreen,
     UploadDetails: UploadDetails,
     AutoComplete: AutoComplete,
-});
+}, {});
 
 export default createStackNavigator(
     {

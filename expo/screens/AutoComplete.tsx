@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
+import { vw } from 'react-native-expo-viewport-units';
 import CapaHeader from '../components/header';
 import { Colors, Container } from '../styles';
 import CapaAutoComplete from '../components/CapaAutoComplete';
@@ -10,6 +11,9 @@ const styles = StyleSheet.create({
     container: {
         ...Container.flexVerticalTop,
         ...Colors.background,
+        paddingLeft: vw(5),
+        paddingRight: vw(5),
+        paddingTop: 20,
     },
     loggedInDesc: {
         ...Colors.whiteText,
@@ -17,7 +21,8 @@ const styles = StyleSheet.create({
 });
 
 interface Props {
-
+    film: any,
+    gear: any,
 }
 
 const data = {
@@ -25,14 +30,17 @@ const data = {
         {
             id: 'test',
             name: 'ILFORD DELTA 100',
+            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
         },
         {
             id: 'ilf12',
             name: 'ILFORD HP5',
+            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
         },
         {
             id: 'kodak232',
             name: 'KODAK PORTRA 100',
+            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
         },
     ],
 };
@@ -42,16 +50,16 @@ class AutoCompleteScreen extends React.Component<Props> {
         header: null,
         headerStyle: {
             backgroundColor: '#000',
+            borderBottomWidth: 0,
         },
     };
 
     render() {
-        const {} = this.props;
+        const { film, gear } = this.props;
         return (
             <View style={styles.container}>
-                <CapaHeader add search />
+                <CapaHeader />
                 <CapaAutoComplete suggestions={data.film} />
-                <Text>Auto Complete Screen</Text>
             </View>
         );
     }

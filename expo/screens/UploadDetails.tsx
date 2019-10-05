@@ -95,6 +95,7 @@ class UploadDetails extends React.Component<Props, State> {
             marginRight: 15,
             borderBottomWidth: 0,
         },
+        animationEnabled: false,
         headerLeft: (
             <Icon
                 name="close"

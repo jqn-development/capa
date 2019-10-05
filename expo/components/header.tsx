@@ -46,8 +46,8 @@ const capaHeader = props => {
 
 capaHeader.propTypes = {
     navigation: PropTypes.shape({}).isRequired,
-    search: PropTypes.bool.isRequired,
-    add: PropTypes.bool.isRequired,
+    search: PropTypes.bool,
+    add: PropTypes.bool,
 };
 
 export default withNavigation(capaHeader);
