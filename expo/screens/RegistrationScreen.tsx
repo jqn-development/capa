@@ -1,11 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, Text, View } from 'react-native';
-
 import {
     SafeAreaView,
     NavigationScreenProp,
-    NavigationScreenOptions,
     NavigationState,
     NavigationParams,
 } from 'react-navigation';

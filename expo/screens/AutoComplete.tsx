@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+// @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
+import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation';
 import CapaHeader from '../components/header';
 import { Colors, Container } from '../styles';
 import CapaAutoComplete from '../components/CapaAutoComplete';
@@ -19,7 +21,7 @@ const styles = StyleSheet.create({
 });
 
 interface Props {
-    navigation: any,
+    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
 class AutoCompleteScreen extends React.Component<Props> {

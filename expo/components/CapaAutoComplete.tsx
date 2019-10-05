@@ -21,6 +21,19 @@ const styles = StyleSheet.create({
         width: vw(100),
         borderBottomColor: '#000',
     },
+    listItemContainer: {
+        width: vw(100),
+        backgroundColor: '#000',
+        marginLeft: 0,
+        paddingLeft: 0,
+    },
+    listItemTitle: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    listItemSubtitle: {
+        color: '#fff',
+    },
 });
 
 interface AutoCompleteProps {
@@ -30,7 +43,7 @@ interface AutoCompleteProps {
 interface Item {
     id: string;
     name: string;
-    avatar: string;
+    avatar?: string;
 }
 
 const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: AutoCompleteProps) => {
@@ -47,17 +60,21 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
                 }}
             >
                 <ListItem
-                    leftAvatar={{
-                        size: 'medium',
-                        title: item.name,
-                        source: { uri: item.avatar },
-                        showEditButton: false,
-                    }}
+                    leftAvatar={
+                        item.avatar
+                            ? {
+                                  size: 'medium',
+                                  title: item.name,
+                                  source: { uri: item.avatar },
+                                  showEditButton: false,
+                              }
+                            : undefined
+                    }
                     title={item.name}
                     subtitle="120"
-                    titleStyle={{ color: 'white', fontWeight: 'bold' }}
-                    subtitleStyle={{ color: '#fff' }}
-                    containerStyle={{ width: vw(100), backgroundColor: '#000' }}
+                    titleStyle={styles.listItemTitle}
+                    subtitleStyle={styles.listItemSubtitle}
+                    containerStyle={styles.listItemContainer}
                 />
             </TouchableOpacity>
         );

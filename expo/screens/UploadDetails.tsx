@@ -88,7 +88,6 @@ const data = {
         {
             id: 'test',
             name: 'CANON F1',
-            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
         },
     ],
     film: [
