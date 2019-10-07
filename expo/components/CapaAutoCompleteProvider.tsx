@@ -1,5 +1,4 @@
-import React, { useState, createContext } from 'react';
-
+import React, { useState, createContext, useCallback } from 'react';
 export const AutoCompleteContext = createContext([]);
 export const AutoCompleteDispatchContext = createContext([]);
 
@@ -36,6 +35,7 @@ export const CapaAutoCompleteProvider = ({ children }) => {
             setSuggestions(data.suggestions);
         });
     };
+
     return (
         <AutoCompleteContext.Provider value={{ suggestions }}>
             <AutoCompleteDispatchContext.Provider value={{fetchSuggestions}}>

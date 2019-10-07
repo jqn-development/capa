@@ -35,7 +35,6 @@ class AutoCompleteScreen extends React.Component<Props> {
     };
 
     render() {
-        const { navigation } = this.props;
         return (
             <View style={styles.container}>
                 <CapaHeader />

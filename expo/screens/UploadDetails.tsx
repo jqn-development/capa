@@ -83,32 +83,6 @@ const renderField = ({
     );
 };
 
-const data = {
-    camera: [
-        {
-            id: 'test',
-            name: 'CANON F1',
-        },
-    ],
-    film: [
-        {
-            id: 'test',
-            name: 'ILFORD DELTA 100',
-            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-        },
-        {
-            id: 'ilf12',
-            name: 'ILFORD HP5',
-            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-        },
-        {
-            id: 'kodak232',
-            name: 'KODAK PORTRA 100',
-            avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-        },
-    ],
-};
-
 class UploadDetails extends React.Component<Props, State> {
     public static navigationOptions = ({
         navigation,
@@ -119,7 +93,6 @@ class UploadDetails extends React.Component<Props, State> {
             marginRight: 15,
             borderBottomWidth: 0,
         },
-        animationEnabled: false,
         headerLeft: (
             <Icon
                 name="close"
@@ -133,10 +106,11 @@ class UploadDetails extends React.Component<Props, State> {
     });
 
     public render(): JSX.Element {
-        const { details } = this.props;
+        const details = this.props.navigation.state.params.input;
+        console.log(details);
         return (
             <View style={styles.container}>
-                <Formik initialValues={details} onSubmit={values => console.log(values)}>
+                <Formik enableReinitialize initialValues={details} onSubmit={values => console.log(values)}>
                     {({ handleChange, values }) => (
                         <View style={Container.flexVerticalTop}>
                             <Field
@@ -148,7 +122,7 @@ class UploadDetails extends React.Component<Props, State> {
                                 placeholder=""
                                 onFocus={() =>
                                     NavigationService.navigate('AutoComplete', {
-                                        suggestions: data.film,
+                                        input: values.Film,
                                     })
                                 }
                             />
@@ -161,7 +135,7 @@ class UploadDetails extends React.Component<Props, State> {
                                 placeholder=""
                                 onFocus={() =>
                                     NavigationService.navigate('AutoComplete', {
-                                        suggestions: data.camera,
+                                        input: values.Gear,
                                     })
                                 }
                             />
@@ -173,9 +147,10 @@ class UploadDetails extends React.Component<Props, State> {
     }
 }
 
-function mapStateToProps(state: AppState): object {
+function mapStateToProps(state: AppState, props): object {
+    console.log('state to props');
     return {
-        details: { Film: 'Ilford HP5', Gear: 'Canon F1 New' },
+        details: { Film: 'Test', Gear: 'Canon F1 New' },
     };
 }
 

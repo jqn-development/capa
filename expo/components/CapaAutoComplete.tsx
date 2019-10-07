@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { debounce } from 'lodash';
 // @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Input, ListItem } from 'react-native-elements';
+import NavigationService from '../navigation/service';
 import { Colors, Container, InputField } from '../styles';
 import {
     AutoCompleteDispatchContext,
@@ -57,11 +59,21 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
     const filtered = suggestionsContext.suggestions.filter((item: Item) => {
         return item.name.indexOf(input) !== -1;
     });
+    const debounceLoadData = useCallback(debounce(dispatch.fetchSuggestions, 100), []);
+
+    const handleInput = e => {
+        setInput(e);
+        debounceLoadData(e);
+    };
+
     function Item({ item }: { item: Item }) {
         return (
             <TouchableOpacity
                 onPress={() => {
                     setInput(item.name);
+                    NavigationService.navigate('UploadDetails', {
+                        input: { Film: item.name, Gear: 'Canon F1 New' },
+                    });
                 }}
             >
                 <ListItem
@@ -93,10 +105,7 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
                 containerStyle={[InputField.inputContainer]}
                 inputStyle={[Colors.whiteText, InputField.inputText]}
                 value={input}
-                onChangeText={e => {
-                    setInput(e);
-                    dispatch.fetchSuggestions();
-                }}
+                onChangeText={handleInput}
             />
             {filtered.length > 0 && filtered[0].name !== input && (
                 <FlatList<Item>
