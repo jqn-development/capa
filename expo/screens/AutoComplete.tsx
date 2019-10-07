@@ -6,6 +6,7 @@ import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-n
 import CapaHeader from '../components/header';
 import { Colors, Container } from '../styles';
 import CapaAutoComplete from '../components/CapaAutoComplete';
+import { CapaAutoCompleteProvider } from '../components/CapaAutoCompleteProvider';
 
 const styles = StyleSheet.create({
     container: {
@@ -38,7 +39,9 @@ class AutoCompleteScreen extends React.Component<Props> {
         return (
             <View style={styles.container}>
                 <CapaHeader />
-                <CapaAutoComplete suggestions={navigation.state.params.suggestions} />
+                <CapaAutoCompleteProvider>
+                    <CapaAutoComplete/>
+                </CapaAutoCompleteProvider>
             </View>
         );
     }

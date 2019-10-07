@@ -4,6 +4,10 @@ import { vw } from 'react-native-expo-viewport-units';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Input, ListItem } from 'react-native-elements';
 import { Colors, Container, InputField } from '../styles';
+import {
+    AutoCompleteDispatchContext,
+    AutoCompleteContext,
+} from '../components/CapaAutoCompleteProvider';
 
 const styles = StyleSheet.create({
     container: {
@@ -47,9 +51,10 @@ interface Item {
 }
 
 const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: AutoCompleteProps) => {
-    const { suggestions } = props;
     const [input, setInput] = useState('');
-    const filtered = suggestions.filter((item: Item) => {
+    const dispatch = React.useContext(AutoCompleteDispatchContext);
+    const suggestionsContext = React.useContext(AutoCompleteContext);
+    const filtered = suggestionsContext.suggestions.filter((item: Item) => {
         return item.name.indexOf(input) !== -1;
     });
     function Item({ item }: { item: Item }) {
@@ -88,8 +93,9 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
                 containerStyle={[InputField.inputContainer]}
                 inputStyle={[Colors.whiteText, InputField.inputText]}
                 value={input}
-                onChangeText={text => {
-                    setInput(text);
+                onChangeText={e => {
+                    setInput(e);
+                    dispatch.fetchSuggestions();
                 }}
             />
             {filtered.length > 0 && filtered[0].name !== input && (
