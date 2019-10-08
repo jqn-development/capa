@@ -6,7 +6,7 @@ import {
     NavigationParams,
     NavigationState,
 } from 'react-navigation';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Icon, Input } from 'react-native-elements';
 // @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
@@ -17,7 +17,6 @@ import {
     CapaAutoCompleteProvider,
     AutoCompleteContext,
 } from '../components/CapaAutoCompleteProvider';
-import NavigationService from '../navigation/service';
 import { AppState } from '../store/rootReducer';
 import { S3ActionTypes } from '../modules/s3/types/actions';
 import { Colors, Container, InputField } from '../styles';
@@ -104,8 +103,8 @@ export const Form = props => {
     const details = suggestionsContext.form;
     const handleInput = (e, type) => {
         suggestionsContext.setInput(e);
-        console.log(suggestionsContext.form);
         suggestionsContext.setEditMode(true);
+        suggestionsContext.setEditType(type);
     };
     return (
         <View>
@@ -115,7 +114,7 @@ export const Form = props => {
                     initialValues={details}
                     onSubmit={values => console.log(values)}
                 >
-                    {({ handleChange, values }) => (
+                    {({ values }) => (
                         <View style={Container.flexVerticalTop}>
                             <Field
                                 onChangeText={(e) => { handleInput(e, 'film')}}
@@ -126,7 +125,7 @@ export const Form = props => {
                                 placeholder=""
                             />
                             <Field
-                                onChangeText={handleInput}
+                                onChangeText={(e) => { handleInput(e, 'gear')}}
                                 value={values.gear}
                                 label="GEAR"
                                 name="Gear"
@@ -152,7 +151,7 @@ export const UploadDetails: React.FunctionComponent<Props> = props => {
     );
 }
 
-function mapStateToProps(state: AppState, params): object {
+function mapStateToProps(state: AppState): object {
     return {
         //details: { film: 'Test', gear: 'Canon F1 New' },
     };

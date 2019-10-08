@@ -20,6 +20,7 @@ export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props =>
     const [input, setInput] = useState(props.input);
     const [form, setForm] = useState({});
     const [editMode, setEditMode] = useState(false);
+    const [editType, setEditType] = useState(null);
     const { children } = props;
     const fetchSuggestions = async () => {
         Promise.resolve({
@@ -46,7 +47,7 @@ export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props =>
     };
 
     return (
-        <AutoCompleteContext.Provider value={{ suggestions, input, setInput, editMode, setEditMode, form, setForm }}>
+        <AutoCompleteContext.Provider value={{ suggestions, input, setInput, editMode, setEditMode, editType, setEditType, form, setForm }}>
             <AutoCompleteDispatchContext.Provider value={{ fetchSuggestions }}>
                 {children}
             </AutoCompleteDispatchContext.Provider>

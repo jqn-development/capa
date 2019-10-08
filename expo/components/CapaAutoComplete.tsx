@@ -57,13 +57,14 @@ interface Item {
 const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: AutoCompleteProps) => {
     const dispatch = React.useContext(AutoCompleteDispatchContext);
     const suggestionsContext: any = React.useContext(AutoCompleteContext);
+    const key = suggestionsContext.editType;
     const filtered = suggestionsContext.suggestions.filter((item: Item) => {
         return item.name.indexOf(suggestionsContext.input) !== -1;
     });
     const debounceLoadData = useCallback(debounce(dispatch.fetchSuggestions, 100), []);
 
     const handleInput = e => {
-        suggestionsContext.setForm({film: e});
+        suggestionsContext.setForm({...suggestionsContext.form, [key]: e});
         suggestionsContext.setInput(e);
         debounceLoadData(e);
     };
@@ -73,8 +74,8 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
             <TouchableOpacity
                 onPress={() => {
                     suggestionsContext.setInput(item.name);
-                    console.log(Object.assign({ film: item.name }, suggestionsContext.form));
-                    suggestionsContext.setForm(Object.assign({ film: item.name }, suggestionsContext.form));
+                    const formState = { ...suggestionsContext.form, [key]: item.name };
+                    suggestionsContext.setForm(formState);
                     suggestionsContext.setEditMode(false);
                 }}
             >
