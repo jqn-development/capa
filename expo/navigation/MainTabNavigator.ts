@@ -7,7 +7,7 @@ import UploadDetails from '../screens/UploadDetails';
 
 const HomeStack = createStackNavigator(
     {
-        Home: AutoComplete,
+        Home: UploadDetails,
         Upload: UploadScreen,
         UploadDetails: UploadDetails,
         AutoComplete: AutoComplete,

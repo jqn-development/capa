@@ -1,4 +1,10 @@
-import React, { useState, createContext, useCallback } from 'react';
+import React, { useState, createContext } from 'react';
+import PropTypes from 'prop-types';
+
+interface Props {
+    children?: React.ReactNode;
+}
+
 export const AutoCompleteContext = createContext([]);
 export const AutoCompleteDispatchContext = createContext([]);
 
@@ -9,9 +15,12 @@ function useAutoCompleteDispatch() {
     }
     return context;
 }
-
-export const CapaAutoCompleteProvider = ({ children }) => {
+export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props => {
     const [suggestions, setSuggestions] = useState([]);
+    const [input, setInput] = useState(props.input);
+    const [form, setForm] = useState({});
+    const [editMode, setEditMode] = useState(false);
+    const { children } = props;
     const fetchSuggestions = async () => {
         Promise.resolve({
             suggestions: [
@@ -37,12 +46,13 @@ export const CapaAutoCompleteProvider = ({ children }) => {
     };
 
     return (
-        <AutoCompleteContext.Provider value={{ suggestions }}>
-            <AutoCompleteDispatchContext.Provider value={{fetchSuggestions}}>
+        <AutoCompleteContext.Provider value={{ suggestions, input, setInput, editMode, setEditMode, form, setForm }}>
+            <AutoCompleteDispatchContext.Provider value={{ fetchSuggestions }}>
                 {children}
             </AutoCompleteDispatchContext.Provider>
         </AutoCompleteContext.Provider>
     );
 };
 
+CapaAutoCompleteProvider.propTypes = { children: PropTypes.node.isRequired };
 export { useAutoCompleteDispatch };

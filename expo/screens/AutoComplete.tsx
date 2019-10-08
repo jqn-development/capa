@@ -23,6 +23,8 @@ const styles = StyleSheet.create({
 
 interface Props {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
+    input: string;
+    name: string;
 }
 
 class AutoCompleteScreen extends React.Component<Props> {
@@ -35,11 +37,13 @@ class AutoCompleteScreen extends React.Component<Props> {
     };
 
     render() {
+        const { navigation } = this.props;
+        const input = navigation.state.params ? navigation.state.params.input : '';
         return (
             <View style={styles.container}>
                 <CapaHeader />
                 <CapaAutoCompleteProvider>
-                    <CapaAutoComplete/>
+                    <CapaAutoComplete input={{value:"test2"}} />
                 </CapaAutoCompleteProvider>
             </View>
         );

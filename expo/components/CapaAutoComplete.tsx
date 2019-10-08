@@ -1,10 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { debounce } from 'lodash';
 // @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Input, ListItem } from 'react-native-elements';
-import NavigationService from '../navigation/service';
 import { Colors, Container, InputField } from '../styles';
 import {
     AutoCompleteDispatchContext,
@@ -13,8 +12,8 @@ import {
 
 const styles = StyleSheet.create({
     container: {
-        paddingLeft: 10,
-        paddingRight: 10,
+        paddingLeft: 5,
+        paddingRight: 5,
         ...Container.flexVerticalTop,
         ...Colors.background,
     },
@@ -43,7 +42,10 @@ const styles = StyleSheet.create({
 });
 
 interface AutoCompleteProps {
-    suggestions: Item[];
+    input: {
+        name: string;
+        value: string;
+    };
 }
 
 interface Item {
@@ -53,16 +55,16 @@ interface Item {
 }
 
 const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: AutoCompleteProps) => {
-    const [input, setInput] = useState('');
     const dispatch = React.useContext(AutoCompleteDispatchContext);
-    const suggestionsContext = React.useContext(AutoCompleteContext);
+    const suggestionsContext: any = React.useContext(AutoCompleteContext);
     const filtered = suggestionsContext.suggestions.filter((item: Item) => {
-        return item.name.indexOf(input) !== -1;
+        return item.name.indexOf(suggestionsContext.input) !== -1;
     });
     const debounceLoadData = useCallback(debounce(dispatch.fetchSuggestions, 100), []);
 
     const handleInput = e => {
-        setInput(e);
+        suggestionsContext.setForm({film: e});
+        suggestionsContext.setInput(e);
         debounceLoadData(e);
     };
 
@@ -70,10 +72,10 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
         return (
             <TouchableOpacity
                 onPress={() => {
-                    setInput(item.name);
-                    NavigationService.navigate('UploadDetails', {
-                        input: { Film: item.name, Gear: 'Canon F1 New' },
-                    });
+                    suggestionsContext.setInput(item.name);
+                    console.log(Object.assign({ film: item.name }, suggestionsContext.form));
+                    suggestionsContext.setForm(Object.assign({ film: item.name }, suggestionsContext.form));
+                    suggestionsContext.setEditMode(false);
                 }}
             >
                 <ListItem
@@ -98,22 +100,25 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
     }
     return (
         <View style={styles.container}>
-            <Input
-                placeholderTextColor="white"
-                placeholder="Search"
-                inputContainerStyle={[InputField.inputUnderline]}
-                containerStyle={[InputField.inputContainer]}
-                inputStyle={[Colors.whiteText, InputField.inputText]}
-                value={input}
-                onChangeText={handleInput}
-            />
-            {filtered.length > 0 && filtered[0].name !== input && (
-                <FlatList<Item>
-                    data={filtered}
-                    renderItem={({ item }) => <Item item={item} />}
-                    keyExtractor={item => item.id}
-                />
-            )}
+            {suggestionsContext.editMode ? (
+                <View style={styles.container}>
+                    <Input
+                        autoFocus
+                        placeholderTextColor="white"
+                        placeholder="Search"
+                        inputContainerStyle={[InputField.inputUnderline]}
+                        containerStyle={[InputField.inputContainer]}
+                        inputStyle={[Colors.whiteText, InputField.inputText]}
+                        value={suggestionsContext.input}
+                        onChangeText={handleInput}
+                    />
+                    <FlatList
+                        data={filtered}
+                        renderItem={({ item }) => <Item item={item} />}
+                        keyExtractor={item => item.id}
+                    />
+                </View>
+            ) : null}
         </View>
     );
 };

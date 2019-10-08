@@ -10,8 +10,13 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Icon, Input } from 'react-native-elements';
 // @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
-import { Formik, withFormik, Field } from 'formik';
+import { Formik, Field } from 'formik';
 import { ThunkDispatch } from 'redux-thunk';
+import CapaAutoComplete from '../components/CapaAutoComplete';
+import {
+    CapaAutoCompleteProvider,
+    AutoCompleteContext,
+} from '../components/CapaAutoCompleteProvider';
 import NavigationService from '../navigation/service';
 import { AppState } from '../store/rootReducer';
 import { S3ActionTypes } from '../modules/s3/types/actions';
@@ -67,6 +72,17 @@ interface SubmitFormData {
 interface SubmitForm {
     (e: SubmitFormData): void;
 }
+
+interface MyFormProps {
+    film: string;
+    gear: string;
+}
+
+interface FormValues {
+    film: string;
+    gear: string;
+}
+
 const renderField = ({
     field, // { name, value, onChange, onBlur }
     ...props
@@ -83,74 +99,62 @@ const renderField = ({
     );
 };
 
-class UploadDetails extends React.Component<Props, State> {
-    public static navigationOptions = ({
-        navigation,
-    }: NavigationParams): NavigationScreenOptions => ({
-        headerStyle: {
-            backgroundColor: '#000',
-            marginLeft: 15,
-            marginRight: 15,
-            borderBottomWidth: 0,
-        },
-        headerLeft: (
-            <Icon
-                name="close"
-                color="#fff"
-                onPress={(): void => {
-                    navigation.goBack();
-                }}
-                Component={TouchableOpacity}
-            />
-        ),
-    });
-
-    public render(): JSX.Element {
-        const details = this.props.navigation.state.params.input;
-        console.log(details);
-        return (
-            <View style={styles.container}>
-                <Formik enableReinitialize initialValues={details} onSubmit={values => console.log(values)}>
+export const Form = props => {
+    const suggestionsContext: any = React.useContext(AutoCompleteContext);
+    const details = suggestionsContext.form;
+    const handleInput = (e, type) => {
+        suggestionsContext.setInput(e);
+        console.log(suggestionsContext.form);
+        suggestionsContext.setEditMode(true);
+    };
+    return (
+        <View>
+            {!suggestionsContext.editMode ? (
+                <Formik
+                    enableReinitialize
+                    initialValues={details}
+                    onSubmit={values => console.log(values)}
+                >
                     {({ handleChange, values }) => (
                         <View style={Container.flexVerticalTop}>
                             <Field
-                                onChangeText={handleChange('Film')}
-                                value={values.Film}
+                                onChangeText={(e) => { handleInput(e, 'film')}}
+                                value={values.film}
                                 label="FILM"
                                 name="Film"
                                 component={renderField}
                                 placeholder=""
-                                onFocus={() =>
-                                    NavigationService.navigate('AutoComplete', {
-                                        input: values.Film,
-                                    })
-                                }
                             />
                             <Field
-                                onChangeText={handleChange('Gear')}
-                                value={values.Gear}
+                                onChangeText={handleInput}
+                                value={values.gear}
                                 label="GEAR"
                                 name="Gear"
                                 component={renderField}
                                 placeholder=""
-                                onFocus={() =>
-                                    NavigationService.navigate('AutoComplete', {
-                                        input: values.Gear,
-                                    })
-                                }
                             />
                         </View>
                     )}
                 </Formik>
-            </View>
-        );
-    }
+            ) : null}
+        </View>
+    );
 }
 
-function mapStateToProps(state: AppState, props): object {
-    console.log('state to props');
+export const UploadDetails: React.FunctionComponent<Props> = props => {
+    return (
+        <View style={styles.container}>
+            <CapaAutoCompleteProvider>
+                <Form/>
+                <CapaAutoComplete />
+            </CapaAutoCompleteProvider>
+        </View>
+    );
+}
+
+function mapStateToProps(state: AppState, params): object {
     return {
-        details: { Film: 'Test', Gear: 'Canon F1 New' },
+        //details: { film: 'Test', gear: 'Canon F1 New' },
     };
 }
 
@@ -163,4 +167,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): Dis
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withFormik({ mapPropsToValues: (props) => ({ details: props.details })})(UploadDetails));
+)(UploadDetails);
