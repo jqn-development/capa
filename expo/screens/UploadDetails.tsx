@@ -52,8 +52,7 @@ interface Item {
 }
 
 interface FormValues {
-    film: string;
-    gear: string;
+    [key: string]: string;
 }
 
 interface NavStatelessComponent extends React.StatelessComponent {
@@ -82,9 +81,13 @@ export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
     const details = suggestionsContext.form;
     const handleInput = (e: string, type: string) => {
-        suggestionsContext.setInput(e);
         suggestionsContext.setEditMode(true);
         suggestionsContext.setEditType(type);
+        const formState = {
+            ...suggestionsContext.form,
+            [type as string]: e,
+        };
+        suggestionsContext.setForm(formState);
     };
     return (
         <View>
@@ -124,7 +127,7 @@ export const UploadDetailsForm = () => {
     );
 };
 
-export const UploadDetails: NavigationScreenComponent<Props> = () => {
+export const UploadDetails: NavigationScreenComponent = () => {
     return (
         <View style={styles.container}>
             <CapaAutoCompleteProvider>

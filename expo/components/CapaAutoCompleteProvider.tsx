@@ -7,22 +7,22 @@ interface Props {
 
 // https://rjzaworski.com/2018/05/react-context-with-typescript
 interface AutoCompleteContext {
-    suggestions: Item[];
-    setSuggestions(delta: Item[]): void;
-    fetchSuggestions(): Promise<void>;
-    input: string;
-    setInput(delta: string): void;
     editMode: boolean;
     setEditMode(delta: boolean): void;
-    form: object;
+    form: FormValues;
     setForm(delta: object): void;
     editType: string | null;
+    editTypeUrl: string | null;
     setEditType(delta: string): void;
+    setEditTypeUrl(delta: string): void;
 }
 interface Item {
     id: string;
     name: string;
     avatar?: string;
+}
+interface FormValues {
+    [key: string]: string;
 }
 
 export const AutoCompleteContext = createContext<AutoCompleteContext | null>(null);
@@ -36,48 +36,21 @@ export const useAutoCompleteContext = (): AutoCompleteContext => {
 };
 
 export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props => {
-    const [suggestions, setSuggestions] = useState<Item[]>([]);
-    const [input, setInput] = useState('');
-    const [form, setForm] = useState({});
+    const [form, setForm] = useState<FormValues>({});
     const [editMode, setEditMode] = useState(false);
     const [editType, setEditType] = useState('');
+    const [editTypeUrl, setEditTypeUrl] = useState('');
     const { children } = props;
-    const fetchSuggestions = async () => {
-        return Promise.resolve({
-            suggestions: [
-                {
-                    id: 'test',
-                    name: 'ILFORD DELTA 100',
-                    avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-                },
-                {
-                    id: 'ilf12',
-                    name: 'ILFORD HP5',
-                    avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-                },
-                {
-                    id: 'kodak232',
-                    name: 'KODAK PORTRA 100',
-                    avatar: 'http://i.imgur.com/9Ttuw8c.jpg',
-                },
-            ],
-        }).then(data => {
-            setSuggestions(data.suggestions);
-        });
-    };
 
     return (
         <AutoCompleteContext.Provider
             value={{
-                suggestions,
-                fetchSuggestions,
-                setSuggestions,
-                input,
-                setInput,
                 editMode,
                 setEditMode,
                 editType,
                 setEditType,
+                editTypeUrl,
+                setEditTypeUrl,
                 form,
                 setForm,
             }}
