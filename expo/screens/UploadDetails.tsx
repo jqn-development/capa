@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-    NavigationScreenProp,
-    NavigationScreenOptions,
-    NavigationParams,
-    NavigationState,
-} from 'react-navigation';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Icon, Input } from 'react-native-elements';
+import {
+    NavigationScreenProps,
+    NavigationScreenOptions,
+    NavigationScreenComponent,
+    NavigationParams,
+} from 'react-navigation';
 // @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
 import { Formik, Field } from 'formik';
@@ -15,9 +15,8 @@ import { ThunkDispatch } from 'redux-thunk';
 import CapaAutoComplete from '../components/CapaAutoComplete';
 import {
     CapaAutoCompleteProvider,
-    AutoCompleteContext,
+    useAutoCompleteContext,
 } from '../components/CapaAutoCompleteProvider';
-import { AppState } from '../store/rootReducer';
 import { S3ActionTypes } from '../modules/s3/types/actions';
 import { Colors, Container, InputField } from '../styles';
 
@@ -38,43 +37,18 @@ const styles = StyleSheet.create({
     },
 });
 
-interface Props {
+interface Props extends NavigationScreenProps {
     errorMessage: string;
     details: Record<string, string>;
-    navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
 interface DispatchProps {
-    dispatchSaveDetails: (Gear: Gear, Film: Film) => void;
+    dispatchSaveDetails: (Gear: Item, Film: Item) => void;
 }
 
-interface Film {
+interface Item {
     id: string;
     name: string;
-}
-
-interface Gear {
-    id: string;
-    name: string;
-}
-
-interface State {
-    Film: Film | null;
-    Gear: Gear | null;
-}
-
-interface SubmitFormData {
-    Film: string;
-    Gear: string;
-}
-
-interface SubmitForm {
-    (e: SubmitFormData): void;
-}
-
-interface MyFormProps {
-    film: string;
-    gear: string;
 }
 
 interface FormValues {
@@ -82,10 +56,16 @@ interface FormValues {
     gear: string;
 }
 
+interface NavStatelessComponent extends React.StatelessComponent {
+    navigationOptions?: NavigationScreenOptions;
+}
+
 const renderField = ({
     field, // { name, value, onChange, onBlur }
     ...props
-}: any) => {
+}: {
+    field: object;
+}) => {
     return (
         <Input
             placeholderTextColor="white"
@@ -98,10 +78,10 @@ const renderField = ({
     );
 };
 
-export const Form = props => {
-    const suggestionsContext: any = React.useContext(AutoCompleteContext);
+export const Form = () => {
+    const suggestionsContext = useAutoCompleteContext();
     const details = suggestionsContext.form;
-    const handleInput = (e, type) => {
+    const handleInput = (e: string, type: string) => {
         suggestionsContext.setInput(e);
         suggestionsContext.setEditMode(true);
         suggestionsContext.setEditType(type);
@@ -109,15 +89,17 @@ export const Form = props => {
     return (
         <View>
             {!suggestionsContext.editMode ? (
-                <Formik
+                <Formik<FormValues | {}>
                     enableReinitialize
                     initialValues={details}
                     onSubmit={values => console.log(values)}
                 >
-                    {({ values }) => (
+                    {({ values }: { values: FormValues }) => (
                         <View style={Container.flexVerticalTop}>
                             <Field
-                                onChangeText={(e) => { handleInput(e, 'film')}}
+                                onChangeText={(e: string) => {
+                                    handleInput(e, 'film');
+                                }}
                                 value={values.film}
                                 label="FILM"
                                 name="Film"
@@ -125,7 +107,9 @@ export const Form = props => {
                                 placeholder=""
                             />
                             <Field
-                                onChangeText={(e) => { handleInput(e, 'gear')}}
+                                onChangeText={(e: string) => {
+                                    handleInput(e, 'gear');
+                                }}
                                 value={values.gear}
                                 label="GEAR"
                                 name="Gear"
@@ -138,24 +122,37 @@ export const Form = props => {
             ) : null}
         </View>
     );
-}
+};
 
-export const UploadDetails: React.FunctionComponent<Props> = props => {
+export const UploadDetails: NavigationScreenComponent<Props> = () => {
     return (
         <View style={styles.container}>
             <CapaAutoCompleteProvider>
-                <Form/>
+                <Form />
                 <CapaAutoComplete />
             </CapaAutoCompleteProvider>
         </View>
     );
-}
+};
 
-function mapStateToProps(state: AppState): object {
-    return {
-        //details: { film: 'Test', gear: 'Canon F1 New' },
-    };
-}
+UploadDetails.navigationOptions = ({ navigation }: NavigationParams): NavigationScreenOptions => ({
+    headerStyle: {
+        backgroundColor: '#000',
+        marginLeft: 15,
+        marginRight: 15,
+        borderBottomWidth: 0,
+    },
+    headerLeft: (
+        <Icon
+            name="close"
+            color="#fff"
+            onPress={(): void => {
+                navigation.goBack();
+            }}
+            Component={TouchableOpacity}
+        />
+    ),
+});
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): DispatchProps => ({
     dispatchSaveDetails: () => {
@@ -164,6 +161,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): Dis
 });
 
 export default connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
 )(UploadDetails);

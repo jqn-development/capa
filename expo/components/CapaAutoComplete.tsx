@@ -1,14 +1,11 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { debounce } from 'lodash';
 // @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Input, ListItem } from 'react-native-elements';
 import { Colors, Container, InputField } from '../styles';
-import {
-    AutoCompleteDispatchContext,
-    AutoCompleteContext,
-} from '../components/CapaAutoCompleteProvider';
+import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
 
 const styles = StyleSheet.create({
     container: {
@@ -41,32 +38,26 @@ const styles = StyleSheet.create({
     },
 });
 
-interface AutoCompleteProps {
-    input: {
-        name: string;
-        value: string;
-    };
-}
-
 interface Item {
     id: string;
     name: string;
     avatar?: string;
 }
 
-const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: AutoCompleteProps) => {
-    const dispatch = React.useContext(AutoCompleteDispatchContext);
-    const suggestionsContext: any = React.useContext(AutoCompleteContext);
-    const key = suggestionsContext.editType;
-    const filtered = suggestionsContext.suggestions.filter((item: Item) => {
+const CapaAutoComplete: React.FunctionComponent = () => {
+    const suggestionsContext = useAutoCompleteContext();
+    const filtered = suggestionsContext.suggestions.filter((item: any) => {
         return item.name.indexOf(suggestionsContext.input) !== -1;
     });
-    const debounceLoadData = useCallback(debounce(dispatch.fetchSuggestions, 100), []);
+    const debounceLoadData = useCallback(debounce(suggestionsContext.fetchSuggestions, 100), []);
 
-    const handleInput = e => {
-        suggestionsContext.setForm({...suggestionsContext.form, [key]: e});
+    const handleInput = (e: string) => {
+        suggestionsContext.setForm({
+            ...suggestionsContext.form,
+            [suggestionsContext.editType as string]: e,
+        });
         suggestionsContext.setInput(e);
-        debounceLoadData(e);
+        debounceLoadData();
     };
 
     function Item({ item }: { item: Item }) {
@@ -74,7 +65,10 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
             <TouchableOpacity
                 onPress={() => {
                     suggestionsContext.setInput(item.name);
-                    const formState = { ...suggestionsContext.form, [key]: item.name };
+                    const formState = {
+                        ...suggestionsContext.form,
+                        [suggestionsContext.editType as string]: item.name,
+                    };
                     suggestionsContext.setForm(formState);
                     suggestionsContext.setEditMode(false);
                 }}
@@ -115,8 +109,8 @@ const CapaAutoComplete: React.FunctionComponent<AutoCompleteProps> = (props: Aut
                     />
                     <FlatList
                         data={filtered}
-                        renderItem={({ item }) => <Item item={item} />}
-                        keyExtractor={item => item.id}
+                        renderItem={({ item }: { item: Item }) => <Item item={item} />}
+                        keyExtractor={(item: Item) => item.id}
                     />
                 </View>
             ) : null}

@@ -5,25 +5,45 @@ interface Props {
     children?: React.ReactNode;
 }
 
-export const AutoCompleteContext = createContext([]);
-export const AutoCompleteDispatchContext = createContext([]);
+// https://rjzaworski.com/2018/05/react-context-with-typescript
+interface AutoCompleteContext {
+    suggestions: Item[];
+    setSuggestions(delta: Item[]): void;
+    fetchSuggestions(): Promise<void>;
+    input: string;
+    setInput(delta: string): void;
+    editMode: boolean;
+    setEditMode(delta: boolean): void;
+    form: object;
+    setForm(delta: object): void;
+    editType: string | null;
+    setEditType(delta: string): void;
+}
+interface Item {
+    id: string;
+    name: string;
+    avatar?: string;
+}
 
-function useAutoCompleteDispatch() {
-    const context = React.useContext(AutoCompleteDispatchContext);
-    if (context === undefined) {
+export const AutoCompleteContext = createContext<AutoCompleteContext | null>(null);
+
+export const useAutoCompleteContext = (): AutoCompleteContext => {
+    const context = React.useContext(AutoCompleteContext) || null;
+    if (context === null) {
         throw new Error('Must be used within a Provider');
     }
     return context;
-}
+};
+
 export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props => {
-    const [suggestions, setSuggestions] = useState([]);
-    const [input, setInput] = useState(props.input);
+    const [suggestions, setSuggestions] = useState<Item[]>([]);
+    const [input, setInput] = useState('');
     const [form, setForm] = useState({});
     const [editMode, setEditMode] = useState(false);
-    const [editType, setEditType] = useState(null);
+    const [editType, setEditType] = useState('');
     const { children } = props;
     const fetchSuggestions = async () => {
-        Promise.resolve({
+        return Promise.resolve({
             suggestions: [
                 {
                     id: 'test',
@@ -47,13 +67,24 @@ export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props =>
     };
 
     return (
-        <AutoCompleteContext.Provider value={{ suggestions, input, setInput, editMode, setEditMode, editType, setEditType, form, setForm }}>
-            <AutoCompleteDispatchContext.Provider value={{ fetchSuggestions }}>
-                {children}
-            </AutoCompleteDispatchContext.Provider>
+        <AutoCompleteContext.Provider
+            value={{
+                suggestions,
+                fetchSuggestions,
+                setSuggestions,
+                input,
+                setInput,
+                editMode,
+                setEditMode,
+                editType,
+                setEditType,
+                form,
+                setForm,
+            }}
+        >
+            {children}
         </AutoCompleteContext.Provider>
     );
 };
 
 CapaAutoCompleteProvider.propTypes = { children: PropTypes.node.isRequired };
-export { useAutoCompleteDispatch };
