@@ -78,7 +78,7 @@ const renderField = ({
     );
 };
 
-export const Form = () => {
+export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
     const details = suggestionsContext.form;
     const handleInput = (e: string, type: string) => {
@@ -128,7 +128,7 @@ export const UploadDetails: NavigationScreenComponent<Props> = () => {
     return (
         <View style={styles.container}>
             <CapaAutoCompleteProvider>
-                <Form />
+                <UploadDetailsForm />
                 <CapaAutoComplete />
             </CapaAutoCompleteProvider>
         </View>
