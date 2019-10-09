@@ -18,6 +18,8 @@ require('dotenv').config();
 const authApi = require('./controllers/auth.api');
 const photoApi = require('./controllers/photo.api');
 const userApi = require('./controllers/user.api');
+const filmApi = require('./controllers/film.api');
+const cameraApi = require('./controllers/camera.api');
 
 //Create server
 const app = express();
@@ -51,6 +53,8 @@ app.use(errorHandler());
 app.use('/api/auth', authApi);
 app.use('/api/photo', photoApi);
 app.use('/api/user', userApi);
+app.use('/api/film', filmApi);
+app.use('/api/camera', cameraApi);
 
 let server = app.listen(app.get('port'), () => {
 	console.log(
