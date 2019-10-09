@@ -12,6 +12,7 @@ import {
 import { vw } from 'react-native-expo-viewport-units';
 import { Formik, Field } from 'formik';
 import { ThunkDispatch } from 'redux-thunk';
+import config from '../config';
 import CapaAutoComplete from '../components/CapaAutoComplete';
 import {
     CapaAutoCompleteProvider,
@@ -80,7 +81,8 @@ const renderField = ({
 export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
     const details = suggestionsContext.form;
-    const handleInput = (e: string, type: string) => {
+    const handleInput = (e: string, type: string, apiUrl: string) => {
+        suggestionsContext.setEditTypeUrl(apiUrl);
         suggestionsContext.setEditMode(true);
         suggestionsContext.setEditType(type);
         const formState = {
@@ -101,7 +103,7 @@ export const UploadDetailsForm = () => {
                         <View style={Container.flexVerticalTop}>
                             <Field
                                 onChangeText={(e: string) => {
-                                    handleInput(e, 'film');
+                                    handleInput(e, 'film', `${config.url}/api/film/suggestions`);
                                 }}
                                 value={values.film}
                                 label="FILM"
@@ -111,7 +113,7 @@ export const UploadDetailsForm = () => {
                             />
                             <Field
                                 onChangeText={(e: string) => {
-                                    handleInput(e, 'gear');
+                                    handleInput(e, 'gear', `${config.url}/api/camera/suggestions`);
                                 }}
                                 value={values.gear}
                                 label="GEAR"

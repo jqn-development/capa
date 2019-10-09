@@ -6,7 +6,6 @@ import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Input, ListItem } from 'react-native-elements';
 import { Colors, Container, InputField } from '../styles';
 import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
-import config from '../config';
 
 const styles = StyleSheet.create({
     container: {
@@ -51,8 +50,8 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     const filtered = suggestions.filter((item: Item) => {
         return item.name.indexOf(suggestionsContext.form[editType]) !== -1;
     });
-    const fetchSuggestions = () =>
-        fetch(`${config.url}/api/film/suggestions`)
+    const fetchSuggestions = (apiUrl: string) => {
+        fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
                 setSuggestions(data.suggestions);
@@ -60,13 +59,14 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             .catch(error => {
                 console.log(error);
             });
+    }
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
     const handleInput = (e: string) => {
         suggestionsContext.setForm({
             ...suggestionsContext.form,
             [suggestionsContext.editType as string]: e,
         });
-        debounceLoadData();
+        debounceLoadData(String(suggestionsContext.editTypeUrl));
     };
 
     function Item({ item }: { item: Item }) {
