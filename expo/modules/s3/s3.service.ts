@@ -7,6 +7,7 @@ import { ErrorsActionTypes } from '../errors/types/actions';
 import { S3ActionTypes } from './types/actions';
 import { FormDataBody, ProgressEvent } from './types/upload';
 import { ResponseObject } from '../errors/types/error';
+import NavigationService from '../../navigation/service';
 
 export const storePhoto = (photo: Photo) => (
     dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | S3ActionTypes>,
@@ -38,6 +39,7 @@ export const storePhoto = (photo: Photo) => (
             dispatch(S3Reducer.setUploadStatus(null));
             dispatch(S3Reducer.setUploadFilename(null));
             dispatch(S3Reducer.setUploadFileSize(null));
+            NavigationService.navigate('UploadDetails', {});
         })
         .catch((error: { response: { data: ResponseObject } }) => {
             // If JWT token is expired, let's refresh it

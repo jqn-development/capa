@@ -2,12 +2,20 @@ import { vw, vh } from 'react-native-expo-viewport-units';
 
 const input = {
     width: '100%',
-    height: vh(5),
-    paddingVertical: 5,
+    height: vh(4),
+};
+
+const inputContainer = {
+    marginBottom: 20,
+    paddingLeft: 0,
+    paddingRight: 0,
+    borderColor: 'white',
 };
 
 const inputText = {
-    fontSize: 12,
+    fontSize: 15,
+    width: vw(100),
+    borderColor: 'white',
 };
 
 const inputUnderline = {
@@ -23,4 +31,4 @@ const inputLabel = {
     marginTop: 20,
 };
 
-export { inputText, inputUnderline, inputLabel, input };
+export { inputText, inputUnderline, inputLabel, input, inputContainer };

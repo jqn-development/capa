@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import { AppLoading, Font, Icon } from 'expo';
+import { AppLoading } from 'expo';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-elements';
 import { NavigationContainerComponent } from 'react-navigation';
@@ -8,6 +8,8 @@ import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
 import capaStore from './store';
 import theme from './styles/theme';
+import * as Font from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 import SpaceMono from './assets/fonts/SpaceMono-Regular.ttf';
 
 interface State {
@@ -37,7 +39,7 @@ export default class App extends React.Component<Props, State> {
     public loadResourcesAsync = async (): Promise<Font> =>
         Promise.all([
             Font.loadAsync({
-                ...Icon.Ionicons.font,
+                ...Ionicons.font,
                 'space-mono': SpaceMono,
             }),
         ]);

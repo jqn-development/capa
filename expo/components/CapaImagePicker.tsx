@@ -1,5 +1,14 @@
 import React from 'react';
-import { View, Image, FlatList, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import {
+    View,
+    Image,
+    FlatList,
+    Text,
+    ListRenderItemInfo,
+    TouchableOpacity,
+    StyleSheet,
+    Animated,
+} from 'react-native';
 
 const styles = StyleSheet.create({
     flexContainer: {
@@ -31,7 +40,7 @@ interface State {
     isLoadingComplete?: boolean;
     skipLoadingScreen?: boolean;
     selectedPhoto?: Photo | null;
-    bounceValue: any;
+    bounceValue: Animated.Value;
 }
 
 interface Props {
@@ -53,14 +62,14 @@ export default class CapaImagePicker extends React.Component<Props, State> {
         onChange(photo);
     }
 
-    renderPhoto = (photo: any) => {
+    renderPhoto = (ListItem: ListRenderItemInfo<CameraRollImage>) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    this.pickPhoto(photo.item);
+                    this.pickPhoto(ListItem.item);
                 }}
             >
-                <Image source={{ uri: photo.item.uri }} style={styles.galleryImage} />
+                <Image source={{ uri: ListItem.item.uri }} style={styles.galleryImage} />
             </TouchableOpacity>
         );
     };

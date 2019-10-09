@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Header, Icon } from 'react-native-elements';
+// @ts-ignore
 import { withNavigation } from 'react-navigation';
 import PropTypes from 'prop-types';
 
@@ -46,8 +47,8 @@ const capaHeader = props => {
 
 capaHeader.propTypes = {
     navigation: PropTypes.shape({}).isRequired,
-    search: PropTypes.bool.isRequired,
-    add: PropTypes.bool.isRequired,
+    search: PropTypes.bool,
+    add: PropTypes.bool,
 };
 
 export default withNavigation(capaHeader);
