@@ -9,8 +9,6 @@ import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
 
 const styles = StyleSheet.create({
     container: {
-        paddingLeft: 5,
-        paddingRight: 5,
         ...Container.flexVerticalTop,
         ...Colors.background,
     },
@@ -115,11 +113,11 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         inputContainerStyle={[InputField.inputUnderline]}
                         containerStyle={[InputField.inputContainer]}
                         inputStyle={[Colors.whiteText, InputField.inputText]}
-                        value={suggestionsContext.form[String(suggestionsContext.active)]}
+                        value={suggestionsContext.form[suggestionsContext.active]}
                         onChangeText={handleInput}
                         onFocus={() => {
                             setSuggestions([]);
-                            debounceLoadData(String(suggestionsContext.activeUrl));
+                            debounceLoadData(suggestionsContext.activeUrl);
                         }}
                     />
                     <FlatList

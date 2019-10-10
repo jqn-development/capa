@@ -8,6 +8,7 @@ import {
     NavigationScreenComponent,
     NavigationParams,
 } from 'react-navigation';
+import FullWidthImage from 'react-native-fullwidth-image';
 // @ts-ignore
 import { vw } from 'react-native-expo-viewport-units';
 import { Formik, Field } from 'formik';
@@ -20,19 +21,23 @@ import {
 } from '../components/CapaAutoCompleteProvider';
 import { S3ActionTypes } from '../modules/s3/types/actions';
 import { Colors, Container, InputField } from '../styles';
+import registerGfx from '../assets/images/bp.jpg';
 
 const styles = StyleSheet.create({
     container: {
         ...Container.flexVerticalTop,
         ...Colors.background,
-        paddingLeft: vw(5),
-        paddingRight: vw(5),
+        paddingLeft: vw(10),
+        paddingRight: vw(10),
     },
     errorMessage: {
         ...Colors.errorText,
         paddingTop: 20,
         paddingLeft: 10,
         fontSize: 10,
+    },
+    imageView: {
+        marginBottom: 30,
     },
 });
 
@@ -48,6 +53,7 @@ interface DispatchProps {
 interface Item {
     id: string;
     name: string;
+    avatar?: string;
 }
 
 interface FormValues {
@@ -91,6 +97,11 @@ export const UploadDetailsForm = () => {
     };
     return (
         <View>
+            {!suggestionsContext.editMode ? (
+                <View style={styles.imageView}>
+                    <FullWidthImage source={registerGfx} ratio={10 / 16} />
+                </View>
+            ) : null}
             {!suggestionsContext.editMode ? (
                 <Formik<FormValues | {}>
                     enableReinitialize

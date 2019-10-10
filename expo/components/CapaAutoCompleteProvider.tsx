@@ -10,16 +10,12 @@ interface AutoCompleteContext {
     setEditMode(delta: boolean): void;
     form: FormValues;
     setForm(delta: object): void;
-    active: string | null;
+    active: string;
     setActive(delta: string): void;
-    activeUrl: string | null;
+    activeUrl: string;
     setActiveUrl(delta: string): void;
 }
-interface Item {
-    id: string;
-    name: string;
-    avatar?: string;
-}
+
 interface FormValues {
     [key: string]: string;
 }
