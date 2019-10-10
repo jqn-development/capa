@@ -5,7 +5,6 @@ interface Props {
     children?: React.ReactNode;
 }
 
-// https://rjzaworski.com/2018/05/react-context-with-typescript
 interface AutoCompleteContext {
     editMode: boolean;
     setEditMode(delta: boolean): void;

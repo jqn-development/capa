@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
 interface Item {
     id: string;
     name: string;
+    details: string;
     avatar?: string;
 }
 
@@ -69,7 +70,7 @@ function Item({ item }: { item: Item }) {
                         : undefined
                 }
                 title={item.name}
-                subtitle="120"
+                subtitle={item.details}
                 titleStyle={styles.listItemTitle}
                 subtitleStyle={styles.listItemSubtitle}
                 containerStyle={styles.listItemContainer}
@@ -89,7 +90,6 @@ const CapaAutoComplete: React.FunctionComponent = () => {
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 setSuggestions(data.suggestions);
             })
             .catch(error => {
@@ -117,6 +117,10 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         inputStyle={[Colors.whiteText, InputField.inputText]}
                         value={suggestionsContext.form[String(suggestionsContext.active)]}
                         onChangeText={handleInput}
+                        onFocus={() => {
+                            setSuggestions([]);
+                            debounceLoadData(String(suggestionsContext.activeUrl));
+                        }}
                     />
                     <FlatList
                         data={filtered}

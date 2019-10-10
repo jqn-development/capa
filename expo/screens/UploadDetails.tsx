@@ -27,13 +27,11 @@ const styles = StyleSheet.create({
         ...Colors.background,
         paddingLeft: vw(5),
         paddingRight: vw(5),
-        paddingTop: 20,
     },
     errorMessage: {
         ...Colors.errorText,
         paddingTop: 20,
         paddingLeft: 10,
-        margin: 0,
         fontSize: 10,
     },
 });
@@ -116,7 +114,7 @@ export const UploadDetailsForm = () => {
                                     handleInput(e, 'gear', `${config.url}/api/camera/suggestions`);
                                 }}
                                 value={values.gear}
-                                label="GEAR"
+                                label="CAMERA"
                                 name="Gear"
                                 component={renderField}
                                 placeholder=""

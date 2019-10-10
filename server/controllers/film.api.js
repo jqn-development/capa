@@ -10,17 +10,20 @@ router.get('/suggestions', (req, res) => {
 		"suggestions": [
 			{
 				"id": "test1",
-				"name": "ILFORD DELTA 100",
+				"name": "Ilford Delta 100",
+				"details": "ISO 100 35mm",
 				"avatar": "http://i.imgur.com/9Ttuw8c.jpg"
 			},
 			{
 				"id": "test2",
-				"name": "ILFORD HP5",
+				"name": "Ilford HP5",
+				"details": "ISO 100 120",
 				"avatar": "http://i.imgur.com/9Ttuw8c.jpg"
 			},
 			{
 				"id": "test3",
-				"name": "KODAK EKTAR 100",
+				"name": "Kodak Ektar",
+				"details": "ISO 100 35mm",
 				"avatar": "http://i.imgur.com/9Ttuw8c.jpg"
 			}
 		]
