@@ -6,7 +6,7 @@ import {
     GetPhotosReturnType,
     GetPhotosParamType,
 } from 'react-native';
-import { Icon, ListItem } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import uuidv4 from 'uuid/v4';
 import {

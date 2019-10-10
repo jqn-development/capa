@@ -43,64 +43,70 @@ interface Item {
     name: string;
     avatar?: string;
 }
+
+function Item({ item }: { item: Item }) {
+    console.log('item2');
+    const suggestionsContext = useAutoCompleteContext();
+    return (
+        <TouchableOpacity
+            onPress={() => {
+                const formState = {
+                    ...suggestionsContext.form,
+                    [suggestionsContext.active as string]: item.name,
+                };
+                suggestionsContext.setForm(formState);
+                suggestionsContext.setEditMode(false);
+            }}
+        >
+            <ListItem
+                leftAvatar={
+                    item.avatar
+                        ? {
+                              size: 'medium',
+                              title: item.name,
+                              source: { uri: item.avatar },
+                              showEditButton: false,
+                          }
+                        : undefined
+                }
+                title={item.name}
+                subtitle="120"
+                titleStyle={styles.listItemTitle}
+                subtitleStyle={styles.listItemSubtitle}
+                containerStyle={styles.listItemContainer}
+            />
+        </TouchableOpacity>
+    );
+}
 const CapaAutoComplete: React.FunctionComponent = () => {
+    console.log('component');
+    const [input, setInput] = useState('');
     const [suggestions, setSuggestions] = useState<Item[]>([]);
     const suggestionsContext = useAutoCompleteContext();
-    const editType = String(suggestionsContext.editType);
-    const filtered = suggestions.filter((item: Item) => {
-        return item.name.indexOf(suggestionsContext.form[editType]) !== -1;
-    });
+    const active = String(suggestionsContext.active);
+    const filtered = suggestions.filter(
+        (item: Item) =>
+            item.name.toLowerCase().indexOf(suggestionsContext.form[active].toLowerCase()) !== -1
+    );
     const fetchSuggestions = (apiUrl: string) => {
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 setSuggestions(data.suggestions);
             })
             .catch(error => {
                 console.log(error);
             });
-    }
+    };
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
     const handleInput = (e: string) => {
         suggestionsContext.setForm({
             ...suggestionsContext.form,
-            [suggestionsContext.editType as string]: e,
+            [active]: e,
         });
-        debounceLoadData(String(suggestionsContext.editTypeUrl));
+        debounceLoadData(String(suggestionsContext.activeUrl));
     };
-
-    function Item({ item }: { item: Item }) {
-        return (
-            <TouchableOpacity
-                onPress={() => {
-                    const formState = {
-                        ...suggestionsContext.form,
-                        [suggestionsContext.editType as string]: item.name,
-                    };
-                    suggestionsContext.setForm(formState);
-                    suggestionsContext.setEditMode(false);
-                }}
-            >
-                <ListItem
-                    leftAvatar={
-                        item.avatar
-                            ? {
-                                  size: 'medium',
-                                  title: item.name,
-                                  source: { uri: item.avatar },
-                                  showEditButton: false,
-                              }
-                            : undefined
-                    }
-                    title={item.name}
-                    subtitle="120"
-                    titleStyle={styles.listItemTitle}
-                    subtitleStyle={styles.listItemSubtitle}
-                    containerStyle={styles.listItemContainer}
-                />
-            </TouchableOpacity>
-        );
-    }
     return (
         <View style={styles.container}>
             {suggestionsContext.editMode ? (
@@ -112,7 +118,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         inputContainerStyle={[InputField.inputUnderline]}
                         containerStyle={[InputField.inputContainer]}
                         inputStyle={[Colors.whiteText, InputField.inputText]}
-                        value={suggestionsContext.form[String(suggestionsContext.editType)]}
+                        value={suggestionsContext.form[String(suggestionsContext.active)]}
                         onChangeText={handleInput}
                     />
                     <FlatList

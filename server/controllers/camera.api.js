@@ -6,18 +6,33 @@ router.get('/suggestions', (req, res) => {
 		"suggestions": [
 			{
 				"id": "test",
-				"name": "Hasselblad 500 CM",
-				"avatar": "http://i.imgur.com/9Ttuw8c.jpg"
+				"name": "Leica Leicaflex SL2",
+				"avatar": "http://i.imgur.com/vZflZsg.png"
 			},
 			{
 				"id": "test2",
-				"name": "Canon F1",
-				"avatar": "http://i.imgur.com/9Ttuw8c.jpg"
+				"name": "Leica M3 SS",
+				"avatar": "http://i.imgur.com/vZflZsg.png"
 			},
 			{
 				"id": "test3",
-				"name": "Leica",
-				"avatar": "http://i.imgur.com/9Ttuw8c.jpg"
+				"name": "Leica R4",
+				"avatar": "http://i.imgur.com/vZflZsg.png"
+			},
+			{
+				"id": "test4",
+				"name": "Leica IIIA",
+				"avatar": "http://i.imgur.com/vZflZsg.png"
+			},
+			{
+				"id": "test5",
+				"name": "Leica M5",
+				"avatar": "http://i.imgur.com/vZflZsg.png"
+			},
+			{
+				"id": "test6",
+				"name": "Leica M2",
+				"avatar": "http://i.imgur.com/vZflZsg.png"
 			}
 		]
 	});

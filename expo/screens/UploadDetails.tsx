@@ -82,9 +82,9 @@ export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
     const details = suggestionsContext.form;
     const handleInput = (e: string, type: string, apiUrl: string) => {
-        suggestionsContext.setEditTypeUrl(apiUrl);
+        suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
-        suggestionsContext.setEditType(type);
+        suggestionsContext.setActive(type);
         const formState = {
             ...suggestionsContext.form,
             [type as string]: e,

@@ -11,10 +11,10 @@ interface AutoCompleteContext {
     setEditMode(delta: boolean): void;
     form: FormValues;
     setForm(delta: object): void;
-    editType: string | null;
-    editTypeUrl: string | null;
-    setEditType(delta: string): void;
-    setEditTypeUrl(delta: string): void;
+    active: string | null;
+    setActive(delta: string): void;
+    activeUrl: string | null;
+    setActiveUrl(delta: string): void;
 }
 interface Item {
     id: string;
@@ -38,8 +38,8 @@ export const useAutoCompleteContext = (): AutoCompleteContext => {
 export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props => {
     const [form, setForm] = useState<FormValues>({});
     const [editMode, setEditMode] = useState(false);
-    const [editType, setEditType] = useState('');
-    const [editTypeUrl, setEditTypeUrl] = useState('');
+    const [active, setActive] = useState('');
+    const [activeUrl, setActiveUrl] = useState('');
     const { children } = props;
 
     return (
@@ -47,10 +47,10 @@ export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props =>
             value={{
                 editMode,
                 setEditMode,
-                editType,
-                setEditType,
-                editTypeUrl,
-                setEditTypeUrl,
+                active,
+                setActive,
+                activeUrl,
+                setActiveUrl,
                 form,
                 setForm,
             }}
