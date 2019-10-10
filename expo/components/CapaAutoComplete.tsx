@@ -45,7 +45,6 @@ interface Item {
 }
 
 function Item({ item }: { item: Item }) {
-    console.log('item2');
     const suggestionsContext = useAutoCompleteContext();
     return (
         <TouchableOpacity
@@ -79,8 +78,6 @@ function Item({ item }: { item: Item }) {
     );
 }
 const CapaAutoComplete: React.FunctionComponent = () => {
-    console.log('component');
-    const [input, setInput] = useState('');
     const [suggestions, setSuggestions] = useState<Item[]>([]);
     const suggestionsContext = useAutoCompleteContext();
     const active = String(suggestionsContext.active);
