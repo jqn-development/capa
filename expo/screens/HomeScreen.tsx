@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 
 interface HomeScreenProps {
     loggedIn: boolean;
-    authToken: string;
+    authToken: string | null;
 }
 
 class HomeScreen extends React.Component<HomeScreenProps> {

@@ -99,7 +99,7 @@ export const UploadDetailsForm = () => {
         <View>
             {!suggestionsContext.editMode ? (
                 <View style={styles.imageView}>
-                    <FullWidthImage source={registerGfx} ratio={10 / 16} />
+                    <FullWidthImage source={registerGfx} />
                 </View>
             ) : null}
             {!suggestionsContext.editMode ? (

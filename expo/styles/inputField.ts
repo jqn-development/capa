@@ -6,18 +6,24 @@ const input = {
     height: vh(6),
 };
 
+const inputContainerSmall = {
+    paddingLeft: 0,
+    paddingRight: 0,
+    borderColor: 'white',
+};
+
 const inputContainer = {
     marginTop: 10,
     marginBottom: 15,
     paddingLeft: 0,
     paddingRight: 0,
     borderColor: 'white',
+    borderBottomWidth: 0,
 };
 
 const inputText = {
-    fontSize: 18,
+    fontSize: vw(3.8),
     width: vw(100),
-    borderColor: 'white',
 };
 
 const inputUnderline = {
@@ -25,10 +31,23 @@ const inputUnderline = {
     borderColor: 'white',
 };
 
+const inputNoUnderline = {
+    borderBottomWidth: 0,
+    borderColor: 'white',
+};
+
 const inputLabel = {
-    fontSize: vw(3.2),
+    fontSize: vw(3.8),
     fontWeight: 'normal',
     marginVertical: vh(0),
 };
 
-export { inputText, inputUnderline, inputLabel, input, inputContainer };
+export {
+    inputText,
+    inputUnderline,
+    inputNoUnderline,
+    inputLabel,
+    input,
+    inputContainer,
+    inputContainerSmall,
+};

@@ -1,22 +1,21 @@
 import React from 'react';
 import { Input } from 'react-native-elements';
-import { Field } from 'redux-form';
+import { Field } from 'formik';
 import PropTypes from 'prop-types';
 import { Colors, InputField } from '../../styles';
 
 interface Props {
-    input: { onChange: (text: string) => void };
+    input: object;
 }
 
-const renderPassword = ({ input: { onChange }, ...restInput }: Props) => {
+const renderPassword = ({ input }: Props) => {
     return (
         <Input
             testID="password"
             placeholder=""
             placeholderTextColor="white"
             inputStyle={[Colors.whiteText, InputField.inputText]}
-            onChangeText={onChange}
-            {...restInput}
+            {...input}
         />
     );
 };

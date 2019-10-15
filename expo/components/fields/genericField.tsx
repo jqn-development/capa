@@ -1,42 +1,41 @@
 import React from 'react';
+import { Field } from 'formik';
 import { Input } from 'react-native-elements';
-import { Field } from 'redux-form';
-import PropTypes from 'prop-types';
 import { Colors, InputField } from '../../styles';
-
-interface Props {
-    input: { onChange: (text: string) => void };
-}
-
-const renderField = ({ input: { onChange }, ...restInput }: Props) => {
-    return (
-        <Input
-            placeholderTextColor="white"
-            inputStyle={[Colors.whiteText, InputField.inputText]}
-            onChangeText={onChange}
-            {...restInput}
-        />
-    );
-};
-
-renderField.propTypes = {
-    input: PropTypes.shape({}).isRequired,
-};
 
 interface FieldProps {
     inputContainerStyle: object;
-    name: string;
+    onChangeText: (e: string) => void;
+    placeholder: string;
     label: string;
+    name: string;
+    value: string;
 }
-export default function genericField(props: FieldProps) {
-    const { inputContainerStyle, name, label } = props;
+const renderField = ({
+    field, // { name, value, onChange, onBlur }
+    ...props
+}: {
+    field: object;
+}) => {
     return (
-        <Field
-            label={label}
-            inputContainerStyle={inputContainerStyle}
-            labelStyle={InputField.inputLabel}
-            name={name}
-            component={renderField}
+        <Input
+            placeholderTextColor="white"
+            containerStyle={[InputField.inputContainerSmall]}
+            inputStyle={[Colors.whiteText, InputField.inputText]}
+            {...field}
+            {...props}
         />
     );
-}
+};
+
+const GenericField = (props: FieldProps) => {
+    return (
+        <Field
+            labelStyle={[InputField.inputLabel, Colors.whiteText]}
+            component={renderField}
+            {...props}
+        />
+    );
+};
+
+export default GenericField;

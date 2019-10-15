@@ -3,13 +3,12 @@ import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
-import { reduxForm } from 'redux-form';
+import { withFormik, FormikProps } from 'formik';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import { login } from '../modules/auth/auth.service';
-import EmailField from '../components/fields/emailField';
-import PasswordField from '../components/fields/passwordField';
-import { Colors, Container } from '../styles';
+import GenericField from '../components/fields/genericField';
+import { Colors, Container, InputField } from '../styles';
 import { AppState } from '../store/rootReducer';
 import signInGfx from '../assets/images/signIn.jpg';
 import { AuthActionTypes } from '../modules/auth/types/actions';
@@ -64,7 +63,10 @@ const styles = StyleSheet.create({
         paddingBottom: '10%',
     },
     clearButton: {
+        margin: 0,
+        padding: 0,
         width: 110,
+        marginLeft: -10,
     },
     errorMessage: {
         ...Colors.errorText,
@@ -78,19 +80,19 @@ const styles = StyleSheet.create({
     },
 });
 
-interface SubmitFormData {
+interface FormValues {
     email: string;
     password: string;
 }
 
 interface SubmitForm {
-    (e: SubmitFormData): void;
+    (e: FormValues): void;
 }
 
 interface ScreenProps {
-    // eslint-disable-next-line
-    handleSubmit: any; // React native onPress redux-form type conflict
+    handleSubmit: SubmitForm; // React native onPress redux-form type conflict
     errorMessage: string;
+    form: FormValues;
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
 }
 
@@ -98,66 +100,70 @@ interface DispatchProps {
     dispatchLogin: (username: string, password: string) => void;
 }
 
-type Props = ScreenProps & DispatchProps;
+type Props = DispatchProps & ScreenProps;
 
-class SignInScreen extends React.Component<Props> {
-    static navigationOptions = {
-        header: null,
-    };
-
-    render() {
-        const { handleSubmit, dispatchLogin, errorMessage, navigation } = this.props;
-        const submitForm: SubmitForm = e => {
-            dispatchLogin(e.email, e.password);
-        };
-
-        return (
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>CAPA</Text>
-                    <Text style={styles.subheaderText}>#analog #nofilter #filmsnotdead</Text>
-                </View>
-                <View style={styles.body}>
-                    <ImageBackground
-                        resizeMode="cover" // or cover
-                        style={styles.imageContainer}
-                        source={signInGfx}
-                    >
-                        <View style={styles.inputView}>
-                            <EmailField
-                                placeholder="example@email.com"
-                                label="EMAIL"
-                                inputContainerStyle={styles.input}
-                            />
-                            <PasswordField
-                                placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-                                label="PASSWORD"
-                                inputContainerStyle={styles.input}
-                            />
-                            <Text style={styles.errorMessage}>{errorMessage}</Text>
-                            <Button
-                                icon={
-                                    <Ionicons name="md-arrow-dropright" size={26} color="white" />
-                                }
-                                style={styles.squareButtonPos}
-                                buttonStyle={styles.squareButton}
-                                testID="login"
-                                onPress={handleSubmit(submitForm)}
-                            />
-                            <Button
-                                type="clear"
-                                buttonStyle={[styles.clearButton]}
-                                testID="newaccount"
-                                title="NEW ACCOUNT"
-                                onPress={() => navigation.navigate('SignUp')}
-                            />
-                        </View>
-                    </ImageBackground>
-                </View>
+const SignInScreen = (props: Props & FormikProps<FormValues>) => {
+    const { handleSubmit, errorMessage, navigation, values, handleChange } = props;
+    return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <Text style={styles.headerText}>CAPA</Text>
+                <Text style={styles.subheaderText}>#analog #nofilter #filmsnotdead</Text>
             </View>
-        );
-    }
-}
+            <View style={styles.body}>
+                <ImageBackground
+                    resizeMode="cover" // or cover
+                    style={styles.imageContainer}
+                    source={signInGfx}
+                >
+                    <View style={styles.inputView}>
+                        <GenericField
+                            onChangeText={handleChange('email')}
+                            name="email"
+                            label="EMAIL"
+                            placeholder="example@email.com"
+                            value={values.email}
+                            inputContainerStyle={[
+                                InputField.input,
+                                InputField.inputNoUnderline,
+                                { marginBottom: 20 },
+                            ]}
+                        />
+                        <GenericField
+                            onChangeText={handleChange('password')}
+                            name="password"
+                            label="PASSWORD"
+                            placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+                            value={values.password}
+                            inputContainerStyle={[InputField.input, InputField.inputNoUnderline]}
+                        />
+                        <Text style={styles.errorMessage}>{errorMessage}</Text>
+                        <Button
+                            icon={<Ionicons name="md-arrow-dropright" size={26} color="white" />}
+                            style={styles.squareButtonPos}
+                            buttonStyle={styles.squareButton}
+                            testID="login"
+                            onPress={() => {
+                                handleSubmit(values);
+                            }}
+                        />
+                        <Button
+                            type="clear"
+                            buttonStyle={[styles.clearButton]}
+                            testID="newaccount"
+                            title="NEW ACCOUNT"
+                            onPress={() => navigation.navigate('SignUp')}
+                        />
+                    </View>
+                </ImageBackground>
+            </View>
+        </View>
+    );
+};
+
+SignInScreen.navigationOptions = () => ({
+    header: null,
+});
 
 function mapStateToProps(state: AppState): object {
     return {
@@ -170,11 +176,14 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AuthActionTypes>): D
     },
 });
 
-const LoginConnect = connect(
+const formikEnhancer = withFormik<Props, FormValues>({
+    displayName: 'LoginForm',
+    handleSubmit: (payload, { props }) => {
+        props.dispatchLogin(payload.email, payload.password);
+    },
+})(SignInScreen);
+
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SignInScreen);
-
-export default reduxForm({
-    form: 'loginForm',
-})(LoginConnect);
+)(formikEnhancer);

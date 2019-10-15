@@ -15,7 +15,7 @@ import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import FullWidthImage from 'react-native-fullwidth-image';
 import { register, login, clearRegError } from '../modules/auth/auth.service';
-import EmailField from '../components/fields/emailField';
+import EmailField from '../components/fields/EmailField';
 import PasswordField from '../components/fields/passwordField';
 import GenericField from '../components/fields/genericField';
 import { Colors, Container, InputField } from '../styles';
@@ -127,7 +127,7 @@ class RegistrationScreen extends React.Component<Props> {
                 </View>
                 <View style={styles.fieldsView}>
                     <GenericField label="NAME" name="name" inputContainerStyle={styles.input} />
-                    <EmailField inputContainerStyle={styles.input} />
+                    <EmailField abel="NAME" name="name"inputContainerStyle={styles.input} />
                     <PasswordField inputContainerStyle={styles.input} />
                     <Text style={styles.errorMessage}>{errorMessage}</Text>
                 </View>
