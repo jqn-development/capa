@@ -9,15 +9,17 @@ import {
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
 import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { withFormik, FormikProps } from 'formik';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import FullWidthImage from 'react-native-fullwidth-image';
 import { register, login, clearRegError } from '../modules/auth/auth.service';
 import GenericField from '../components/fields/genericField';
+import { AppState } from '../store/rootReducer';
+import { AuthActionTypes } from '../modules/auth/types/actions';
 import { Colors, Container, InputField } from '../styles';
-
-const registerGfx = require('../assets/images/register.jpg');
+import registerGfx from '../assets/images/register.jpg';
 
 const styles = StyleSheet.create({
     container: {
@@ -79,11 +81,10 @@ const styles = StyleSheet.create({
     },
 });
 
-interface Props {
+interface ScreenProps {
+    handleSubmit: SubmitForm;
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-    dispatchRegister: any;
-    dispatchClearErrors: any;
-    errorMessage: any;
+    errorMessage: boolean | null;
 }
 interface FormValues {
     name: string;
@@ -91,13 +92,24 @@ interface FormValues {
     password: string;
 }
 
+interface SubmitForm {
+    (e: FormValues): void;
+}
+
+interface DispatchProps {
+    dispatchRegister: (name: string, email: string, password: string) => void;
+    dispatchClearErrors: () => void;
+}
+
+type Props = DispatchProps & ScreenProps;
+
 class RegistrationScreen extends React.Component<Props & FormikProps<FormValues>> {
     static navigationOptions = {
         header: null,
     };
 
     render() {
-        const { handleSubmit, navigation, dispatchClearErrors, errorMessage } = this.props;
+        const { values, handleSubmit, navigation, dispatchClearErrors, errorMessage } = this.props;
 
         const navigateToHome = () => {
             dispatchClearErrors();
@@ -128,10 +140,9 @@ class RegistrationScreen extends React.Component<Props & FormikProps<FormValues>
                 <View style={styles.nextstep}>
                     <Button
                         type="clear"
-                        buttonStyle={[styles.clearButton]}
                         testID="nextstep"
                         title="NEXT STEP"
-                        onPress={handleSubmit}
+                        onPress={() => handleSubmit(values)}
                     />
                 </View>
             </SafeAreaView>
@@ -139,33 +150,31 @@ class RegistrationScreen extends React.Component<Props & FormikProps<FormValues>
     }
 }
 
-function mapStateToProps(store) {
+function mapStateToProps(store: AppState) {
     return {
         errorMessage: store.auth.regError,
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        dispatchRegister: (name, email, password) => {
-            dispatch(register(name, email, password))
-                .then(() => {
-                    dispatch(login(email, password));
-                })
-                .catch(() => {
-                    // console.log(err);
-                });
-        },
-        dispatchClearErrors: () => {
-            dispatch(clearRegError());
-        },
-    };
-}
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, AuthActionTypes>): DispatchProps => ({
+    dispatchRegister: (name, email, password) => {
+        dispatch(register(name, email, password))
+            .then(() => {
+                dispatch(login(email, password));
+            })
+            .catch(() => {
+                // console.log(err);
+            });
+    },
+    dispatchClearErrors: () => {
+        dispatch(clearRegError());
+    },
+});
 
 const formikEnhancer = withFormik<Props, FormValues>({
     displayName: 'LoginForm',
     handleSubmit: (payload, { props }) => {
-        props.dispatchRegister(payload.email, payload.password);
+        props.dispatchRegister(payload.name, payload.email, payload.password);
     },
 })(RegistrationScreen);
 

@@ -5,12 +5,12 @@ import { Colors, InputField } from '../../styles';
 
 interface FieldProps {
     inputContainerStyle: object;
-    onChangeText: (e: string) => void;
-    placeholder: string;
+    onChangeText?: (e: string) => void;
+    placeholder?: string;
     label: string;
     secureTextEntry?: boolean;
     name: string;
-    value: string;
+    value?: string;
 }
 const renderField = ({
     field, // { name, value, onChange, onBlur }

@@ -89,7 +89,7 @@ interface SubmitForm {
 }
 
 interface ScreenProps {
-    handleSubmit: SubmitForm; // React native onPress redux-form type conflict
+    handleSubmit: SubmitForm;
     errorMessage: string;
     form: FormValues;
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
