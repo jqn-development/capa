@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
         margin: 0,
         padding: 0,
         width: 110,
-        marginLeft: -10,
     },
     errorMessage: {
         ...Colors.errorText,
@@ -133,6 +132,7 @@ const SignInScreen = (props: Props & FormikProps<FormValues>) => {
                             onChangeText={handleChange('password')}
                             name="password"
                             label="PASSWORD"
+                            secureTextEntry
                             placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
                             value={values.password}
                             inputContainerStyle={[InputField.input, InputField.inputNoUnderline]}

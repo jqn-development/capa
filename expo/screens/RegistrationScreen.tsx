@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { StyleSheet, Text, View } from 'react-native';
 import {
     SafeAreaView,
@@ -10,13 +9,11 @@ import {
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+import { withFormik, FormikProps } from 'formik';
 import { Button } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
 import FullWidthImage from 'react-native-fullwidth-image';
 import { register, login, clearRegError } from '../modules/auth/auth.service';
-import EmailField from '../components/fields/EmailField';
-import PasswordField from '../components/fields/passwordField';
 import GenericField from '../components/fields/genericField';
 import { Colors, Container, InputField } from '../styles';
 
@@ -30,6 +27,7 @@ const styles = StyleSheet.create({
     input: {
         ...InputField.input,
         ...InputField.inputUnderline,
+        ...InputField.inputContainerSmall,
     },
     text: {
         fontSize: 12,
@@ -75,7 +73,7 @@ const styles = StyleSheet.create({
     errorMessage: {
         ...Colors.errorText,
         paddingTop: 20,
-        paddingLeft: 10,
+        paddingLeft: 0,
         margin: 0,
         fontSize: 10,
     },
@@ -83,30 +81,27 @@ const styles = StyleSheet.create({
 
 interface Props {
     navigation: NavigationScreenProp<NavigationState, NavigationParams>;
-    handleSubmit: any;
+    dispatchRegister: any;
+    dispatchClearErrors: any;
+    errorMessage: any;
+}
+interface FormValues {
+    name: string;
+    email: string;
+    password: string;
 }
 
-class RegistrationScreen extends React.Component<Props> {
+class RegistrationScreen extends React.Component<Props & FormikProps<FormValues>> {
     static navigationOptions = {
         header: null,
     };
 
     render() {
-        const {
-            handleSubmit,
-            navigation,
-            dispatchRegister,
-            dispatchClearErrors,
-            errorMessage,
-        } = this.props;
+        const { handleSubmit, navigation, dispatchClearErrors, errorMessage } = this.props;
 
         const navigateToHome = () => {
             dispatchClearErrors();
             navigation.navigate('SignIn');
-        };
-
-        const submitForm = e => {
-            dispatchRegister(e.name, e.email, e.password);
         };
 
         return (
@@ -116,7 +111,6 @@ class RegistrationScreen extends React.Component<Props> {
                     <View style={styles.closeButtonView}>
                         <Button
                             icon={<Ionicons name="md-close" size={26} color="white" />}
-                            style={styles.closeButtonPos}
                             testID="close"
                             onPress={() => navigateToHome()}
                         />
@@ -127,8 +121,8 @@ class RegistrationScreen extends React.Component<Props> {
                 </View>
                 <View style={styles.fieldsView}>
                     <GenericField label="NAME" name="name" inputContainerStyle={styles.input} />
-                    <EmailField abel="NAME" name="name"inputContainerStyle={styles.input} />
-                    <PasswordField inputContainerStyle={styles.input} />
+                    <GenericField label="EMAIL" name="name" inputContainerStyle={styles.input} />
+                    <GenericField label="PASSWORD" name="name" inputContainerStyle={styles.input} />
                     <Text style={styles.errorMessage}>{errorMessage}</Text>
                 </View>
                 <View style={styles.nextstep}>
@@ -137,25 +131,13 @@ class RegistrationScreen extends React.Component<Props> {
                         buttonStyle={[styles.clearButton]}
                         testID="nextstep"
                         title="NEXT STEP"
-                        onPress={handleSubmit(submitForm)}
+                        onPress={handleSubmit}
                     />
                 </View>
             </SafeAreaView>
         );
     }
 }
-
-RegistrationScreen.propTypes = {
-    handleSubmit: PropTypes.func.isRequired,
-    dispatchRegister: PropTypes.func.isRequired,
-    dispatchClearErrors: PropTypes.func.isRequired,
-    navigation: PropTypes.shape({}).isRequired,
-    errorMessage: PropTypes.string,
-};
-
-RegistrationScreen.defaultProps = {
-    errorMessage: null,
-};
 
 function mapStateToProps(store) {
     return {
@@ -180,11 +162,14 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-const RegistrationConnect = connect(
+const formikEnhancer = withFormik<Props, FormValues>({
+    displayName: 'LoginForm',
+    handleSubmit: (payload, { props }) => {
+        props.dispatchRegister(payload.email, payload.password);
+    },
+})(RegistrationScreen);
+
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(RegistrationScreen);
-
-export default reduxForm({
-    form: 'registrationForm',
-})(RegistrationConnect);
+)(formikEnhancer);

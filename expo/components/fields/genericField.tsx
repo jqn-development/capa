@@ -8,6 +8,7 @@ interface FieldProps {
     onChangeText: (e: string) => void;
     placeholder: string;
     label: string;
+    secureTextEntry?: boolean;
     name: string;
     value: string;
 }
@@ -20,7 +21,6 @@ const renderField = ({
     return (
         <Input
             placeholderTextColor="white"
-            containerStyle={[InputField.inputContainerSmall]}
             inputStyle={[Colors.whiteText, InputField.inputText]}
             {...field}
             {...props}

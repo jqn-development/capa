@@ -3,13 +3,15 @@ import { vw, vh } from 'react-native-expo-viewport-units';
 
 const input = {
     width: '100%',
-    height: vh(6),
+    height: vh(5),
+    marginBottom: 15,
+    marginLeft: 0,
+    paddingLeft: 0,
 };
 
 const inputContainerSmall = {
-    paddingLeft: 0,
-    paddingRight: 0,
-    borderColor: 'white',
+    margin: 0,
+    padding: 0,
 };
 
 const inputContainer = {
@@ -17,6 +19,7 @@ const inputContainer = {
     marginBottom: 15,
     paddingLeft: 0,
     paddingRight: 0,
+    margin: 0,
     borderColor: 'white',
     borderBottomWidth: 0,
 };
@@ -33,7 +36,6 @@ const inputUnderline = {
 
 const inputNoUnderline = {
     borderBottomWidth: 0,
-    borderColor: 'white',
 };
 
 const inputLabel = {
