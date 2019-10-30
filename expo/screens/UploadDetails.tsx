@@ -95,47 +95,55 @@ export const UploadDetailsForm = () => {
         };
         suggestionsContext.setForm(formState);
     };
-    return (
+    return !suggestionsContext.editMode ? (
         <View>
-            {!suggestionsContext.editMode ? (
-                <View style={styles.imageView}>
-                    <FullWidthImage source={registerGfx} />
-                </View>
-            ) : null}
-            {!suggestionsContext.editMode ? (
-                <Formik<FormValues | {}>
-                    enableReinitialize
-                    initialValues={details}
-                    onSubmit={values => console.log(values)}
-                >
-                    {({ values }: { values: FormValues }) => (
-                        <View style={Container.flexVerticalTop}>
-                            <Field
-                                onChangeText={(e: string) => {
-                                    handleInput(e, 'film', `${config.url}/api/film/suggestions`);
-                                }}
-                                value={values.film}
-                                label="FILM"
-                                name="Film"
-                                component={renderField}
-                                placeholder=""
-                            />
-                            <Field
-                                onChangeText={(e: string) => {
-                                    handleInput(e, 'gear', `${config.url}/api/camera/suggestions`);
-                                }}
-                                value={values.gear}
-                                label="CAMERA"
-                                name="Gear"
-                                component={renderField}
-                                placeholder=""
-                            />
-                        </View>
-                    )}
-                </Formik>
-            ) : null}
+            <View style={styles.imageView}>
+                {/* 
+                // @ts-ignore */}
+                <FullWidthImage source={registerGfx} ratio={10 / 16} />
+            </View>
+            <Formik<FormValues | {}>
+                enableReinitialize
+                initialValues={details}
+                onSubmit={values => console.log(values)}
+            >
+                {({ values }: { values: FormValues }) => (
+                    <View style={Container.flexVerticalTop}>
+                        <Field
+                            onChangeText={(e: string) => {
+                                handleInput(e, 'film', `${config.url}/api/film/suggestions`);
+                            }}
+                            value={values.film}
+                            label="FILM"
+                            name="Film"
+                            component={renderField}
+                            placeholder=""
+                        />
+                        <Field
+                            onChangeText={(e: string) => {
+                                handleInput(e, 'gear', `${config.url}/api/camera/suggestions`);
+                            }}
+                            value={values.gear}
+                            label="CAMERA"
+                            name="Gear"
+                            component={renderField}
+                            placeholder=""
+                        />
+                        <Field
+                            onChangeText={(e: string) => {
+                                handleInput(e, 'location', `${config.url}/api/location`);
+                            }}
+                            value={values.location}
+                            label="LOCATION"
+                            name="Location"
+                            component={renderField}
+                            placeholder=""
+                        />
+                    </View>
+                )}
+            </Formik>
         </View>
-    );
+    ) : null;
 };
 
 export const UploadDetails: NavigationScreenComponent = () => {
