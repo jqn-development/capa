@@ -8,6 +8,8 @@ interface Props {
 interface AutoCompleteContext {
     editMode: boolean;
     setEditMode(delta: boolean): void;
+    mapMode: boolean;
+    setMapMode(delta: boolean): void;
     form: FormValues;
     setForm(delta: object): void;
     active: string;
@@ -33,6 +35,7 @@ export const useAutoCompleteContext = (): AutoCompleteContext => {
 export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props => {
     const [form, setForm] = useState<FormValues>({});
     const [editMode, setEditMode] = useState(false);
+    const [mapMode, setMapMode] = useState(false);
     const [active, setActive] = useState('');
     const [activeUrl, setActiveUrl] = useState('');
     const { children } = props;
@@ -42,6 +45,8 @@ export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props =>
             value={{
                 editMode,
                 setEditMode,
+                mapMode,
+                setMapMode,
                 active,
                 setActive,
                 activeUrl,

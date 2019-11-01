@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { debounce } from 'lodash';
 // @ts-ignore
-import { vw } from 'react-native-expo-viewport-units';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { vw, vh } from 'react-native-expo-viewport-units';
+import { View, StyleSheet, FlatList, TouchableOpacity, Text } from 'react-native';
 import { Input, ListItem } from 'react-native-elements';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Colors, Container, InputField } from '../styles';
 import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
 
@@ -33,6 +34,10 @@ const styles = StyleSheet.create({
     },
     listItemSubtitle: {
         color: '#fff',
+    },
+    mapStyle: {
+        width: vw(100),
+        height: vh(100),
     },
 });
 
@@ -84,6 +89,24 @@ const CapaAutoComplete: React.FunctionComponent = () => {
         (item: Item) =>
             item.name.toLowerCase().indexOf(suggestionsContext.form[active].toLowerCase()) !== -1
     );
+    const mapStyle = [
+        {
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#212121',
+                },
+            ],
+        },
+        {
+            elementType: 'labels.icon',
+            stylers: [
+                {
+                    visibility: 'off',
+                },
+            ],
+        },
+    ];
     const fetchSuggestions = (apiUrl: string) => {
         fetch(apiUrl)
             .then(response => response.json())
@@ -102,10 +125,15 @@ const CapaAutoComplete: React.FunctionComponent = () => {
         });
         debounceLoadData(String(suggestionsContext.activeUrl));
     };
-    return (
-        <View style={styles.container}>
-            {suggestionsContext.editMode ? (
-                <View style={styles.container}>
+    if (suggestionsContext.mapMode) {
+        return suggestionsContext.editMode ? (
+            <View style={styles.container}>
+                <MapView
+                    provider={PROVIDER_GOOGLE}
+                    customMapStyle={mapStyle}
+                    style={styles.mapStyle}
+                />
+                <View style={[styles.container, Container.absolute]}>
                     <Input
                         autoFocus
                         placeholderTextColor="white"
@@ -126,8 +154,35 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         keyExtractor={(item: Item) => item.id}
                     />
                 </View>
-            ) : null}
+            </View>
+        ) : (
+            <View />
+        );
+    }
+    return suggestionsContext.editMode ? (
+        <View style={styles.container}>
+            <Input
+                autoFocus
+                placeholderTextColor="white"
+                placeholder="Search"
+                inputContainerStyle={[InputField.inputUnderline]}
+                containerStyle={[InputField.inputContainer]}
+                inputStyle={[Colors.whiteText, InputField.inputText]}
+                value={suggestionsContext.form[suggestionsContext.active]}
+                onChangeText={handleInput}
+                onFocus={() => {
+                    setSuggestions([]);
+                    debounceLoadData(suggestionsContext.activeUrl);
+                }}
+            />
+            <FlatList
+                data={filtered}
+                renderItem={({ item }: { item: Item }) => <Item item={item} />}
+                keyExtractor={(item: Item) => item.id}
+            />
         </View>
+    ) : (
+        <View />
     );
 };
 

@@ -1,3 +1,5 @@
+import { whiteText } from "./colors";
+
 const flexVerticalCenter: object = {
     flex: 1,
     flexDirection: 'column',
@@ -21,4 +23,11 @@ const flexVerticalBottom: object = {
     width: '100%',
 };
 
-export { flexVerticalCenter, flexVerticalTop, flexVerticalBottom };
+const absolute = {
+    position: 'absolute',
+    top: 0,
+    zIndex: 1,
+    color: '#fff',
+};
+
+export { absolute, flexVerticalCenter, flexVerticalTop, flexVerticalBottom };

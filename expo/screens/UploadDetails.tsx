@@ -10,7 +10,7 @@ import {
 } from 'react-navigation';
 import FullWidthImage from 'react-native-fullwidth-image';
 // @ts-ignore
-import { vw } from 'react-native-expo-viewport-units';
+import { vw, vh } from 'react-native-expo-viewport-units';
 import { Formik, Field } from 'formik';
 import { ThunkDispatch } from 'redux-thunk';
 import config from '../config';
@@ -29,6 +29,10 @@ const styles = StyleSheet.create({
         ...Colors.background,
         paddingLeft: vw(10),
         paddingRight: vw(10),
+    },
+    containerNoPadding: {
+        ...Container.flexVerticalTop,
+        ...Colors.background,
     },
     errorMessage: {
         ...Colors.errorText,
@@ -88,6 +92,9 @@ export const UploadDetailsForm = () => {
     const handleInput = (e: string, type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
+        if (type === 'location') {
+            suggestionsContext.setMapMode(true);
+        }
         suggestionsContext.setActive(type);
         const formState = {
             ...suggestionsContext.form,
@@ -148,7 +155,7 @@ export const UploadDetailsForm = () => {
 
 export const UploadDetails: NavigationScreenComponent = () => {
     return (
-        <View style={styles.container}>
+        <View style={styles.containerNoPadding}>
             <CapaAutoCompleteProvider>
                 <UploadDetailsForm />
                 <CapaAutoComplete />
