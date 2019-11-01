@@ -107,6 +107,18 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             ],
         },
     ];
+    const fetchMapSuggestions = () => {
+        fetch(
+            'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Vict&types=geocode&language=fr&key=AIzaSyCa-nlF1oV_1THrXZxbt6LyJbcebz84qJ4'
+        )
+            .then(resp => {
+                return resp.json();
+            })
+            .then(data => {
+                setSuggestions(data);
+            })
+            .catch(err => console.error(err));
+    };
     const fetchSuggestions = (apiUrl: string) => {
         fetch(apiUrl)
             .then(response => response.json())
@@ -117,7 +129,15 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                 console.log(error);
             });
     };
+    const debounceLoadPlacesData = useCallback(debounce(fetchMapSuggestions, 300), []);
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
+    const handleMapInput = (e: string) => {
+        suggestionsContext.setForm({
+            ...suggestionsContext.form,
+            [active]: e,
+        });
+        debounceLoadPlacesData();
+    };
     const handleInput = (e: string) => {
         suggestionsContext.setForm({
             ...suggestionsContext.form,
@@ -142,10 +162,10 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         containerStyle={[InputField.inputContainer]}
                         inputStyle={[Colors.whiteText, InputField.inputText]}
                         value={suggestionsContext.form[suggestionsContext.active]}
-                        onChangeText={handleInput}
+                        onChangeText={handleMapInput}
                         onFocus={() => {
                             setSuggestions([]);
-                            debounceLoadData(suggestionsContext.activeUrl);
+                            debounceLoadPlacesData();
                         }}
                     />
                     <FlatList
