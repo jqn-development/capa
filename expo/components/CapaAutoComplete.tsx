@@ -2,11 +2,12 @@ import React, { useCallback, useState } from 'react';
 import { debounce } from 'lodash';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Input, ListItem } from 'react-native-elements';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { Colors, Container, InputField } from '../styles';
 import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
+import useGoogleAutocomplete from '../hooks/useGooglePlaces';
 
 const styles = StyleSheet.create({
     container: {
@@ -48,6 +49,29 @@ interface Item {
     avatar?: string;
 }
 
+function PlacesItem({ item, onSelected }: { item: any; onSelected: () => void }) {
+    const suggestionsContext = useAutoCompleteContext();
+    return (
+        <TouchableOpacity
+            onPress={() => {
+                const formState = {
+                    ...suggestionsContext.form,
+                    [suggestionsContext.active as string]: item.description,
+                };
+                onSelected();
+                suggestionsContext.setForm(formState);
+            }}
+        >
+            <ListItem
+                leftIcon={{ name: 'map-marker', type: 'font-awesome', color: '#fff' }}
+                title={item.description}
+                titleStyle={styles.listItemTitle}
+                containerStyle={styles.listItemContainer}
+            />
+        </TouchableOpacity>
+    );
+}
+
 function Item({ item }: { item: Item }) {
     const suggestionsContext = useAutoCompleteContext();
     return (
@@ -83,6 +107,7 @@ function Item({ item }: { item: Item }) {
 }
 const CapaAutoComplete: React.FunctionComponent = () => {
     const [suggestions, setSuggestions] = useState<Item[]>([]);
+    const [showList, setShowList] = useState(true)
     const suggestionsContext = useAutoCompleteContext();
     const active = String(suggestionsContext.active);
     const filtered = suggestions.filter(
@@ -107,18 +132,6 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             ],
         },
     ];
-    const fetchMapSuggestions = () => {
-        fetch(
-            'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Vict&types=geocode&language=fr&key=AIzaSyCa-nlF1oV_1THrXZxbt6LyJbcebz84qJ4'
-        )
-            .then(resp => {
-                return resp.json();
-            })
-            .then(data => {
-                setSuggestions(data);
-            })
-            .catch(err => console.error(err));
-    };
     const fetchSuggestions = (apiUrl: string) => {
         fetch(apiUrl)
             .then(response => response.json())
@@ -129,14 +142,21 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                 console.log(error);
             });
     };
-    const debounceLoadPlacesData = useCallback(debounce(fetchMapSuggestions, 300), []);
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
+    let { results, isLoading, error } = useGoogleAutocomplete({
+        apiKey: 'AIzaSyCa-nlF1oV_1THrXZxbt6LyJbcebz84qJ4',
+        query: suggestionsContext.form[suggestionsContext.active],
+        type: 'geocode',
+        options: {
+            types: '(cities)',
+        },
+    });
     const handleMapInput = (e: string) => {
         suggestionsContext.setForm({
             ...suggestionsContext.form,
             [active]: e,
         });
-        debounceLoadPlacesData();
+        setShowList(true);
     };
     const handleInput = (e: string) => {
         suggestionsContext.setForm({
@@ -165,14 +185,23 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         onChangeText={handleMapInput}
                         onFocus={() => {
                             setSuggestions([]);
-                            debounceLoadPlacesData();
+                            //debounceLoadPlacesData();
                         }}
                     />
-                    <FlatList
-                        data={filtered}
-                        renderItem={({ item }: { item: Item }) => <Item item={item} />}
-                        keyExtractor={(item: Item) => item.id}
-                    />
+                    {showList && (
+                        <FlatList
+                            data={results.predictions}
+                            renderItem={({ item }: { item: Item }) => (
+                                <PlacesItem
+                                    onSelected={() => {
+                                        setShowList(false);
+                                    }}
+                                    item={item}
+                                />
+                            )}
+                            keyExtractor={(item: Item) => item.id}
+                        />
+                    )}
                 </View>
             </View>
         ) : (
