@@ -28,14 +28,12 @@ const inputText = {
     fontSize: vw(3.8),
     width: vw(100),
 };
-
+const inputNoUnderline = {
+    borderBottomWidth: 0,
+};
 const inputUnderline = {
     borderBottomWidth: 1,
     borderColor: 'white',
-};
-
-const inputNoUnderline = {
-    borderBottomWidth: 0,
 };
 
 const inputLabel = {

@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
     container: {
         ...Container.flexVerticalTop,
         ...Colors.background,
-        paddingLeft: vw(10),
-        paddingRight: vw(10),
+        paddingLeft: vw(5),
+        paddingRight: vw(5),
     },
     containerNoPadding: {
         ...Container.flexVerticalTop,
@@ -42,6 +42,9 @@ const styles = StyleSheet.create({
     },
     imageView: {
         marginBottom: 30,
+        marginTop: 30,
+        marginLeft: vw(5),
+        marginRight: vw(5),
     },
 });
 
@@ -115,7 +118,7 @@ export const UploadDetailsForm = () => {
                 onSubmit={values => console.log(values)}
             >
                 {({ values }: { values: FormValues }) => (
-                    <View style={Container.flexVerticalTop}>
+                    <View style={[styles.container]}>
                         <Field
                             onChangeText={(e: string) => {
                                 handleInput(e, 'film', `${config.url}/api/film/suggestions`);

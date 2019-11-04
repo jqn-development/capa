@@ -10,6 +10,10 @@ import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
 import useGoogleAutocomplete from '../hooks/useGooglePlaces';
 
 const styles = StyleSheet.create({
+    inputContainer: {
+        margin: 0,
+        padding: 0,
+    },
     container: {
         ...Container.flexVerticalTop,
         ...Colors.background,
@@ -27,7 +31,7 @@ const styles = StyleSheet.create({
         width: vw(100),
         backgroundColor: '#000',
         marginLeft: 0,
-        paddingLeft: 0,
+        paddingLeft: vw(5),
     },
     listItemTitle: {
         color: 'white',
@@ -140,8 +144,8 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             });
     };
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
-    const { results, isLoading, error, getPlaceDetails } = useGoogleAutocomplete({
-        apiKey: 'AIzaSyCa-nlF1oV_1THrXZxbt6LyJbcebz84qJ4',
+    const { results, getPlaceDetails } = useGoogleAutocomplete({
+        apiKey: 'AIzaSyB7KeUed2q1siPzTv7zxLT0jaaKcMEYmec',
         query: suggestionsContext.form[suggestionsContext.active],
         type: 'geocode',
         options: {
@@ -168,7 +172,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     };
     if (suggestionsContext.mapMode) {
         return suggestionsContext.editMode ? (
-            <View style={styles.container}>
+            <View>
                 <MapView
                     ref={mapView}
                     provider={PROVIDER_GOOGLE}
@@ -185,20 +189,25 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                     )}
                 </MapView>
                 <View style={[styles.container, Container.absolute]}>
-                    <Input
-                        autoFocus
-                        placeholderTextColor="white"
-                        placeholder="Search"
-                        inputContainerStyle={[InputField.inputUnderline]}
-                        containerStyle={[InputField.inputContainer]}
-                        inputStyle={[Colors.whiteText, InputField.inputText]}
-                        value={suggestionsContext.form[suggestionsContext.active]}
-                        onChangeText={handleMapInput}
-                        onFocus={() => {
-                            setSuggestions([]);
-                            // debounceLoadPlacesData();
-                        }}
-                    />
+                    <View style={{flex: 1,flexDirection: 'row'}}>
+                        
+                        <Input
+                            autoFocus
+                            placeholderTextColor="white"
+                            placeholder="Search"
+                            inputContainerStyle={[InputField.inputNoUnderline, styles.inputContainer]}
+                            containerStyle={[InputField.inputContainer, styles.inputContainer]}
+                            inputStyle={[Colors.whiteText, InputField.inputText]}
+                            value={suggestionsContext.form[suggestionsContext.active]}
+                            //leftIcon={{ type: 'font-awesome', name: 'chevron-left', color: '#fff'}}
+                            //leftIconContainerStyle={{ margin: 0, paddingRight: 10 }}
+                            onChangeText={handleMapInput}
+                            onFocus={() => {
+                                setSuggestions([]);
+                                // debounceLoadPlacesData();
+                            }}
+                        />
+                    </View>
                     {showList && (
                         <FlatList
                             data={results.predictions}
