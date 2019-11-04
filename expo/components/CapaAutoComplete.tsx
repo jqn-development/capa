@@ -109,6 +109,7 @@ function Item({ item }: { item: Item }) {
 const CapaAutoComplete: React.FunctionComponent = () => {
     const [suggestions, setSuggestions] = useState<Item[]>([]);
     const [showList, setShowList] = useState(true);
+    const [marker, setMarker] = useState(false);
     const suggestionsContext = useAutoCompleteContext();
     const active = String(suggestionsContext.active);
     const mapView = useRef();
@@ -174,12 +175,14 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                     customMapStyle={MapStyles}
                     style={styles.mapStyle}
                 >
-                    <Marker
-                        coordinate={{
-                            latitude: 51.556619,
-                            longitude: 0.07625100000000001,
-                        }}
-                    ></Marker>
+                    {marker && (
+                        <Marker
+                            coordinate={{
+                                latitude: marker.lat,
+                                longitude: marker.lng,
+                            }}
+                        ></Marker>
+                    )}
                 </MapView>
                 <View style={[styles.container, Container.absolute]}>
                     <Input
@@ -205,7 +208,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                                         getPlaceDetails(item.place_id, {
                                             fields: ['name', 'geometry'],
                                         }).then(data => {
-                                            console.log(data.result.geometry.location.lat);
+                                            setMarker({ lat: data.result.geometry.location.lat, lng: data.result.geometry.location.lng});
                                             animate(
                                                 data.result.geometry.location.lat,
                                                 data.result.geometry.location.lng
