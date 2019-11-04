@@ -103,7 +103,7 @@ export default function useGoogleAutocomplete({
     const sessionTokenTimeout = React.useRef<any>();
 
     // AbortController to cancel window.fetch requests if component unmounts.
-    const abortController = React.useRef<any>();
+    // const abortController = React.useRef<any>();
     const abortSignal = React.useRef<any>();
 
     const resetSessionToken = () => {
@@ -135,7 +135,7 @@ export default function useGoogleAutocomplete({
             return;
         }
         // Cancel previous debounced call.
-        //if (debouncedFn.current) debouncedFn.current.clear();
+        if (debouncedFn.current) debouncedFn.current.clear();
 
         if (!state.isLoading) {
             dispatch({
@@ -178,9 +178,41 @@ export default function useGoogleAutocomplete({
         options.offset,
         type,
     ]);
+    const getPlaceDetails = (
+        placeId: string,
+        placeDetailOptions: {
+            fields?: string[];
+            region?: string;
+            language?: string;
+        } = {}
+    ) => {
+        const fields = placeDetailOptions.fields
+            ? `&fields=${placeDetailOptions.fields.join(',')}`
+            : '';
+        const region = placeDetailOptions.region ? `&region=${placeDetailOptions.region}` : '';
+        // If no options are passed, we'll default to closured language option.
+        const language = placeDetailOptions.language ? `&language=${placeDetailOptions.language}`
+          : options.language
+          ? `&language=${options.language}}`
+          : '';
+      
+        const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}${fields}${region}${language}&key=${apiKey}&sessiontoken=${sessionToken.current}`;
+        return fetch(url, { signal: abortSignal.current })
+            .then(data => data.json())
+            .then(data => {
+                // Reset session token after we make a Place Details query.
+                resetSessionToken();
+                return data;
+            })
+            .catch(() => {
+                // Component unmounted and API call cancelled.
+            });
+    };
+
     return {
         results: state.results,
         isLoading: state.isLoading,
         error: state.error,
+        getPlaceDetails,
     };
 }

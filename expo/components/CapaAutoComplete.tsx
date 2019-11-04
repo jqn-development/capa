@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { debounce } from 'lodash';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Input, ListItem } from 'react-native-elements';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { Colors, Container, InputField } from '../styles';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Colors, Container, InputField, MapStyles } from '../styles';
 import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
 import useGoogleAutocomplete from '../hooks/useGooglePlaces';
 
@@ -105,33 +105,29 @@ function Item({ item }: { item: Item }) {
         </TouchableOpacity>
     );
 }
+
 const CapaAutoComplete: React.FunctionComponent = () => {
     const [suggestions, setSuggestions] = useState<Item[]>([]);
-    const [showList, setShowList] = useState(true)
+    const [showList, setShowList] = useState(true);
     const suggestionsContext = useAutoCompleteContext();
     const active = String(suggestionsContext.active);
+    const mapView = useRef();
+    const animate = (lat,lng) => {
+        const r = {
+            latitude: lat,
+            longitude: lng,
+            latitudeDelta: 7.5,
+            longitudeDelta: 7.5,
+        };
+        if (mapView.current) {
+            mapView.current.animateToRegion(r, 2000);
+        }
+    };
     const filtered = suggestions.filter(
         (item: Item) =>
             item.name.toLowerCase().indexOf(suggestionsContext.form[active].toLowerCase()) !== -1
     );
-    const mapStyle = [
-        {
-            elementType: 'geometry',
-            stylers: [
-                {
-                    color: '#212121',
-                },
-            ],
-        },
-        {
-            elementType: 'labels.icon',
-            stylers: [
-                {
-                    visibility: 'off',
-                },
-            ],
-        },
-    ];
+
     const fetchSuggestions = (apiUrl: string) => {
         fetch(apiUrl)
             .then(response => response.json())
@@ -143,7 +139,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             });
     };
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
-    let { results, isLoading, error } = useGoogleAutocomplete({
+    const { results, isLoading, error, getPlaceDetails } = useGoogleAutocomplete({
         apiKey: 'AIzaSyCa-nlF1oV_1THrXZxbt6LyJbcebz84qJ4',
         query: suggestionsContext.form[suggestionsContext.active],
         type: 'geocode',
@@ -156,7 +152,11 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             ...suggestionsContext.form,
             [active]: e,
         });
-        setShowList(true);
+        if (e.length === 0) {
+            setShowList(false);
+        } else {
+            setShowList(true);
+        }
     };
     const handleInput = (e: string) => {
         suggestionsContext.setForm({
@@ -169,10 +169,18 @@ const CapaAutoComplete: React.FunctionComponent = () => {
         return suggestionsContext.editMode ? (
             <View style={styles.container}>
                 <MapView
+                    ref={mapView}
                     provider={PROVIDER_GOOGLE}
-                    customMapStyle={mapStyle}
+                    customMapStyle={MapStyles}
                     style={styles.mapStyle}
-                />
+                >
+                    <Marker
+                        coordinate={{
+                            latitude: 51.556619,
+                            longitude: 0.07625100000000001,
+                        }}
+                    ></Marker>
+                </MapView>
                 <View style={[styles.container, Container.absolute]}>
                     <Input
                         autoFocus
@@ -185,7 +193,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         onChangeText={handleMapInput}
                         onFocus={() => {
                             setSuggestions([]);
-                            //debounceLoadPlacesData();
+                            // debounceLoadPlacesData();
                         }}
                     />
                     {showList && (
@@ -194,6 +202,15 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                             renderItem={({ item }: { item: Item }) => (
                                 <PlacesItem
                                     onSelected={() => {
+                                        getPlaceDetails(item.place_id, {
+                                            fields: ['name', 'geometry'],
+                                        }).then(data => {
+                                            console.log(data.result.geometry.location.lat);
+                                            animate(
+                                                data.result.geometry.location.lat,
+                                                data.result.geometry.location.lng
+                                            );
+                                        });
                                         setShowList(false);
                                     }}
                                     item={item}
