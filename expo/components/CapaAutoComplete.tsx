@@ -3,7 +3,7 @@ import { debounce } from 'lodash';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Input, ListItem } from 'react-native-elements';
+import { Input, ListItem, Icon } from 'react-native-elements';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Colors, Container, InputField, MapStyles } from '../styles';
 import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
     inputContainer: {
         margin: 0,
         padding: 0,
+        width: vw(80),
     },
     container: {
         ...Container.flexVerticalTop,
@@ -117,6 +118,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     const suggestionsContext = useAutoCompleteContext();
     const active = String(suggestionsContext.active);
     const mapView = useRef();
+    const placeSelected = useRef(false);
     const animate = (lat,lng) => {
         const r = {
             latitude: lat,
@@ -162,6 +164,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
         } else {
             setShowList(true);
         }
+        placeSelected.current = false;
     };
     const handleInput = (e: string) => {
         suggestionsContext.setForm({
@@ -189,24 +192,37 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                     )}
                 </MapView>
                 <View style={[styles.container, Container.absolute]}>
-                    <View style={{flex: 1,flexDirection: 'row'}}>
-                        
-                        <Input
-                            autoFocus
-                            placeholderTextColor="white"
-                            placeholder="Search"
-                            inputContainerStyle={[InputField.inputNoUnderline, styles.inputContainer]}
-                            containerStyle={[InputField.inputContainer, styles.inputContainer]}
-                            inputStyle={[Colors.whiteText, InputField.inputText]}
-                            value={suggestionsContext.form[suggestionsContext.active]}
-                            //leftIcon={{ type: 'font-awesome', name: 'chevron-left', color: '#fff'}}
-                            //leftIconContainerStyle={{ margin: 0, paddingRight: 10 }}
-                            onChangeText={handleMapInput}
-                            onFocus={() => {
-                                setSuggestions([]);
-                                // debounceLoadPlacesData();
+                    <View style={{flexDirection: 'row'}}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                suggestionsContext.setEditMode(false);
                             }}
-                        />
+                        >
+                            {placeSelected.current && (
+                                <View style={{marginLeft: vw(5), marginRight: 10, marginTop: 18}}>
+                                    <Icon type="font-awesome" name="chevron-left" color="#fff"/>
+                                </View>
+                            )}
+                        </TouchableOpacity>
+                        <View>
+                            <Input
+                                autoFocus
+                                keyboardAppearance="dark"
+                                placeholderTextColor="white"
+                                placeholder="Search"
+                                inputContainerStyle={[InputField.inputNoUnderline, styles.inputContainer]}
+                                containerStyle={[InputField.inputContainer, styles.inputContainer]}
+                                inputStyle={[Colors.whiteText, InputField.inputText]}
+                                value={suggestionsContext.form[suggestionsContext.active]}
+                                // leftIcon={{ type: 'font-awesome', name: 'chevron-left', color: '#fff'}}
+                                // leftIconContainerStyle={{ margin: 0, paddingRight: 10 }}
+                                onChangeText={handleMapInput}
+                                onFocus={() => {
+                                    setSuggestions([]);
+                                    // debounceLoadPlacesData();
+                                }}
+                            />
+                        </View>
                     </View>
                     {showList && (
                         <FlatList
@@ -223,6 +239,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                                                 data.result.geometry.location.lng
                                             );
                                         });
+                                        placeSelected.current = true;
                                         setShowList(false);
                                     }}
                                     item={item}
@@ -241,6 +258,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
         <View style={styles.container}>
             <Input
                 autoFocus
+                keyboardAppearance="dark"
                 placeholderTextColor="white"
                 placeholder="Search"
                 inputContainerStyle={[InputField.inputUnderline]}

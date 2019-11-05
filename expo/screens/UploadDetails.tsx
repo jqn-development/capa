@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
 
 interface Props extends NavigationScreenProps {
     errorMessage: string;
-    details: Record<string, string>;
 }
 
 interface DispatchProps {
@@ -83,6 +82,7 @@ const renderField = ({
             inputContainerStyle={[InputField.input, InputField.inputUnderline]}
             containerStyle={[InputField.inputContainer]}
             inputStyle={[Colors.whiteText, InputField.inputText]}
+            keyboardAppearance="dark"
             {...field}
             {...props}
         />
@@ -91,12 +91,13 @@ const renderField = ({
 
 export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
-    const details = suggestionsContext.form;
     const handleInput = (e: string, type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
         if (type === 'location') {
             suggestionsContext.setMapMode(true);
+        } else {
+            suggestionsContext.setMapMode(false);
         }
         suggestionsContext.setActive(type);
         const formState = {
@@ -114,7 +115,7 @@ export const UploadDetailsForm = () => {
             </View>
             <Formik<FormValues | {}>
                 enableReinitialize
-                initialValues={details}
+                initialValues={suggestionsContext.form}
                 onSubmit={values => console.log(values)}
             >
                 {({ values }: { values: FormValues }) => (
@@ -175,7 +176,7 @@ UploadDetails.navigationOptions = ({ navigation }: NavigationParams): Navigation
         borderBottomWidth: 0,
     },
     headerLeft: (
-        <Icon
+        false && <Icon
             name="close"
             color="#fff"
             onPress={(): void => {
