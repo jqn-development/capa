@@ -91,7 +91,14 @@ const renderField = ({
 
 export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
-    const handleInput = (e: string, type: string, apiUrl: string) => {
+    /*const handleInput = (e: string) => {
+        const formState = {
+            ...suggestionsContext.form,
+            [suggestionsContext.active as string]: e,
+        };
+        suggestionsContext.setForm(formState);
+    };*/
+    const onFocusHandle = (type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
         if (type === 'location') {
@@ -100,11 +107,14 @@ export const UploadDetailsForm = () => {
             suggestionsContext.setMapMode(false);
         }
         suggestionsContext.setActive(type);
-        const formState = {
-            ...suggestionsContext.form,
-            [type as string]: e,
-        };
-        suggestionsContext.setForm(formState);
+        // push input value on form state
+        if (!suggestionsContext.form[type]) {
+            const formState = {
+                ...suggestionsContext.form,
+                [type as string]: '',
+            };
+            suggestionsContext.setForm(formState);
+        }
     };
     return !suggestionsContext.editMode ? (
         <View>
@@ -121,8 +131,8 @@ export const UploadDetailsForm = () => {
                 {({ values }: { values: FormValues }) => (
                     <View style={[styles.container]}>
                         <Field
-                            onChangeText={(e: string) => {
-                                handleInput(e, 'film', `${config.url}/api/film/suggestions`);
+                            onFocus={() => {
+                                onFocusHandle('film', `${config.url}/api/film/suggestions`);
                             }}
                             value={values.film}
                             label="FILM"
@@ -131,8 +141,8 @@ export const UploadDetailsForm = () => {
                             placeholder=""
                         />
                         <Field
-                            onChangeText={(e: string) => {
-                                handleInput(e, 'gear', `${config.url}/api/camera/suggestions`);
+                            onFocus={() => {
+                                onFocusHandle('gear', `${config.url}/api/camera/suggestions`);
                             }}
                             value={values.gear}
                             label="CAMERA"
@@ -141,8 +151,8 @@ export const UploadDetailsForm = () => {
                             placeholder=""
                         />
                         <Field
-                            onChangeText={(e: string) => {
-                                handleInput(e, 'location', `${config.url}/api/location`);
+                            onFocus={() => {
+                                onFocusHandle('location', `${config.url}/api/location`);
                             }}
                             value={values.location}
                             label="LOCATION"
