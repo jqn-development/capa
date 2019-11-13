@@ -91,13 +91,6 @@ const renderField = ({
 
 export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
-    /*const handleInput = (e: string) => {
-        const formState = {
-            ...suggestionsContext.form,
-            [suggestionsContext.active as string]: e,
-        };
-        suggestionsContext.setForm(formState);
-    };*/
     const onFocusHandle = (type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);

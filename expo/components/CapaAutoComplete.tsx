@@ -52,9 +52,17 @@ interface Item {
     name: string;
     details: string;
     avatar?: string;
+    // eslint-disable-next-line
+    place_id: string;
+    description: string;
 }
 
-function PlacesItem({ item, onSelected }: { item: any; onSelected: () => void }) {
+interface Coordinate {
+    lat: number;
+    lng: number;
+}
+
+function PlacesItem({ item, onSelected }: { item: Item; onSelected: () => void }) {
     const suggestionsContext = useAutoCompleteContext();
     return (
         <TouchableOpacity
@@ -114,19 +122,19 @@ function Item({ item }: { item: Item }) {
 const CapaAutoComplete: React.FunctionComponent = () => {
     const [suggestions, setSuggestions] = useState<Item[]>([]);
     const [showList, setShowList] = useState(true);
-    const [marker, setMarker] = useState(false);
+    const [marker, setMarker] = useState<Coordinate | null>(null);
     const suggestionsContext = useAutoCompleteContext();
     const active = String(suggestionsContext.active);
-    const mapView = useRef();
+    const mapView = useRef<MapView | null>(null);
     const placeSelected = useRef(false);
-    const animate = (lat,lng) => {
+    const animate = (lat: number, lng: number) => {
         const r = {
             latitude: lat,
             longitude: lng,
             latitudeDelta: 7.5,
             longitudeDelta: 7.5,
         };
-        if (mapView.current) {
+        if (mapView && mapView.current) {
             mapView.current.animateToRegion(r, 2000);
         }
     };
@@ -192,15 +200,19 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                     )}
                 </MapView>
                 <View style={[styles.container, Container.absolute]}>
-                    <View style={{flexDirection: 'row'}}>
+                    <View style={{ flexDirection: 'row' }}>
                         <TouchableOpacity
                             onPress={() => {
                                 suggestionsContext.setEditMode(false);
                             }}
                         >
-                            {placeSelected.current && (
-                                <View style={{marginLeft: vw(5), marginRight: 10, marginTop: 18}}>
-                                    <Icon type="font-awesome" name="chevron-left" color="#fff"/>
+                            {placeSelected.current ? (
+                                <View style={{ marginLeft: vw(5), marginRight: 10, marginTop: 18 }}>
+                                    <Icon type="font-awesome" name="chevron-left" color="#fff" />
+                                </View>
+                            ) : (
+                                <View style={{ marginLeft: vw(5), marginRight: 10, marginTop: 18 }}>
+                                    <Icon type="font-awesome" name="search" color="#fff" />
                                 </View>
                             )}
                         </TouchableOpacity>
@@ -210,7 +222,10 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                                 keyboardAppearance="dark"
                                 placeholderTextColor="white"
                                 placeholder="Search"
-                                inputContainerStyle={[InputField.inputNoUnderline, styles.inputContainer]}
+                                inputContainerStyle={[
+                                    InputField.inputNoUnderline,
+                                    styles.inputContainer,
+                                ]}
                                 containerStyle={[InputField.inputContainer, styles.inputContainer]}
                                 inputStyle={[Colors.whiteText, InputField.inputText]}
                                 value={suggestionsContext.form[suggestionsContext.active]}
@@ -233,7 +248,10 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                                         getPlaceDetails(item.place_id, {
                                             fields: ['name', 'geometry'],
                                         }).then(data => {
-                                            setMarker({ lat: data.result.geometry.location.lat, lng: data.result.geometry.location.lng});
+                                            setMarker({
+                                                lat: data.result.geometry.location.lat,
+                                                lng: data.result.geometry.location.lng,
+                                            });
                                             animate(
                                                 data.result.geometry.location.lat,
                                                 data.result.geometry.location.lng
