@@ -10,7 +10,7 @@ import {
 } from 'react-navigation';
 import FullWidthImage from 'react-native-fullwidth-image';
 // @ts-ignore
-import { vw, vh } from 'react-native-expo-viewport-units';
+import { vw } from 'react-native-expo-viewport-units';
 import { Formik, Field } from 'formik';
 import { ThunkDispatch } from 'redux-thunk';
 import config from '../config';
@@ -178,8 +178,8 @@ UploadDetails.navigationOptions = ({ navigation }: NavigationParams): Navigation
         marginRight: 15,
         borderBottomWidth: 0,
     },
-    headerLeft: (
-        false && <Icon
+    headerLeft: false && (
+        <Icon
             name="close"
             color="#fff"
             onPress={(): void => {
