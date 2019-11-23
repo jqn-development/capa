@@ -8,10 +8,16 @@ import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Colors, Container, InputField, MapStyles } from '../styles';
 import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
 import useGoogleAutocomplete from '../hooks/useGooglePlaces';
+import config from '../config';
 
 const styles = StyleSheet.create({
-    inputContainer: {
+    mapInputContainer: {
         margin: 0,
+        padding: 0,
+        width: vw(80),
+    },
+    inputContainer: {
+        paddingLeft: vw(5),
         padding: 0,
         width: vw(80),
     },
@@ -155,7 +161,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     };
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
     const { results, getPlaceDetails } = useGoogleAutocomplete({
-        apiKey: 'AIzaSyB7KeUed2q1siPzTv7zxLT0jaaKcMEYmec',
+        apiKey: config.googleApi,
         query: suggestionsContext.form[suggestionsContext.active],
         type: 'geocode',
         options: {
@@ -224,13 +230,11 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                                 placeholder="Search"
                                 inputContainerStyle={[
                                     InputField.inputNoUnderline,
-                                    styles.inputContainer,
+                                    styles.mapInputContainer,
                                 ]}
                                 containerStyle={[InputField.inputContainer, styles.inputContainer]}
                                 inputStyle={[Colors.whiteText, InputField.inputText]}
                                 value={suggestionsContext.form[suggestionsContext.active]}
-                                // leftIcon={{ type: 'font-awesome', name: 'chevron-left', color: '#fff'}}
-                                // leftIconContainerStyle={{ margin: 0, paddingRight: 10 }}
                                 onChangeText={handleMapInput}
                                 onFocus={() => {
                                     setSuggestions([]);
@@ -280,7 +284,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                 placeholderTextColor="white"
                 placeholder="Search"
                 inputContainerStyle={[InputField.inputUnderline]}
-                containerStyle={[InputField.inputContainer]}
+                containerStyle={[InputField.inputContainer, styles.inputContainer]}
                 inputStyle={[Colors.whiteText, InputField.inputText]}
                 value={suggestionsContext.form[suggestionsContext.active]}
                 onChangeText={handleInput}
