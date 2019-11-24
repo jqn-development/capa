@@ -1,5 +1,6 @@
 import React, { useState, createContext } from 'react';
 import PropTypes from 'prop-types';
+import { Item } from '../components/CapaAutoComplete';
 
 interface Props {
     children?: React.ReactNode;
@@ -16,20 +17,6 @@ interface AutoCompleteContext {
     setActive(delta: string): void;
     activeUrl: string;
     setActiveUrl(delta: string): void;
-}
-interface Coordinate {
-    lat: number;
-    lng: number;
-}
-interface Item {
-    id?: string;
-    name: string;
-    details?: string;
-    avatar?: string;
-    // eslint-disable-next-line
-    place_id?: string;
-    description?: string;
-    coord?: Coordinate;
 }
 
 interface FormValues {

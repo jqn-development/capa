@@ -61,15 +61,15 @@ interface Coordinate {
     lat: number;
     lng: number;
 }
-interface Item {
-    id: string;
+export interface Item {
+    id?: string;
     name: string;
-    details: string;
+    details?: string;
     avatar?: string;
     // eslint-disable-next-line
     place_id?: string;
     description?: string;
-    coord: Coordinate;
+    coord?: Coordinate;
 }
 
 function PlacesItem({ item, onPress }: { item: Item; onPress: () => void }) {
@@ -268,7 +268,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                             renderItem={({ item }: { item: Item }) => (
                                 <PlacesItem onPress={() => onSelectItem(item)} item={item} />
                             )}
-                            keyExtractor={(item: Item) => item.id}
+                            keyExtractor={(item: Item) => item.name}
                         />
                     )}
                 </View>
@@ -304,7 +304,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                 renderItem={({ item }: { item: Item }) => {
                     return <Item onPress={() => onSelectItem(item)} item={item} />;
                 }}
-                keyExtractor={(item: Item) => item.id}
+                keyExtractor={(item: Item) => item.name}
             />
         </View>
     ) : (
