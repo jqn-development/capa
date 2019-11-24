@@ -57,7 +57,10 @@ const styles = StyleSheet.create({
         height: vh(100),
     },
 });
-
+interface Coordinate {
+    lat: number;
+    lng: number;
+}
 interface Item {
     id: string;
     name: string;
@@ -66,11 +69,7 @@ interface Item {
     // eslint-disable-next-line
     place_id?: string;
     description?: string;
-}
-
-interface Coordinate {
-    lat: number;
-    lng: number;
+    coord: Coordinate;
 }
 
 function PlacesItem({ item, onPress }: { item: Item; onPress: () => void }) {
@@ -118,17 +117,6 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     const active = String(suggestionsContext.active);
     const mapView = useRef<MapView | null>(null);
     const placeSelected = useRef(false);
-    const animate = (lat: number, lng: number) => {
-        const r = {
-            latitude: lat,
-            longitude: lng,
-            latitudeDelta: 7.5,
-            longitudeDelta: 7.5,
-        };
-        if (mapView && mapView.current) {
-            mapView.current.animateToRegion(r, 2000);
-        }
-    };
     const filtered = suggestions.filter(
         (item: Item) =>
             item.name.toLowerCase().indexOf(suggestionsContext.form[active].name.toLowerCase()) !==
@@ -164,12 +152,20 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                     lat: data.result.geometry.location.lat,
                     lng: data.result.geometry.location.lng,
                 });
-                animate(data.result.geometry.location.lat, data.result.geometry.location.lng);
+                const location = {
+                    ...item,
+                    coord: {
+                        lat: data.result.geometry.location.lat,
+                        lng: data.result.geometry.location.lng,
+                    },
+                    name: item.description,
+                };
+                formState = {
+                    ...suggestionsContext.form,
+                    location: location,
+                };
+                suggestionsContext.setForm(formState);
             });
-            formState = {
-                ...suggestionsContext.form,
-                [suggestionsContext.active as string]: { ...item, name: item.description },
-            };
             placeSelected.current = true;
             setShowList(false);
         } else {
@@ -178,8 +174,8 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                 [suggestionsContext.active]: item,
             };
             suggestionsContext.setEditMode(false);
+            suggestionsContext.setForm(formState);
         }
-        suggestionsContext.setForm(formState);
     };
     const handleMapInput = (e: string) => {
         suggestionsContext.setForm({
@@ -203,21 +199,29 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     if (suggestionsContext.mapMode) {
         return suggestionsContext.editMode ? (
             <View>
-                <MapView
-                    ref={mapView}
-                    provider={PROVIDER_GOOGLE}
-                    customMapStyle={MapStyles}
-                    style={styles.mapStyle}
-                >
-                    {marker && (
-                        <Marker
-                            coordinate={{
-                                latitude: marker.lat,
-                                longitude: marker.lng,
-                            }}
-                        ></Marker>
-                    )}
-                </MapView>
+                {suggestionsContext.form.location.coord && (
+                    <MapView
+                        ref={mapView}
+                        region={{
+                            latitude: suggestionsContext.form.location.coord.lat,
+                            longitude: suggestionsContext.form.location.coord.lng,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421,
+                        }}
+                        provider={PROVIDER_GOOGLE}
+                        customMapStyle={MapStyles}
+                        style={styles.mapStyle}
+                    >
+                        {marker && (
+                            <Marker
+                                coordinate={{
+                                    latitude: marker.lat,
+                                    longitude: marker.lng,
+                                }}
+                            ></Marker>
+                        )}
+                    </MapView>
+                )}
                 <View style={[styles.container, Container.absolute]}>
                     <View style={{ flexDirection: 'row' }}>
                         <TouchableOpacity
