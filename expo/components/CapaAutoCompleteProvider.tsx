@@ -19,7 +19,7 @@ interface AutoCompleteContext {
 }
 
 interface FormValues {
-    [key: string]: string;
+    [key: string]: object;
 }
 
 export const AutoCompleteContext = createContext<AutoCompleteContext | null>(null);
@@ -33,7 +33,11 @@ export const useAutoCompleteContext = (): AutoCompleteContext => {
 };
 
 export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props => {
-    const [form, setForm] = useState<FormValues>({});
+    const [form, setForm] = useState<FormValues>({
+        film: { name: '' },
+        gear: { name: '' },
+        location: { name: '' },
+    });
     const [editMode, setEditMode] = useState(false);
     const [mapMode, setMapMode] = useState(false);
     const [active, setActive] = useState('');

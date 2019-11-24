@@ -65,7 +65,7 @@ interface Item {
 }
 
 interface FormValues {
-    [key: string]: string;
+    [key: string]: object;
 }
 
 interface NavStatelessComponent extends React.StatelessComponent {
@@ -85,6 +85,8 @@ const renderField = ({
             containerStyle={[InputField.inputContainer]}
             inputStyle={[Colors.whiteText, InputField.inputText]}
             keyboardAppearance="dark"
+            leftIcon={<Icon name="search" color="#fff" />}
+            leftIconContainerStyle={{marginLeft: 0, paddingRight: 5}}
             {...field}
             {...props}
         />
@@ -104,13 +106,13 @@ export const UploadDetailsForm = () => {
         }
         suggestionsContext.setActive(type);
         // push input value on form state
-        if (!suggestionsContext.form[type]) {
+        /*if (!suggestionsContext.form[type]) {
             const formState = {
                 ...suggestionsContext.form,
                 [type as string]: '',
             };
             suggestionsContext.setForm(formState);
-        }
+        }*/
     };
     return !suggestionsContext.editMode ? (
         <View>
@@ -129,7 +131,7 @@ export const UploadDetailsForm = () => {
                                 onFocus={() => {
                                     onFocusHandle('film', `${config.url}/api/film/suggestions`);
                                 }}
-                                value={values.film}
+                                value={values.film.name}
                                 label="FILM"
                                 name="Film"
                                 component={renderField}
@@ -141,7 +143,7 @@ export const UploadDetailsForm = () => {
                                 onFocus={() => {
                                     onFocusHandle('gear', `${config.url}/api/camera/suggestions`);
                                 }}
-                                value={values.gear}
+                                value={values.gear.name}
                                 label="CAMERA"
                                 name="Gear"
                                 component={renderField}
@@ -153,7 +155,7 @@ export const UploadDetailsForm = () => {
                                 onFocus={() => {
                                     onFocusHandle('location', `${config.url}/api/location`);
                                 }}
-                                value={values.location}
+                                value={values.location.name}
                                 label="LOCATION"
                                 name="Location"
                                 component={renderField}
@@ -186,9 +188,19 @@ UploadDetails.navigationOptions = ({ navigation }: NavigationParams): Navigation
         marginRight: 15,
         borderBottomWidth: 0,
     },
-    headerLeft: false && (
+    headerLeft: (
         <Icon
             name="close"
+            color="#fff"
+            onPress={(): void => {
+                navigation.goBack();
+            }}
+            Component={TouchableOpacity}
+        />
+    ),
+    headerRight: (
+        <Icon
+            name="check"
             color="#fff"
             onPress={(): void => {
                 navigation.goBack();

@@ -17,9 +17,14 @@ const styles = StyleSheet.create({
         width: vw(80),
     },
     inputContainer: {
-        paddingLeft: vw(5),
+        paddingLeft: vw(0),
         padding: 0,
         width: vw(80),
+    },
+    inputContainerGeneric: {
+        paddingLeft: vw(5),
+        padding: 0,
+        width: vw(90),
     },
     container: {
         ...Container.flexVerticalTop,
@@ -59,8 +64,8 @@ interface Item {
     details: string;
     avatar?: string;
     // eslint-disable-next-line
-    place_id: string;
-    description: string;
+    place_id?: string;
+    description?: string;
 }
 
 interface Coordinate {
@@ -126,7 +131,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     };
     const filtered = suggestions.filter(
         (item: Item) =>
-            item.name.toLowerCase().indexOf(suggestionsContext.form[active].toLowerCase()) !== -1
+            item.name.toLowerCase().indexOf(suggestionsContext.form[active].name.toLowerCase()) !== -1
     );
 
     const fetchSuggestions = (apiUrl: string) => {
@@ -142,7 +147,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
     const { results, getPlaceDetails } = useGoogleAutocomplete({
         apiKey: config.googleApi,
-        query: suggestionsContext.form[suggestionsContext.active],
+        query: suggestionsContext.form.location.name,
         type: 'geocode',
         options: {
             types: '(cities)',
@@ -162,14 +167,14 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             });
             formState = {
                 ...suggestionsContext.form,
-                [suggestionsContext.active as string]: item.description,
+                [suggestionsContext.active as string]: { ...item, name: item.description },
             };
             placeSelected.current = true;
             setShowList(false);
         } else {
             formState = {
                 ...suggestionsContext.form,
-                [suggestionsContext.active as string]: item.name,
+                [suggestionsContext.active]: item,
             };
             suggestionsContext.setEditMode(false);
         }
@@ -178,7 +183,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     const handleMapInput = (e: string) => {
         suggestionsContext.setForm({
             ...suggestionsContext.form,
-            [active]: e,
+            location: { name: e },
         });
         if (e.length === 0) {
             setShowList(false);
@@ -241,7 +246,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                                 ]}
                                 containerStyle={[InputField.inputContainer, styles.inputContainer]}
                                 inputStyle={[Colors.whiteText, InputField.inputText]}
-                                value={suggestionsContext.form[suggestionsContext.active]}
+                                value={suggestionsContext.form[suggestionsContext.active].name}
                                 onChangeText={handleMapInput}
                                 onFocus={() => {
                                     setSuggestions([]);
@@ -272,10 +277,15 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                 keyboardAppearance="dark"
                 placeholderTextColor="white"
                 placeholder="Search"
+                leftIcon={<Icon name="search" color="#fff" />}
+                leftIconContainerStyle={{
+                    marginLeft: 0,
+                    paddingRight: 5,
+                }}
                 inputContainerStyle={[InputField.inputUnderline]}
-                containerStyle={[InputField.inputContainer, styles.inputContainer]}
+                containerStyle={[InputField.inputContainer, styles.inputContainerGeneric]}
                 inputStyle={[Colors.whiteText, InputField.inputText]}
-                value={suggestionsContext.form[suggestionsContext.active]}
+                value={suggestionsContext.form[suggestionsContext.active].name}
                 onChangeText={handleInput}
                 onFocus={() => {
                     setSuggestions([]);
