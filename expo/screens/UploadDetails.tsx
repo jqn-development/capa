@@ -87,6 +87,8 @@ const renderField = ({
 }: {
     field: object;
 }) => {
+    // @ts-ignore
+    const { value } = props;
     return (
         <Input
             placeholderTextColor="white"
@@ -98,7 +100,7 @@ const renderField = ({
             leftIconContainerStyle={{
                 marginLeft: 0,
                 paddingRight: 5,
-                display: props.value ? 'none': 'flex',
+                display: value ? 'none' : 'flex',
             }}
             {...field}
             {...props}
@@ -108,7 +110,7 @@ const renderField = ({
 
 export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
-    const [activeTab, setActiveTab] = useState(null);
+    const [activeTab, setActiveTab] = useState<string | null>(null);
     const onFocusHandle = (type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
@@ -122,6 +124,7 @@ export const UploadDetailsForm = () => {
     return !suggestionsContext.editMode ? (
         <View>
             <View style={styles.imageView}>
+                // @ts-ignore
                 <FullWidthImage source={registerGfx} ratio={10 / 16} />
             </View>
             <Formik<FormValues | {}>
