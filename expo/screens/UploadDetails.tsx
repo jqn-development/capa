@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Icon, Input } from 'react-native-elements';
+import { Icon, Input, ListItem, Avatar } from 'react-native-elements';
 import {
     NavigationScreenProps,
     NavigationScreenOptions,
@@ -48,6 +48,10 @@ const styles = StyleSheet.create({
         marginRight: vw(5),
         marginLeft: vw(5),
     },
+    avatarContainerStyle: {
+        marginTop: 10,
+        marginRight: 10,
+    }
 });
 
 interface Props extends NavigationScreenProps {
@@ -81,12 +85,16 @@ const renderField = ({
     return (
         <Input
             placeholderTextColor="white"
-            inputContainerStyle={[InputField.input, InputField.inputUnderline]}
+            inputContainerStyle={[InputField.input, InputField.inputUnderline, {marginTop: 20}]}
             containerStyle={[InputField.inputContainer]}
             inputStyle={[Colors.whiteText, InputField.inputText]}
             keyboardAppearance="dark"
             leftIcon={<Icon name="search" color="#fff" />}
-            leftIconContainerStyle={{marginLeft: 0, paddingRight: 5}}
+            leftIconContainerStyle={{
+                marginLeft: 0,
+                paddingRight: 5,
+                display: props.value ? 'none': 'flex',
+            }}
             {...field}
             {...props}
         />
@@ -105,19 +113,29 @@ export const UploadDetailsForm = () => {
             suggestionsContext.setMapMode(false);
         }
         suggestionsContext.setActive(type);
-        // push input value on form state
-        /*if (!suggestionsContext.form[type]) {
-            const formState = {
-                ...suggestionsContext.form,
-                [type as string]: '',
-            };
-            suggestionsContext.setForm(formState);
-        }*/
     };
     return !suggestionsContext.editMode ? (
         <View>
             <View style={styles.imageView}>
                 <FullWidthImage source={registerGfx} ratio={10 / 16} />
+                <View style={{display: 'none', flexDirection: 'row'}}>
+                    <Avatar
+                        rounded
+                        size="small"
+                        containerStyle={styles.avatarContainerStyle}
+                        source={{
+                            uri: suggestionsContext.form.film.avatar,
+                        }}
+                    />
+                    <Avatar
+                        rounded
+                        size="small"
+                        containerStyle={{marginTop: 10}}
+                        source={{
+                            uri: suggestionsContext.form.gear.avatar,
+                        }}
+                    />
+                </View>
             </View>
             <Formik<FormValues | {}>
                 enableReinitialize
