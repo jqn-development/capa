@@ -202,6 +202,8 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                 {suggestionsContext.form.location.coord && (
                     <MapView
                         ref={mapView}
+                        loadingBackgroundColor="black"
+                        loadingIndicatorColor="black"
                         region={{
                             latitude: suggestionsContext.form.location.coord.lat,
                             longitude: suggestionsContext.form.location.coord.lng,
