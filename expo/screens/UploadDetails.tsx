@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Icon, Input } from 'react-native-elements';
+import { Icon, Input, ListItem, Avatar } from 'react-native-elements';
 import {
     NavigationScreenProps,
     NavigationScreenOptions,
@@ -86,7 +86,11 @@ const renderField = ({
             inputStyle={[Colors.whiteText, InputField.inputText]}
             keyboardAppearance="dark"
             leftIcon={<Icon name="search" color="#fff" />}
-            leftIconContainerStyle={{marginLeft: 0, paddingRight: 5}}
+            leftIconContainerStyle={{
+                marginLeft: 0,
+                paddingRight: 5,
+                display:'none',
+            }}
             {...field}
             {...props}
         />
@@ -97,6 +101,7 @@ export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
     const [activeTab, setActiveTab] = useState(null);
     const onFocusHandle = (type: string, apiUrl: string) => {
+        console.log(suggestionsContext.form);
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
         if (type === 'location') {
@@ -105,19 +110,29 @@ export const UploadDetailsForm = () => {
             suggestionsContext.setMapMode(false);
         }
         suggestionsContext.setActive(type);
-        // push input value on form state
-        /*if (!suggestionsContext.form[type]) {
-            const formState = {
-                ...suggestionsContext.form,
-                [type as string]: '',
-            };
-            suggestionsContext.setForm(formState);
-        }*/
     };
     return !suggestionsContext.editMode ? (
         <View>
             <View style={styles.imageView}>
                 <FullWidthImage source={registerGfx} ratio={10 / 16} />
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <Avatar
+                        rounded
+                        size="small"
+                        containerStyle={{marginTop: 10, marginRight: 10}}
+                        source={{
+                            uri: suggestionsContext.form.film.avatar,
+                        }}
+                    />
+                    <Avatar
+                        rounded
+                        size="small"
+                        containerStyle={{marginTop: 10}}
+                        source={{
+                            uri: suggestionsContext.form.gear.avatar,
+                        }}
+                    />
+                </View>
             </View>
             <Formik<FormValues | {}>
                 enableReinitialize

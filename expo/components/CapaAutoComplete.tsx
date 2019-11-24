@@ -131,7 +131,8 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     };
     const filtered = suggestions.filter(
         (item: Item) =>
-            item.name.toLowerCase().indexOf(suggestionsContext.form[active].name.toLowerCase()) !== -1
+            item.name.toLowerCase().indexOf(suggestionsContext.form[active].name.toLowerCase()) !==
+            -1
     );
 
     const fetchSuggestions = (apiUrl: string) => {
@@ -195,7 +196,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     const handleInput = (e: string) => {
         suggestionsContext.setForm({
             ...suggestionsContext.form,
-            [active]: e,
+            [active]: { name: e },
         });
         debounceLoadData(String(suggestionsContext.activeUrl));
     };
