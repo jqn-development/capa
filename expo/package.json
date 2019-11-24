@@ -36,6 +36,7 @@
   "dependencies": {
     "@expo/samples": "2.1.1",
     "@expo/vector-icons": "^10.0.0",
+    "@types/react-native-dotenv": "^0.2.0",
     "@types/react-navigation": "^3.0.8",
     "@unimodules/react-native-adapter": "~4.0.0",
     "axios": "^0.19.0",

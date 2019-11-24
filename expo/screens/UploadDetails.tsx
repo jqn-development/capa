@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Icon, Input } from 'react-native-elements';
@@ -15,6 +15,7 @@ import { Formik, Field } from 'formik';
 import { ThunkDispatch } from 'redux-thunk';
 import config from '../config';
 import CapaAutoComplete from '../components/CapaAutoComplete';
+import CapaPhotoSettingsFooter from '../components/CapaPhotoSettingsFooter';
 import {
     CapaAutoCompleteProvider,
     useAutoCompleteContext,
@@ -25,10 +26,9 @@ import registerGfx from '../assets/images/bp.jpg';
 
 const styles = StyleSheet.create({
     container: {
-        ...Container.flexVerticalTop,
-        ...Colors.background,
         paddingLeft: vw(10),
         paddingRight: vw(10),
+        marginBottom: vh(10),
     },
     containerNoPadding: {
         ...Container.flexVerticalTop,
@@ -41,13 +41,17 @@ const styles = StyleSheet.create({
         fontSize: 10,
     },
     imageView: {
-        marginBottom: 30,
+        flex: 1,
+        width: vw(90),
+        flexDirection: 'column',
+        justifyContent: 'center',
+        marginRight: vw(5),
+        marginLeft: vw(5),
     },
 });
 
 interface Props extends NavigationScreenProps {
     errorMessage: string;
-    details: Record<string, string>;
 }
 
 interface DispatchProps {
@@ -61,7 +65,7 @@ interface Item {
 }
 
 interface FormValues {
-    [key: string]: string;
+    [key: string]: object;
 }
 
 interface NavStatelessComponent extends React.StatelessComponent {
@@ -80,6 +84,9 @@ const renderField = ({
             inputContainerStyle={[InputField.input, InputField.inputUnderline]}
             containerStyle={[InputField.inputContainer]}
             inputStyle={[Colors.whiteText, InputField.inputText]}
+            keyboardAppearance="dark"
+            leftIcon={<Icon name="search" color="#fff" />}
+            leftIconContainerStyle={{marginLeft: 0, paddingRight: 5}}
             {...field}
             {...props}
         />
@@ -88,67 +95,77 @@ const renderField = ({
 
 export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
-    const details = suggestionsContext.form;
-    const handleInput = (e: string, type: string, apiUrl: string) => {
+    const [activeTab, setActiveTab] = useState(null);
+    const onFocusHandle = (type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
         if (type === 'location') {
             suggestionsContext.setMapMode(true);
+        } else {
+            suggestionsContext.setMapMode(false);
         }
         suggestionsContext.setActive(type);
-        const formState = {
-            ...suggestionsContext.form,
-            [type as string]: e,
-        };
-        suggestionsContext.setForm(formState);
+        // push input value on form state
+        /*if (!suggestionsContext.form[type]) {
+            const formState = {
+                ...suggestionsContext.form,
+                [type as string]: '',
+            };
+            suggestionsContext.setForm(formState);
+        }*/
     };
     return !suggestionsContext.editMode ? (
         <View>
             <View style={styles.imageView}>
-                {/* 
-                // @ts-ignore */}
                 <FullWidthImage source={registerGfx} ratio={10 / 16} />
             </View>
             <Formik<FormValues | {}>
                 enableReinitialize
-                initialValues={details}
+                initialValues={suggestionsContext.form}
                 onSubmit={values => console.log(values)}
             >
                 {({ values }: { values: FormValues }) => (
-                    <View style={Container.flexVerticalTop}>
-                        <Field
-                            onChangeText={(e: string) => {
-                                handleInput(e, 'film', `${config.url}/api/film/suggestions`);
-                            }}
-                            value={values.film}
-                            label="FILM"
-                            name="Film"
-                            component={renderField}
-                            placeholder=""
-                        />
-                        <Field
-                            onChangeText={(e: string) => {
-                                handleInput(e, 'gear', `${config.url}/api/camera/suggestions`);
-                            }}
-                            value={values.gear}
-                            label="CAMERA"
-                            name="Gear"
-                            component={renderField}
-                            placeholder=""
-                        />
-                        <Field
-                            onChangeText={(e: string) => {
-                                handleInput(e, 'location', `${config.url}/api/location`);
-                            }}
-                            value={values.location}
-                            label="LOCATION"
-                            name="Location"
-                            component={renderField}
-                            placeholder=""
-                        />
+                    <View style={[styles.container]}>
+                        {activeTab === 'Film' && (
+                            <Field
+                                onFocus={() => {
+                                    onFocusHandle('film', `${config.url}/api/film/suggestions`);
+                                }}
+                                value={values.film.name}
+                                label="FILM"
+                                name="Film"
+                                component={renderField}
+                                placeholder=""
+                            />
+                        )}
+                        {activeTab === 'Camera' && (
+                            <Field
+                                onFocus={() => {
+                                    onFocusHandle('gear', `${config.url}/api/camera/suggestions`);
+                                }}
+                                value={values.gear.name}
+                                label="CAMERA"
+                                name="Gear"
+                                component={renderField}
+                                placeholder=""
+                            />
+                        )}
+                        {activeTab === 'Location' && (
+                            <Field
+                                onFocus={() => {
+                                    onFocusHandle('location', `${config.url}/api/location`);
+                                }}
+                                value={values.location.name}
+                                label="LOCATION"
+                                name="Location"
+                                component={renderField}
+                                placeholder=""
+                            />
+                        )}
                     </View>
                 )}
             </Formik>
+            <CapaPhotoSettingsFooter changeActiveTab={tab => setActiveTab(tab)} />
         </View>
     ) : null;
 };
@@ -174,6 +191,16 @@ UploadDetails.navigationOptions = ({ navigation }: NavigationParams): Navigation
     headerLeft: (
         <Icon
             name="close"
+            color="#fff"
+            onPress={(): void => {
+                navigation.goBack();
+            }}
+            Component={TouchableOpacity}
+        />
+    ),
+    headerRight: (
+        <Icon
+            name="check"
             color="#fff"
             onPress={(): void => {
                 navigation.goBack();

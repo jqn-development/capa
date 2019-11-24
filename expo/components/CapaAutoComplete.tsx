@@ -3,13 +3,29 @@ import { debounce } from 'lodash';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Input, ListItem } from 'react-native-elements';
+import { Input, ListItem, Icon } from 'react-native-elements';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Colors, Container, InputField, MapStyles } from '../styles';
 import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
 import useGoogleAutocomplete from '../hooks/useGooglePlaces';
+import config from '../config';
 
 const styles = StyleSheet.create({
+    mapInputContainer: {
+        margin: 0,
+        padding: 0,
+        width: vw(80),
+    },
+    inputContainer: {
+        paddingLeft: vw(0),
+        padding: 0,
+        width: vw(80),
+    },
+    inputContainerGeneric: {
+        paddingLeft: vw(5),
+        padding: 0,
+        width: vw(90),
+    },
     container: {
         ...Container.flexVerticalTop,
         ...Colors.background,
@@ -27,7 +43,7 @@ const styles = StyleSheet.create({
         width: vw(100),
         backgroundColor: '#000',
         marginLeft: 0,
-        paddingLeft: 0,
+        paddingLeft: vw(5),
     },
     listItemTitle: {
         color: 'white',
@@ -47,21 +63,19 @@ interface Item {
     name: string;
     details: string;
     avatar?: string;
+    // eslint-disable-next-line
+    place_id?: string;
+    description?: string;
 }
 
-function PlacesItem({ item, onSelected }: { item: any; onSelected: () => void }) {
-    const suggestionsContext = useAutoCompleteContext();
+interface Coordinate {
+    lat: number;
+    lng: number;
+}
+
+function PlacesItem({ item, onPress }: { item: Item; onPress: () => void }) {
     return (
-        <TouchableOpacity
-            onPress={() => {
-                const formState = {
-                    ...suggestionsContext.form,
-                    [suggestionsContext.active as string]: item.description,
-                };
-                onSelected();
-                suggestionsContext.setForm(formState);
-            }}
-        >
+        <TouchableOpacity onPress={onPress}>
             <ListItem
                 leftIcon={{ name: 'map-marker', type: 'font-awesome', color: '#fff' }}
                 title={item.description}
@@ -72,19 +86,9 @@ function PlacesItem({ item, onSelected }: { item: any; onSelected: () => void })
     );
 }
 
-function Item({ item }: { item: Item }) {
-    const suggestionsContext = useAutoCompleteContext();
+function Item({ item, onPress }: { item: Item; onPress: () => void }) {
     return (
-        <TouchableOpacity
-            onPress={() => {
-                const formState = {
-                    ...suggestionsContext.form,
-                    [suggestionsContext.active as string]: item.name,
-                };
-                suggestionsContext.setForm(formState);
-                suggestionsContext.setEditMode(false);
-            }}
-        >
+        <TouchableOpacity onPress={onPress}>
             <ListItem
                 leftAvatar={
                     item.avatar
@@ -109,24 +113,25 @@ function Item({ item }: { item: Item }) {
 const CapaAutoComplete: React.FunctionComponent = () => {
     const [suggestions, setSuggestions] = useState<Item[]>([]);
     const [showList, setShowList] = useState(true);
-    const [marker, setMarker] = useState(false);
+    const [marker, setMarker] = useState<Coordinate | null>(null);
     const suggestionsContext = useAutoCompleteContext();
     const active = String(suggestionsContext.active);
-    const mapView = useRef();
-    const animate = (lat,lng) => {
+    const mapView = useRef<MapView | null>(null);
+    const placeSelected = useRef(false);
+    const animate = (lat: number, lng: number) => {
         const r = {
             latitude: lat,
             longitude: lng,
             latitudeDelta: 7.5,
             longitudeDelta: 7.5,
         };
-        if (mapView.current) {
+        if (mapView && mapView.current) {
             mapView.current.animateToRegion(r, 2000);
         }
     };
     const filtered = suggestions.filter(
         (item: Item) =>
-            item.name.toLowerCase().indexOf(suggestionsContext.form[active].toLowerCase()) !== -1
+            item.name.toLowerCase().indexOf(suggestionsContext.form[active].name.toLowerCase()) !== -1
     );
 
     const fetchSuggestions = (apiUrl: string) => {
@@ -140,24 +145,52 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             });
     };
     const debounceLoadData = useCallback(debounce(fetchSuggestions, 300), []);
-    const { results, isLoading, error, getPlaceDetails } = useGoogleAutocomplete({
-        apiKey: 'AIzaSyCa-nlF1oV_1THrXZxbt6LyJbcebz84qJ4',
-        query: suggestionsContext.form[suggestionsContext.active],
+    const { results, getPlaceDetails } = useGoogleAutocomplete({
+        apiKey: config.googleApi,
+        query: suggestionsContext.form.location.name,
         type: 'geocode',
         options: {
             types: '(cities)',
         },
     });
+    const onSelectItem = (item: Item) => {
+        let formState;
+        if (item.place_id) {
+            getPlaceDetails(item.place_id, {
+                fields: ['name', 'geometry'],
+            }).then(data => {
+                setMarker({
+                    lat: data.result.geometry.location.lat,
+                    lng: data.result.geometry.location.lng,
+                });
+                animate(data.result.geometry.location.lat, data.result.geometry.location.lng);
+            });
+            formState = {
+                ...suggestionsContext.form,
+                [suggestionsContext.active as string]: { ...item, name: item.description },
+            };
+            placeSelected.current = true;
+            setShowList(false);
+        } else {
+            formState = {
+                ...suggestionsContext.form,
+                [suggestionsContext.active]: item,
+            };
+            suggestionsContext.setEditMode(false);
+        }
+        suggestionsContext.setForm(formState);
+    };
     const handleMapInput = (e: string) => {
         suggestionsContext.setForm({
             ...suggestionsContext.form,
-            [active]: e,
+            location: { name: e },
         });
         if (e.length === 0) {
             setShowList(false);
         } else {
             setShowList(true);
         }
+        placeSelected.current = false;
     };
     const handleInput = (e: string) => {
         suggestionsContext.setForm({
@@ -168,7 +201,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     };
     if (suggestionsContext.mapMode) {
         return suggestionsContext.editMode ? (
-            <View style={styles.container}>
+            <View>
                 <MapView
                     ref={mapView}
                     provider={PROVIDER_GOOGLE}
@@ -185,39 +218,48 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                     )}
                 </MapView>
                 <View style={[styles.container, Container.absolute]}>
-                    <Input
-                        autoFocus
-                        placeholderTextColor="white"
-                        placeholder="Search"
-                        inputContainerStyle={[InputField.inputUnderline]}
-                        containerStyle={[InputField.inputContainer]}
-                        inputStyle={[Colors.whiteText, InputField.inputText]}
-                        value={suggestionsContext.form[suggestionsContext.active]}
-                        onChangeText={handleMapInput}
-                        onFocus={() => {
-                            setSuggestions([]);
-                            // debounceLoadPlacesData();
-                        }}
-                    />
+                    <View style={{ flexDirection: 'row' }}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                suggestionsContext.setEditMode(false);
+                            }}
+                        >
+                            {placeSelected.current ? (
+                                <View style={{ marginLeft: vw(5), marginRight: 10, marginTop: 18 }}>
+                                    <Icon type="font-awesome" name="chevron-left" color="#fff" />
+                                </View>
+                            ) : (
+                                <View style={{ marginLeft: vw(5), marginRight: 10, marginTop: 18 }}>
+                                    <Icon type="font-awesome" name="search" color="#fff" />
+                                </View>
+                            )}
+                        </TouchableOpacity>
+                        <View>
+                            <Input
+                                autoFocus
+                                keyboardAppearance="dark"
+                                placeholderTextColor="white"
+                                placeholder="Search"
+                                inputContainerStyle={[
+                                    InputField.inputNoUnderline,
+                                    styles.mapInputContainer,
+                                ]}
+                                containerStyle={[InputField.inputContainer, styles.inputContainer]}
+                                inputStyle={[Colors.whiteText, InputField.inputText]}
+                                value={suggestionsContext.form[suggestionsContext.active].name}
+                                onChangeText={handleMapInput}
+                                onFocus={() => {
+                                    setSuggestions([]);
+                                    // debounceLoadPlacesData();
+                                }}
+                            />
+                        </View>
+                    </View>
                     {showList && (
                         <FlatList
                             data={results.predictions}
                             renderItem={({ item }: { item: Item }) => (
-                                <PlacesItem
-                                    onSelected={() => {
-                                        getPlaceDetails(item.place_id, {
-                                            fields: ['name', 'geometry'],
-                                        }).then(data => {
-                                            setMarker({ lat: data.result.geometry.location.lat, lng: data.result.geometry.location.lng});
-                                            animate(
-                                                data.result.geometry.location.lat,
-                                                data.result.geometry.location.lng
-                                            );
-                                        });
-                                        setShowList(false);
-                                    }}
-                                    item={item}
-                                />
+                                <PlacesItem onPress={() => onSelectItem(item)} item={item} />
                             )}
                             keyExtractor={(item: Item) => item.id}
                         />
@@ -232,12 +274,18 @@ const CapaAutoComplete: React.FunctionComponent = () => {
         <View style={styles.container}>
             <Input
                 autoFocus
+                keyboardAppearance="dark"
                 placeholderTextColor="white"
                 placeholder="Search"
+                leftIcon={<Icon name="search" color="#fff" />}
+                leftIconContainerStyle={{
+                    marginLeft: 0,
+                    paddingRight: 5,
+                }}
                 inputContainerStyle={[InputField.inputUnderline]}
-                containerStyle={[InputField.inputContainer]}
+                containerStyle={[InputField.inputContainer, styles.inputContainerGeneric]}
                 inputStyle={[Colors.whiteText, InputField.inputText]}
-                value={suggestionsContext.form[suggestionsContext.active]}
+                value={suggestionsContext.form[suggestionsContext.active].name}
                 onChangeText={handleInput}
                 onFocus={() => {
                     setSuggestions([]);
@@ -246,7 +294,9 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             />
             <FlatList
                 data={filtered}
-                renderItem={({ item }: { item: Item }) => <Item item={item} />}
+                renderItem={({ item }: { item: Item }) => {
+                    return <Item onPress={() => onSelectItem(item)} item={item} />;
+                }}
                 keyExtractor={(item: Item) => item.id}
             />
         </View>
