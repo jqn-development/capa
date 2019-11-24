@@ -6,7 +6,7 @@ import { absolute, flexVerticalBottom } from '../styles/container';
 import { whiteText } from '../styles/colors';
 
 interface PhotoSettingsProps {
-    changeActiveTab: () => void;
+    changeActiveTab: (tab: string | null) => void;
 }
 
 const tabs = [

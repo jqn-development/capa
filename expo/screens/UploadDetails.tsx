@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Icon, Input } from 'react-native-elements';
 import {
     NavigationScreenProps,
@@ -11,7 +11,7 @@ import {
 import FullWidthImage from 'react-native-fullwidth-image';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
-import { Formik, Field, validateYupSchema } from 'formik';
+import { Formik, Field } from 'formik';
 import { ThunkDispatch } from 'redux-thunk';
 import config from '../config';
 import CapaAutoComplete from '../components/CapaAutoComplete';
@@ -26,8 +26,6 @@ import registerGfx from '../assets/images/bp.jpg';
 
 const styles = StyleSheet.create({
     container: {
-        //...Container.flexVerticalBottom,
-        ...Colors.background,
         paddingLeft: vw(10),
         paddingRight: vw(10),
         marginBottom: vh(10),
@@ -93,9 +91,9 @@ const renderField = ({
     );
 };
 
-export const UploadDetailsForm = props => {
+export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
-    const { activeOption } = props;
+    const [activeTab, setActiveTab] = useState(null);
     const onFocusHandle = (type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
@@ -126,7 +124,7 @@ export const UploadDetailsForm = props => {
             >
                 {({ values }: { values: FormValues }) => (
                     <View style={[styles.container]}>
-                        {activeOption === 'Film' && (
+                        {activeTab === 'Film' && (
                             <Field
                                 onFocus={() => {
                                     onFocusHandle('film', `${config.url}/api/film/suggestions`);
@@ -138,7 +136,7 @@ export const UploadDetailsForm = props => {
                                 placeholder=""
                             />
                         )}
-                        {activeOption === 'Camera' && (
+                        {activeTab === 'Camera' && (
                             <Field
                                 onFocus={() => {
                                     onFocusHandle('gear', `${config.url}/api/camera/suggestions`);
@@ -150,7 +148,7 @@ export const UploadDetailsForm = props => {
                                 placeholder=""
                             />
                         )}
-                        {activeOption === 'Location' && (
+                        {activeTab === 'Location' && (
                             <Field
                                 onFocus={() => {
                                     onFocusHandle('location', `${config.url}/api/location`);
@@ -165,18 +163,17 @@ export const UploadDetailsForm = props => {
                     </View>
                 )}
             </Formik>
+            <CapaPhotoSettingsFooter changeActiveTab={tab => setActiveTab(tab)} />
         </View>
     ) : null;
 };
 
 export const UploadDetails: NavigationScreenComponent = () => {
-    const [activeTab, setActiveTab] = useState('Film');
     return (
         <View style={styles.containerNoPadding}>
             <CapaAutoCompleteProvider>
-                <UploadDetailsForm activeOption={activeTab} />
+                <UploadDetailsForm />
                 <CapaAutoComplete />
-                <CapaPhotoSettingsFooter changeActiveTab={(tab) => {setActiveTab(tab)}} />
             </CapaAutoCompleteProvider>
         </View>
     );

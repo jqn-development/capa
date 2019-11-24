@@ -68,19 +68,9 @@ interface Coordinate {
     lng: number;
 }
 
-function PlacesItem({ item, onSelected }: { item: Item; onSelected: () => void }) {
-    const suggestionsContext = useAutoCompleteContext();
+function PlacesItem({ item, onPress }: { item: Item; onPress: () => void }) {
     return (
-        <TouchableOpacity
-            onPress={() => {
-                const formState = {
-                    ...suggestionsContext.form,
-                    [suggestionsContext.active as string]: item.description,
-                };
-                onSelected();
-                suggestionsContext.setForm(formState);
-            }}
-        >
+        <TouchableOpacity onPress={onPress}>
             <ListItem
                 leftIcon={{ name: 'map-marker', type: 'font-awesome', color: '#fff' }}
                 title={item.description}
@@ -91,19 +81,9 @@ function PlacesItem({ item, onSelected }: { item: Item; onSelected: () => void }
     );
 }
 
-function Item({ item }: { item: Item }) {
-    const suggestionsContext = useAutoCompleteContext();
+function Item({ item, onPress }: { item: Item; onPress: () => void }) {
     return (
-        <TouchableOpacity
-            onPress={() => {
-                const formState = {
-                    ...suggestionsContext.form,
-                    [suggestionsContext.active as string]: item.name,
-                };
-                suggestionsContext.setForm(formState);
-                suggestionsContext.setEditMode(false);
-            }}
-        >
+        <TouchableOpacity onPress={onPress}>
             <ListItem
                 leftAvatar={
                     item.avatar
@@ -168,6 +148,33 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             types: '(cities)',
         },
     });
+    const onSelectItem = (item: Item) => {
+        let formState;
+        if (item.place_id) {
+            getPlaceDetails(item.place_id, {
+                fields: ['name', 'geometry'],
+            }).then(data => {
+                setMarker({
+                    lat: data.result.geometry.location.lat,
+                    lng: data.result.geometry.location.lng,
+                });
+                animate(data.result.geometry.location.lat, data.result.geometry.location.lng);
+            });
+            formState = {
+                ...suggestionsContext.form,
+                [suggestionsContext.active as string]: item.description,
+            };
+            placeSelected.current = true;
+            setShowList(false);
+        } else {
+            formState = {
+                ...suggestionsContext.form,
+                [suggestionsContext.active as string]: item.name,
+            };
+            suggestionsContext.setEditMode(false);
+        }
+        suggestionsContext.setForm(formState);
+    };
     const handleMapInput = (e: string) => {
         suggestionsContext.setForm({
             ...suggestionsContext.form,
@@ -247,25 +254,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         <FlatList
                             data={results.predictions}
                             renderItem={({ item }: { item: Item }) => (
-                                <PlacesItem
-                                    onSelected={() => {
-                                        getPlaceDetails(item.place_id, {
-                                            fields: ['name', 'geometry'],
-                                        }).then(data => {
-                                            setMarker({
-                                                lat: data.result.geometry.location.lat,
-                                                lng: data.result.geometry.location.lng,
-                                            });
-                                            animate(
-                                                data.result.geometry.location.lat,
-                                                data.result.geometry.location.lng
-                                            );
-                                        });
-                                        placeSelected.current = true;
-                                        setShowList(false);
-                                    }}
-                                    item={item}
-                                />
+                                <PlacesItem onPress={() => onSelectItem(item)} item={item} />
                             )}
                             keyExtractor={(item: Item) => item.id}
                         />
@@ -295,7 +284,9 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             />
             <FlatList
                 data={filtered}
-                renderItem={({ item }: { item: Item }) => <Item item={item} />}
+                renderItem={({ item }: { item: Item }) => {
+                    return <Item onPress={() => onSelectItem(item)} item={item} />;
+                }}
                 keyExtractor={(item: Item) => item.id}
             />
         </View>
