@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { Icon, Input, ListItem, Avatar } from 'react-native-elements';
+import { Icon, Input } from 'react-native-elements';
 import {
     NavigationScreenProps,
     NavigationScreenOptions,
@@ -25,6 +25,11 @@ import { Colors, Container, InputField } from '../styles';
 import registerGfx from '../assets/images/bp.jpg';
 
 const styles = StyleSheet.create({
+    inputContainerStyle: {
+        ...InputField.input,
+        ...InputField.inputUnderline,
+        marginTop: 20,
+    },
     container: {
         paddingLeft: vw(10),
         paddingRight: vw(10),
@@ -51,7 +56,7 @@ const styles = StyleSheet.create({
     avatarContainerStyle: {
         marginTop: 10,
         marginRight: 10,
-    }
+    },
 });
 
 interface Props extends NavigationScreenProps {
@@ -69,7 +74,7 @@ interface Item {
 }
 
 interface FormValues {
-    [key: string]: object;
+    [key: string]: Item;
 }
 
 interface NavStatelessComponent extends React.StatelessComponent {
@@ -85,7 +90,7 @@ const renderField = ({
     return (
         <Input
             placeholderTextColor="white"
-            inputContainerStyle={[InputField.input, InputField.inputUnderline, {marginTop: 20}]}
+            inputContainerStyle={styles.inputContainerStyle}
             containerStyle={[InputField.inputContainer]}
             inputStyle={[Colors.whiteText, InputField.inputText]}
             keyboardAppearance="dark"
@@ -118,24 +123,6 @@ export const UploadDetailsForm = () => {
         <View>
             <View style={styles.imageView}>
                 <FullWidthImage source={registerGfx} ratio={10 / 16} />
-                <View style={{display: 'none', flexDirection: 'row'}}>
-                    <Avatar
-                        rounded
-                        size="small"
-                        containerStyle={styles.avatarContainerStyle}
-                        source={{
-                            uri: suggestionsContext.form.film.avatar,
-                        }}
-                    />
-                    <Avatar
-                        rounded
-                        size="small"
-                        containerStyle={{marginTop: 10}}
-                        source={{
-                            uri: suggestionsContext.form.gear.avatar,
-                        }}
-                    />
-                </View>
             </View>
             <Formik<FormValues | {}>
                 enableReinitialize

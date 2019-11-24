@@ -17,9 +17,23 @@ interface AutoCompleteContext {
     activeUrl: string;
     setActiveUrl(delta: string): void;
 }
+interface Coordinate {
+    lat: number;
+    lng: number;
+}
+interface Item {
+    id?: string;
+    name: string;
+    details?: string;
+    avatar?: string;
+    // eslint-disable-next-line
+    place_id?: string;
+    description?: string;
+    coord?: Coordinate;
+}
 
 interface FormValues {
-    [key: string]: object;
+    [key: string]: Item;
 }
 
 export const AutoCompleteContext = createContext<AutoCompleteContext | null>(null);
