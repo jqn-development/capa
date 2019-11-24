@@ -48,6 +48,10 @@ const styles = StyleSheet.create({
         marginRight: vw(5),
         marginLeft: vw(5),
     },
+    avatarContainerStyle: {
+        marginTop: 10,
+        marginRight: 10,
+    }
 });
 
 interface Props extends NavigationScreenProps {
@@ -81,7 +85,7 @@ const renderField = ({
     return (
         <Input
             placeholderTextColor="white"
-            inputContainerStyle={[InputField.input, InputField.inputUnderline]}
+            inputContainerStyle={[InputField.input, InputField.inputUnderline, {marginTop: 20}]}
             containerStyle={[InputField.inputContainer]}
             inputStyle={[Colors.whiteText, InputField.inputText]}
             keyboardAppearance="dark"
@@ -89,7 +93,7 @@ const renderField = ({
             leftIconContainerStyle={{
                 marginLeft: 0,
                 paddingRight: 5,
-                display:'none',
+                display: props.value ? 'none': 'flex',
             }}
             {...field}
             {...props}
@@ -101,7 +105,6 @@ export const UploadDetailsForm = () => {
     const suggestionsContext = useAutoCompleteContext();
     const [activeTab, setActiveTab] = useState(null);
     const onFocusHandle = (type: string, apiUrl: string) => {
-        console.log(suggestionsContext.form);
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
         if (type === 'location') {
@@ -115,11 +118,11 @@ export const UploadDetailsForm = () => {
         <View>
             <View style={styles.imageView}>
                 <FullWidthImage source={registerGfx} ratio={10 / 16} />
-                <View style={{display: 'flex', flexDirection: 'row'}}>
+                <View style={{display: 'none', flexDirection: 'row'}}>
                     <Avatar
                         rounded
                         size="small"
-                        containerStyle={{marginTop: 10, marginRight: 10}}
+                        containerStyle={styles.avatarContainerStyle}
                         source={{
                             uri: suggestionsContext.form.film.avatar,
                         }}

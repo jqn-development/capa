@@ -25,7 +25,7 @@ const inputContainer = {
 };
 
 const inputText = {
-    fontSize: vw(3.8),
+    fontSize: vw(4.2),
     width: vw(100),
 };
 const inputNoUnderline = {
