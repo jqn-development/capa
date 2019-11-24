@@ -124,8 +124,10 @@ export const UploadDetailsForm = () => {
     return !suggestionsContext.editMode ? (
         <View>
             <View style={styles.imageView}>
-                // @ts-ignore
-                <FullWidthImage source={registerGfx} ratio={10 / 16} />
+                {
+                    // @ts-ignore
+                    <FullWidthImage source={registerGfx} ratio={10 / 16} />
+                }
             </View>
             <Formik<FormValues | {}>
                 enableReinitialize
