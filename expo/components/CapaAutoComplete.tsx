@@ -61,13 +61,19 @@ interface Coordinate {
     lat: number;
     lng: number;
 }
+
+interface Prediction {
+    description: string;
+    // eslint-disable-next-line
+    place_id: string;
+}
+
 export interface Item {
-    id?: string;
     name: string;
     details?: string;
     avatar?: string;
     // eslint-disable-next-line
-    place_id?: string;
+    placeId?: string;
     description?: string;
     coord?: Coordinate;
 }
@@ -77,7 +83,7 @@ function PlacesItem({ item, onPress }: { item: Item; onPress: () => void }) {
         <TouchableOpacity onPress={onPress}>
             <ListItem
                 leftIcon={{ name: 'map-marker', type: 'font-awesome', color: '#fff' }}
-                title={item.description}
+                title={item.name}
                 titleStyle={styles.listItemTitle}
                 containerStyle={styles.listItemContainer}
             />
@@ -144,8 +150,8 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     });
     const onSelectItem = (item: Item) => {
         let formState;
-        if (item.place_id) {
-            getPlaceDetails(item.place_id, {
+        if (item.placeId) {
+            getPlaceDetails(item.placeId, {
                 fields: ['name', 'geometry'],
             }).then(data => {
                 setMarker({
@@ -158,7 +164,6 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         lat: data.result.geometry.location.lat,
                         lng: data.result.geometry.location.lng,
                     },
-                    name: item.description,
                 };
                 formState = {
                     ...suggestionsContext.form,
@@ -265,10 +270,16 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                     {showList && (
                         <FlatList
                             data={results.predictions}
-                            renderItem={({ item }: { item: Item }) => (
-                                <PlacesItem onPress={() => onSelectItem(item)} item={item} />
-                            )}
-                            keyExtractor={(item: Item) => item.name}
+                            renderItem={({ item }: { item: Prediction }) => {
+                                const place = {
+                                    name: item.description,
+                                    placeId: item.place_id,
+                                };
+                                return (
+                                    <PlacesItem onPress={() => onSelectItem(place)} item={place} />
+                                );
+                            }}
+                            keyExtractor={(item: Prediction) => item.place_id}
                         />
                     )}
                 </View>
