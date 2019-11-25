@@ -72,7 +72,6 @@ export interface Item {
     name: string;
     details?: string;
     avatar?: string;
-    // eslint-disable-next-line
     placeId?: string;
     description?: string;
     coord?: Coordinate;
@@ -170,9 +169,9 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                     location: location,
                 };
                 suggestionsContext.setForm(formState);
+                placeSelected.current = true;
+                setShowList(false);
             });
-            placeSelected.current = true;
-            setShowList(false);
         } else {
             formState = {
                 ...suggestionsContext.form,
@@ -267,9 +266,9 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                             />
                         </View>
                     </View>
-                    {showList && (
+                    {results && showList && (
                         <FlatList
-                            data={results.predictions}
+                            data={results}
                             renderItem={({ item }: { item: Prediction }) => {
                                 const place = {
                                     name: item.description,

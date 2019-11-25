@@ -1,16 +1,22 @@
 import React from 'react';
 import uuid4 from 'uuid';
 
+interface Prediction {
+    description: string;
+    // eslint-disable-next-line
+    place_id: string;
+}
+
 interface State {
-    results?: object[] | [];
+    results?: Prediction[] | [];
     isLoading: boolean;
     error: null | string;
 }
 
 interface ReducerAction {
     type: string;
-    payload?: { data: object[] };
-    results?: object[];
+    payload?: Prediction[];
+    results?: Prediction[] | [];
     isLoading?: boolean;
     error?: null;
 }
@@ -80,7 +86,7 @@ const reducer = (state: State, action: ReducerAction) => {
         case 'OK':
             return {
                 ...state,
-                results: action.payload && action.payload.data,
+                results: action.payload,
                 isLoading: false,
                 error: null,
             };
@@ -172,9 +178,7 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
                 .then(data => {
                     dispatch({
                         type: data.status,
-                        payload: {
-                            data,
-                        },
+                        payload: data.predictions,
                     });
                 });
         }, 400);
