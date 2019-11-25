@@ -189,7 +189,6 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
         options.strictbounds,
         options.offset,
         type,
-        state.isLoading,
     ]);
     const getPlaceDetails = (
         placeId: string,
