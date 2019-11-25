@@ -122,10 +122,6 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
     const sessionToken = React.useRef<string>(uuid4());
     const sessionTokenTimeout = React.useRef<NodeJS.Timeout>();
 
-    // AbortController to cancel window.fetch requests if component unmounts.
-    // const abortController = React.useRef<any>();
-    const abortSignal = React.useRef();
-
     const resetSessionToken = () => {
         sessionToken.current = uuid4();
     };
@@ -133,16 +129,11 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
     React.useEffect(() => {
         // Setup a timer to reset our session_token every 3 minutes.
         sessionTokenTimeout.current = global.setInterval(resetSessionToken, 180000);
-        // Setup an AbortController to cancel all http requests on unmount.
-        // abortController.current = new AbortController();
-        // abortSignal.current = abortController.current.signal;
-
         // Cleanup clearInterval and abort any http calls on unmount.
         return () => {
             if (sessionTokenTimeout.current) {
                 global.clearInterval(sessionTokenTimeout.current);
             }
-            // abortController.current.abort();
         };
     }, []);
 
@@ -176,7 +167,7 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
             const radius = options.radius ? `&radius=${options.radius}` : '';
 
             const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}${types}${language}${location}${radius}${strictbounds}${offset}&key=${apiKey}&sessiontoken=${sessionToken.current}`;
-            fetch(url, { signal: abortSignal.current })
+            fetch(url)
                 .then(data => data.json())
                 .then(data => {
                     dispatch({
@@ -219,7 +210,7 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
             ? `&language=${options.language}}`
             : '';
         const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}${fields}${region}${language}&key=${apiKey}&sessiontoken=${sessionToken.current}`;
-        return fetch(url, { signal: abortSignal.current })
+        return fetch(url)
             .then(data => data.json())
             .then(data => {
                 // Reset session token after we make a Place Details query.
