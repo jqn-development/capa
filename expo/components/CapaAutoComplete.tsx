@@ -313,6 +313,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
             <FlatList
                 data={filtered}
                 renderItem={({ item }: { item: Item }) => {
+                    console.log(item.name);
                     return <Item onPress={() => onSelectItem(item)} item={item} />;
                 }}
                 keyExtractor={(item: Item) => item.name}

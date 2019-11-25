@@ -29,6 +29,7 @@
         "import/no-unresolved": "off",
         "arrow-body-style": "off",
         "object-shorthand": "off",
+       "no-nested-ternary": "off",
         "@typescript-eslint/explicit-member-accessibility": 0,
         "@typescript-eslint/explicit-function-return-type": 0,
         "prettier/prettier": [

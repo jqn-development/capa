@@ -1,21 +1,51 @@
 import React from 'react';
 import uuid4 from 'uuid';
 
-function debounce(func: () => any, wait: number, immediate?: boolean) {
-    let timeout: any;
+interface State {
+    results?: object[] | [];
+    isLoading: boolean;
+    error: null | string;
+}
 
-    const executedFunction = function(this: any) {
+interface ReducerAction {
+    type: string;
+    payload?: { data: object[] };
+    results?: object[];
+    isLoading?: boolean;
+    error?: null;
+}
+
+interface Options {
+    query: string;
+    types: string;
+    language: string;
+    location: string;
+    radius: string;
+    strictbounds: string;
+    offset: string;
+}
+interface Props {
+    apiKey: string;
+    query: string;
+    type: string;
+    options: Options;
+}
+
+function debounce(func: () => void, wait: number, immediate?: boolean) {
+    let timeout: NodeJS.Timeout | null;
+
+    const executedFunction = function(this: object) {
         const context = this;
         const args: any = arguments;
 
         const later = function() {
             timeout = null;
-            if (!immediate) func.apply(context, args)
+            if (!immediate) func.apply(context, args);
         };
 
         const callNow = immediate && !timeout;
 
-        clearTimeout(timeout);
+        if (timeout) clearTimeout(timeout);
 
         timeout = setTimeout(later, wait);
 
@@ -23,26 +53,22 @@ function debounce(func: () => any, wait: number, immediate?: boolean) {
     };
 
     executedFunction.clear = function() {
-        clearTimeout(timeout);
+        if (timeout) {
+            clearTimeout(timeout);
+        }
         timeout = null;
     };
 
     return executedFunction;
 }
 
-const initialState = {
+const initialState: State = {
     results: [],
     isLoading: false,
     error: null,
 };
 
-const reducer = (
-    state: any,
-    action: {
-        type: string;
-        payload?: any;
-    }
-) => {
+const reducer = (state: State, action: ReducerAction) => {
     // All cases, beside 'LOADING', are status codes provided from Google Autocomplete API's response.
     switch (action.type) {
         case 'LOADING':
@@ -53,7 +79,7 @@ const reducer = (
         case 'OK':
             return {
                 ...state,
-                results: action.payload.data,
+                results: action.payload && action.payload.data,
                 isLoading: false,
                 error: null,
             };
@@ -86,25 +112,18 @@ const reducer = (
             return state;
     }
 };
-interface Props {
-    apiKey: string;
-    query: string;
-    type: string;
-    options: any;
-}
-export default function useGoogleAutocomplete({
-    apiKey,
-    query,
-    type = 'places',
-    options = {},
-}: Props) {
-    const [state, dispatch] = React.useReducer(reducer, initialState);
+
+export default function useGoogleAutocomplete({ apiKey, query, type = 'places', options }: Props) {
+    const [state, dispatch] = React.useReducer<React.Reducer<State, ReducerAction>>(
+        reducer,
+        initialState
+    );
     const sessionToken = React.useRef<string>(uuid4());
-    const sessionTokenTimeout = React.useRef<any>();
+    const sessionTokenTimeout = React.useRef<NodeJS.Timeout>();
 
     // AbortController to cancel window.fetch requests if component unmounts.
     // const abortController = React.useRef<any>();
-    const abortSignal = React.useRef<any>();
+    const abortSignal = React.useRef();
 
     const resetSessionToken = () => {
         sessionToken.current = uuid4();
@@ -114,19 +133,21 @@ export default function useGoogleAutocomplete({
         // Setup a timer to reset our session_token every 3 minutes.
         sessionTokenTimeout.current = setInterval(resetSessionToken, 180000);
         // Setup an AbortController to cancel all http requests on unmount.
-        //abortController.current = new AbortController();
-        //abortSignal.current = abortController.current.signal;
+        // abortController.current = new AbortController();
+        // abortSignal.current = abortController.current.signal;
 
         // Cleanup clearInterval and abort any http calls on unmount.
         return () => {
-            clearInterval(sessionTokenTimeout.current);
-            //abortController.current.abort();
+            if (sessionTokenTimeout) {
+                clearInterval(sessionTokenTimeout.current);
+            }
+            // abortController.current.abort();
         };
     }, []);
 
     const initialRender = React.useRef<boolean>(false);
     // Debounce our search to only trigger an API call when user stops typing after (n)ms.
-    const debouncedFn = React.useRef<any>();
+    const debouncedFn = React.useRef();
 
     // Effect triggers on every query change.
     React.useEffect(() => {
@@ -165,7 +186,6 @@ export default function useGoogleAutocomplete({
                     // Our AbortController was cancelled on unmount and API call was cancelled.
                 });
         }, 400);
-
         debouncedFn.current();
     }, [
         query,
@@ -177,6 +197,7 @@ export default function useGoogleAutocomplete({
         options.strictbounds,
         options.offset,
         type,
+        state.isLoading,
     ]);
     const getPlaceDetails = (
         placeId: string,
@@ -191,11 +212,11 @@ export default function useGoogleAutocomplete({
             : '';
         const region = placeDetailOptions.region ? `&region=${placeDetailOptions.region}` : '';
         // If no options are passed, we'll default to closured language option.
-        const language = placeDetailOptions.language ? `&language=${placeDetailOptions.language}`
-          : options.language
-          ? `&language=${options.language}}`
-          : '';
-      
+        const language = placeDetailOptions.language
+            ? `&language=${placeDetailOptions.language}`
+            : options.language
+            ? `&language=${options.language}}`
+            : '';
         const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}${fields}${region}${language}&key=${apiKey}&sessiontoken=${sessionToken.current}`;
         return fetch(url, { signal: abortSignal.current })
             .then(data => data.json())
