@@ -36,6 +36,7 @@ function debounce(func: () => void, wait: number, immediate?: boolean) {
 
     const executedFunction = function(this: object) {
         const context = this;
+        // eslint-disable-next-line
         const args: any = arguments;
 
         const later = function() {
@@ -131,15 +132,15 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
 
     React.useEffect(() => {
         // Setup a timer to reset our session_token every 3 minutes.
-        sessionTokenTimeout.current = setInterval(resetSessionToken, 180000);
+        sessionTokenTimeout.current = global.setInterval(resetSessionToken, 180000);
         // Setup an AbortController to cancel all http requests on unmount.
         // abortController.current = new AbortController();
         // abortSignal.current = abortController.current.signal;
 
         // Cleanup clearInterval and abort any http calls on unmount.
         return () => {
-            if (sessionTokenTimeout) {
-                clearInterval(sessionTokenTimeout.current);
+            if (sessionTokenTimeout.current) {
+                global.clearInterval(sessionTokenTimeout.current);
             }
             // abortController.current.abort();
         };
@@ -147,7 +148,7 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
 
     const initialRender = React.useRef<boolean>(false);
     // Debounce our search to only trigger an API call when user stops typing after (n)ms.
-    const debouncedFn = React.useRef();
+    const debouncedFn = React.useRef<() => void>();
 
     // Effect triggers on every query change.
     React.useEffect(() => {
@@ -156,7 +157,10 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
             return;
         }
         // Cancel previous debounced call.
-        if (debouncedFn.current) debouncedFn.current.clear();
+        if (debouncedFn.current) {
+            // @ts-ignore
+            debouncedFn.current.clear();
+        }
 
         if (!state.isLoading) {
             dispatch({
@@ -181,9 +185,6 @@ export default function useGoogleAutocomplete({ apiKey, query, type = 'places', 
                             data,
                         },
                     });
-                })
-                .catch(() => {
-                    // Our AbortController was cancelled on unmount and API call was cancelled.
                 });
         }, 400);
         debouncedFn.current();
