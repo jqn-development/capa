@@ -6,7 +6,7 @@ interface Props {
     children?: React.ReactNode;
 }
 
-interface AutoCompleteContext {
+export interface AutoCompleteContext {
     editMode: boolean;
     setEditMode(delta: boolean): void;
     mapMode: boolean;

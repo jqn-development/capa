@@ -27,17 +27,13 @@ export default class S3Api {
         callback: (e: ProgressEvent) => void
     ) {
         const formData = createFormData(photo, body);
-        return axios
-            .post(`${config.url}/api/photo/photos`, formData, {
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'multipart/form-data',
-                    authorization: `Bearer ${token}`,
-                },
-                onUploadProgress: callback,
-            })
-            .catch(error => {
-                throw error;
-            });
+        return axios.post(`${config.url}/api/photo/photos`, formData, {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
+                authorization: `Bearer ${token}`,
+            },
+            onUploadProgress: callback,
+        });
     }
 }

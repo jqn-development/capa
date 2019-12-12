@@ -2,8 +2,6 @@ import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { Colors, Container } from '../styles';
 import { Icon, colors } from 'react-native-elements';
-import { absolute, flexVerticalBottom } from '../styles/container';
-import { whiteText } from '../styles/colors';
 
 interface PhotoSettingsProps {
     changeActiveTab: (tab: string | null) => void;

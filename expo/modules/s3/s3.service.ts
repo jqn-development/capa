@@ -34,12 +34,13 @@ export const storePhoto = (photo: Photo) => (
     dispatch(S3Reducer.setUploadFilename(photo.filename));
     dispatch(S3Reducer.setUploadStatus('uploading'));
     return S3Api.store(state.auth.authToken, photo, body, progressCallback)
-        .then(() => {
+        .then(response => {
             dispatch(S3Reducer.setUploadProgress(null));
             dispatch(S3Reducer.setUploadStatus(null));
             dispatch(S3Reducer.setUploadFilename(null));
             dispatch(S3Reducer.setUploadFileSize(null));
-            NavigationService.navigate('UploadDetails', {});
+            console.log(response.data);
+            NavigationService.navigate('UploadDetails', { photo: response.data.photoPath });
         })
         .catch((error: { response: { data: ResponseObject } }) => {
             // If JWT token is expired, let's refresh it
