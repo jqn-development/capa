@@ -5,7 +5,7 @@ import { Header, Icon } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 import PropTypes from 'prop-types';
 
-const capaHeader = props => {
+const capaHeader = (props: any ) => {
     const { navigation, search, add } = props;
     return (
         <Header
