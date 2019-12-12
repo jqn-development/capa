@@ -22,13 +22,13 @@ interface ReducerAction {
 }
 
 interface Options {
-    query: string;
+    query?: string;
     types: string;
-    language: string;
-    location: string;
-    radius: string;
-    strictbounds: string;
-    offset: string;
+    language?: string;
+    location?: string;
+    radius?: string;
+    strictbounds?: string;
+    offset?: string;
 }
 interface Props {
     apiKey: string;

@@ -29,6 +29,8 @@ const styles = StyleSheet.create({
     container: {
         ...Container.flexVerticalTop,
         ...Colors.background,
+        marginTop: 0,
+        paddingTop: 40,
     },
     loggedInDesc: {
         ...Colors.whiteText,
@@ -202,7 +204,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
     };
     if (suggestionsContext.mapMode) {
         return suggestionsContext.editMode ? (
-            <View>
+            <View style={styles.container}>
                 {suggestionsContext.form.location.coord && (
                     <MapView
                         ref={mapView}

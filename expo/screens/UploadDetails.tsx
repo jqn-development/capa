@@ -77,11 +77,9 @@ export const UploadDetails: NavigationScreenComponent = ({
 };
 
 UploadDetails.navigationOptions = ({ navigation }: NavigationParams): NavigationScreenOptions => ({
+    header: null,
     headerStyle: {
         backgroundColor: '#000',
-        marginLeft: 15,
-        marginRight: 15,
-        borderBottomWidth: 0,
     },
 });
 

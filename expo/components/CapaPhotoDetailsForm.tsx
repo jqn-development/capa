@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Formik, Field } from 'formik';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
-import { Icon, Input } from 'react-native-elements';
+import { Icon, Input, Header } from 'react-native-elements';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { Colors, InputField } from '../styles';
 import {
@@ -89,13 +89,24 @@ const PhotoDetailsForm = (props: {
     };
     return !suggestionsContext.editMode ? (
         <View>
-            <Icon
-                name="check"
-                color="#fff"
-                onPress={(): void => {
-                    handleSave(suggestionsContext);
+            <Header
+                barStyle="light-content"
+                leftComponent={{ text: 'CAPA', style: { color: '#fff' } }}
+                rightComponent={
+                    <Icon
+                        name="check"
+                        color="#fff"
+                        onPress={(): void => {
+                            handleSave(suggestionsContext);
+                        }}
+                        Component={TouchableOpacity}
+                    />
+                }
+                containerStyle={{
+                    backgroundColor: 'black',
+                    justifyContent: 'space-around',
+                    borderBottomWidth: 0,
                 }}
-                Component={TouchableOpacity}
             />
             <View style={styles.imageView}>
                 {
