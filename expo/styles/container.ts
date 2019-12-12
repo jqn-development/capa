@@ -1,5 +1,3 @@
-import { whiteText } from "./colors";
-
 const flexVerticalCenter: object = {
     flex: 1,
     flexDirection: 'column',

@@ -28,13 +28,13 @@ router.get('/suggestions', (req, res) => {
 			},
 			{
 				"id": "test4",
-				"name": "Kodak Ektar 100",
+				"name": "Kodak Kodak Plus",
 				"details": "ISO 100 Medium Format 120",
 				"avatar": "https://i.imgur.com/fttnEBk.jpg"
 			},
 			{
 				"id": "test5",
-				"name": "Kodak Portra 100",
+				"name": "Kodak Portra 400",
 				"details": "ISO 100 35mm",
 				"avatar": "https://i.imgur.com/fttnEBk.jpg"
 			},
