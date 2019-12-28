@@ -58,6 +58,11 @@ const styles = StyleSheet.create({
         width: vw(100),
         height: vh(100),
     },
+    placeInputIcon: {
+        marginLeft: vw(5),
+        marginRight: 10,
+        marginTop: 18,
+    },
 });
 interface Coordinate {
     lat: number;
@@ -238,11 +243,11 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                             }}
                         >
                             {placeSelected.current ? (
-                                <View style={{ marginLeft: vw(5), marginRight: 10, marginTop: 18 }}>
+                                <View style={styles.placeInputIcon}>
                                     <Icon type="font-awesome" name="chevron-left" color="#fff" />
                                 </View>
                             ) : (
-                                <View style={{ marginLeft: vw(5), marginRight: 10, marginTop: 18 }}>
+                                <View style={styles.placeInputIcon}>
                                     <Icon type="font-awesome" name="search" color="#fff" />
                                 </View>
                             )}
