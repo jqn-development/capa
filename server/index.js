@@ -55,7 +55,6 @@ app.use('/api/photo', photoApi);
 app.use('/api/user', userApi);
 app.use('/api/film', filmApi);
 app.use('/api/camera', cameraApi);
-
 let server = app.listen(app.get('port'), () => {
 	console.log(
 		'%s App is running at http://localhost:%d in %s mode',

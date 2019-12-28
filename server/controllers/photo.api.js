@@ -24,6 +24,15 @@ router.use((req, res, next) => {
 	});
 });
 
+router.put('/photos', (req, res) => {
+	console.log(req.body.body);
+	photo.putPhoto(req.body.id, req.body.body).then(photo => {
+		res.send({
+			success: photo,
+		});
+	});
+});
+
 router.post('/photos', (req, res) => {
 	singleUpload(req, res, function(err) {
 		if (err) {
@@ -32,15 +41,14 @@ router.post('/photos', (req, res) => {
 		photo
 			.storePhoto(
 				req.body.userId,
-				req.body.caption,
-				req.body.lat,
-				req.body.long,
-				req.file.location
+				req.file.location,
 			)
 			.then((photo) => {
+				console.log(photo);
 				res.send({
 					success: true,
-					photoPath: photo.path
+					photoPath: photo.path,
+					id: photo._id
 				});
 			})
 			.catch(err => {
