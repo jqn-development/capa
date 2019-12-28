@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 import {
     NavigationScreenProps,
@@ -9,11 +8,9 @@ import {
 } from 'react-navigation';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
-import { ThunkDispatch } from 'redux-thunk';
 import { CapaAutoCompleteProvider } from '../components/CapaAutoCompleteProvider';
 import CapaAutoComplete from '../components/CapaAutoComplete';
 import PhotoDetailsForm from '../components/CapaPhotoDetailsForm';
-import { S3ActionTypes } from '../modules/s3/types/actions';
 import { Colors, Container, InputField } from '../styles';
 
 const styles = StyleSheet.create({
@@ -47,10 +44,6 @@ interface Props extends NavigationScreenProps {
     errorMessage: string;
 }
 
-interface DispatchProps {
-    dispatchSaveDetails: (Gear: Item, Film: Item) => void;
-}
-
 interface Item {
     id: string;
     name: string;
@@ -61,35 +54,23 @@ interface NavStatelessComponent extends React.StatelessComponent {
     navigationOptions?: NavigationScreenOptions;
 }
 
-export const UploadDetails: NavigationScreenComponent = ({
-    navigation,
-    dispatchSaveDetails,
-}: NavigationParams) => {
+export const UploadDetails: NavigationScreenComponent = ({ navigation }: NavigationParams) => {
     const { photo } = navigation.state.params;
     return (
         <View style={styles.containerNoPadding}>
             <CapaAutoCompleteProvider>
-                <PhotoDetailsForm photo={photo} handleSave={dispatchSaveDetails} />
+                <PhotoDetailsForm photo={photo} />
                 <CapaAutoComplete />
             </CapaAutoCompleteProvider>
         </View>
     );
 };
 
-UploadDetails.navigationOptions = ({ navigation }: NavigationParams): NavigationScreenOptions => ({
+UploadDetails.navigationOptions = (): NavigationScreenOptions => ({
     header: null,
     headerStyle: {
         backgroundColor: '#000',
     },
 });
 
-const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, S3ActionTypes>): DispatchProps => ({
-    dispatchSaveDetails: data => {
-        console.log(data);
-    },
-});
-
-export default connect(
-    null,
-    mapDispatchToProps
-)(UploadDetails);
+export default UploadDetails;

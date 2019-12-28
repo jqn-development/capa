@@ -58,7 +58,7 @@ let loginUser = (email, password) => {
 
 let createToken = user => {
 	return jwt.sign(_.omit(user.toObject(), 'password'), config.secret, {
-		expiresIn: '10s' //lower value for testing
+		expiresIn: 86400 //lower value for testing
 	});
 };
 
