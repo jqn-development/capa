@@ -39,7 +39,6 @@ export const storePhoto = (photo: Photo) => (
             dispatch(S3Reducer.setUploadStatus(null));
             dispatch(S3Reducer.setUploadFilename(null));
             dispatch(S3Reducer.setUploadFileSize(null));
-            console.log(response.data);
             NavigationService.navigate('UploadDetails', {
                 photo: response.data.photoPath,
                 id: response.data.id,

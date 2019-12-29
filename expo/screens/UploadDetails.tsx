@@ -55,11 +55,11 @@ interface NavStatelessComponent extends React.StatelessComponent {
 }
 
 export const UploadDetails: NavigationScreenComponent = ({ navigation }: NavigationParams) => {
-    const { photo } = navigation.state.params;
+    const { photo, id } = navigation.state.params;
     return (
         <View style={styles.containerNoPadding}>
             <CapaAutoCompleteProvider>
-                <PhotoDetailsForm photo={photo} />
+                <PhotoDetailsForm photo={photo} id={id} />
                 <CapaAutoComplete />
             </CapaAutoCompleteProvider>
         </View>

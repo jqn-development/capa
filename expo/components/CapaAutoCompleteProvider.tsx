@@ -36,7 +36,7 @@ export const useAutoCompleteContext = (): AutoCompleteContext => {
 export const CapaAutoCompleteProvider: React.FunctionComponent<Props> = props => {
     const [form, setForm] = useState<FormValues>({
         film: { name: '' },
-        gear: { name: '' },
+        camera: { name: '' },
         location: { name: '' },
     });
     const [editMode, setEditMode] = useState(false);
