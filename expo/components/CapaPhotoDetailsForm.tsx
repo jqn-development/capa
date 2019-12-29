@@ -73,10 +73,10 @@ const renderField = ({
     );
 };
 
-const PhotoDetailsForm = (props: { photo: string; token: string; id: string }) => {
+const PhotoDetailsForm = (props: { photo: string; token: string; id: string; userId: string }) => {
     const suggestionsContext = useAutoCompleteContext();
     const [activeTab, setActiveTab] = useState<string | null>(null);
-    const { photo, token, id } = props;
+    const { photo, token, id, userId } = props;
     const onFocusHandle = (type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
@@ -90,7 +90,7 @@ const PhotoDetailsForm = (props: { photo: string; token: string; id: string }) =
     const handleSave = (data: AutoCompleteContext) => {
         const jsondata = {
             id: id,
-            body: JSON.stringify(data.form),
+            body: JSON.stringify({ ...data.form, userId: userId }),
         };
         return axios.put(`${config.url}/api/photo/photos`, jsondata, {
             headers: {
@@ -180,6 +180,7 @@ const PhotoDetailsForm = (props: { photo: string; token: string; id: string }) =
 function mapStateToProps(state: AppState): object {
     return {
         token: state.auth.authToken,
+        userId: state.user.id,
     };
 }
 

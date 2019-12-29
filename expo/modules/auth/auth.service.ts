@@ -113,7 +113,6 @@ export const login = (email: string, password: string) => (
                         saveItem('refreshToken', response.refreshToken)
                             .then(() => {
                                 NavigationService.navigate('Home', {});
-                                //NavigationService.navigate('UploadDetail', {});
                             })
                             .catch(error => {
                                 dispatch(ErrorReducer.asyncError(error));
