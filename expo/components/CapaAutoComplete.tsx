@@ -32,9 +32,8 @@ const styles = StyleSheet.create({
         marginTop: 0,
         paddingTop: 40,
     },
-    loggedInDesc: {
-        ...Colors.whiteText,
-    },
+    absolute: Container.absolute,
+    loggedInDesc: Colors.whiteText,
     itemView: {
         paddingBottom: 10,
         paddingTop: 10,
@@ -235,7 +234,7 @@ const CapaAutoComplete: React.FunctionComponent = () => {
                         )}
                     </MapView>
                 )}
-                <View style={[styles.container, Container.absolute]}>
+                <View style={[styles.container, styles.absolute]}>
                     <View style={{ flexDirection: 'row' }}>
                         <TouchableOpacity
                             onPress={() => {

@@ -14,7 +14,7 @@ const initialState: PhotoState = {
     id: null,
     url: null,
     film: null,
-    gear: null,
+    camera: null,
 };
 
 export default function(state = initialState, action: PhotoActionTypes) {

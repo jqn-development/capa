@@ -7,7 +7,11 @@ import { connect } from 'react-redux';
 import { Icon, Input, Header } from 'react-native-elements';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { Colors, InputField } from '../styles';
-import { useAutoCompleteContext } from '../components/CapaAutoCompleteProvider';
+import {
+    useAutoCompleteContext,
+    AutoCompleteContext,
+} from '../components/CapaAutoCompleteProvider';
+import { AppState } from '../store/rootReducer';
 import CapaPhotoSettingsFooter from '../components/CapaPhotoSettingsFooter';
 import config from '../config';
 
@@ -69,10 +73,10 @@ const renderField = ({
     );
 };
 
-const PhotoDetailsForm = (props: { photo: string; token: string }) => {
+const PhotoDetailsForm = (props: { photo: string; token: string; id: string }) => {
     const suggestionsContext = useAutoCompleteContext();
     const [activeTab, setActiveTab] = useState<string | null>(null);
-    const { photo, token } = props;
+    const { photo, token, id } = props;
     const onFocusHandle = (type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
@@ -83,9 +87,9 @@ const PhotoDetailsForm = (props: { photo: string; token: string }) => {
         }
         suggestionsContext.setActive(type);
     };
-    const handleSave = (data: object) => {
+    const handleSave = (data: AutoCompleteContext) => {
         const jsondata = {
-            id: '5e06cb8592fd5f255d1b60cb',
+            id: id,
             body: JSON.stringify(data.form),
         };
         return axios.put(`${config.url}/api/photo/photos`, jsondata, {
@@ -144,11 +148,11 @@ const PhotoDetailsForm = (props: { photo: string; token: string }) => {
                         {activeTab === 'Camera' && (
                             <Field
                                 onFocus={() => {
-                                    onFocusHandle('gear', `${config.url}/api/camera/suggestions`);
+                                    onFocusHandle('camera', `${config.url}/api/camera/suggestions`);
                                 }}
-                                value={values.gear.name}
+                                value={values.camera.name}
                                 label="CAMERA"
-                                name="Gear"
+                                name="Camera"
                                 component={renderField}
                                 placeholder=""
                             />
