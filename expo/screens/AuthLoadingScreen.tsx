@@ -14,10 +14,14 @@ class AuthLoadingScreen extends React.Component {
     bootstrap = () => {
         // This will switch to the App screen or Auth screen and this loading
         const { dispatch, navigation } = this.props;
-        dispatch(checkAuthStatus()).then(() => {
-            const { authToken } = this.props;
-            navigation.navigate(authToken ? 'App' : 'Auth');
-        });
+        dispatch(checkAuthStatus())
+            .then(() => {
+                const { authToken } = this.props;
+                navigation.navigate(authToken ? 'App' : 'Auth');
+            })
+            .catch(error => {
+                throw error;
+            });
     };
 
     // Render any loading content that you like here
@@ -30,16 +34,6 @@ class AuthLoadingScreen extends React.Component {
         );
     }
 }
-
-AuthLoadingScreen.propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired }).isRequired,
-    authToken: PropTypes.string,
-};
-
-AuthLoadingScreen.defaultProps = {
-    authToken: null,
-};
 
 function mapStateToProps(store) {
     return {

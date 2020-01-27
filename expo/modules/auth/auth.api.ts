@@ -40,9 +40,10 @@ class AuthApi {
             });
     }
 
-    static checkAuthTest(token: string | null) {
+    static checkAuthTest(token: string | null, refreshToken: string) {
         return fetch(`${config.url}/api/auth/getAll`, {
             method: 'POST',
+            body: JSON.stringify({ refreshToken }),
             headers: {
                 ...config.configHeaders,
                 Authorization: `Bearer ${token}`,
