@@ -103,11 +103,12 @@ router.use((req, res, next) => {
 });
 
 router.post('/getAll', (req, res) => {
-	Users.find()
-		.then(users => {
+	auth
+		.validateRefreshToken(req.body.refreshToken)
+		.then(user => {
 			res.status(201).send({
 				success: true,
-				message: users
+				message: user
 			});
 		})
 		.catch(err => {
