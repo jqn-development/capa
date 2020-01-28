@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Text, StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import CapaHeader from '../components/header';
@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
         ...Colors.whiteText,
     },
     galleryImage: {
-        width: 120,
-        height: 120,
+        width: 140,
+        height: 140,
     },
 });
 
@@ -27,9 +27,9 @@ interface HomeScreenProps {
     userId: string;
 }
 
-const HomeScreen: NavigationScreenComponent = (props: HomeScreenProps) => {
-    const { loggedIn, authToken, userId } = props;
-    let userPhotos = null;
+const HomeScreen = (props: HomeScreenProps) => {
+    const { authToken, userId } = props;
+    const [userPhotos, setUserPhotos] = useState(null);
     const getPhotos = () => {
         return axios.get(`${config.url}/api/user/${userId}/photos`, {
             headers: {
@@ -38,48 +38,52 @@ const HomeScreen: NavigationScreenComponent = (props: HomeScreenProps) => {
             },
         });
     };
-    const renderPhoto = (ListItem: ListRenderItemInfo<CameraRollImage>) => {
+    const renderPhoto = (ListItem) => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    //test
+                    // on press handler
                 }}
             >
-                <Image source={{ uri: ListItem.path }} style={styles.galleryImage} />
+                <Image
+                    resizeMode="contain"
+                    source={{ uri: ListItem.item.path }}
+                    style={styles.galleryImage}
+                />
             </TouchableOpacity>
         );
     };
 
     useEffect(() => {
-        // Setup a timer to reset our session_token every 3 minutes.
         getPhotos()
             .then(function(data) {
-                userPhotos = data.user;
+                setUserPhotos(data.data.user);
             })
             .catch(error => {
                 console.log(error);
             });
-        // Cleanup clearInterval and abort any http calls on unmount.
     }, []);
     return (
         <View style={styles.container}>
             <CapaHeader add search />
-            <FlatList
-                testID="flatListGallery"
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                renderItem={photo => {
-                    return renderPhoto(photo);
-                }}
-                keyExtractor={(photo, index) => index.toString()}
-                data={userPhotos}
-            />
-            {loggedIn ? (
-                <Text style={styles.loggedInDesc}>You are logged in with token: {authToken}</Text>
+            {userPhotos ? (
+                <FlatList
+                    testID="flatListGallery"
+                    numColumns={3}
+                    renderItem={photo => {
+                        return renderPhoto(photo);
+                    }}
+                    keyExtractor={(photo, index) => index.toString()}
+                    data={userPhotos}
+                />
             ) : null}
         </View>
     );
 };
+
+HomeScreen.navigationOptions = () => ({
+    header: null,
+});
 
 function mapStateToProps(state: AppState) {
     return {
