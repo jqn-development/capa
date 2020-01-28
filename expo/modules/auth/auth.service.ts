@@ -37,13 +37,38 @@ export const saveRefreshToken = (refreshToken: string) => (
 
 // used on app startup
 export const checkAuthStatus = () => async (
-    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes>
+    dispatch: ThunkDispatch<{}, {}, ErrorsActionTypes | AuthActionTypes | UserActionTypes>
 ) => {
     try {
         const authToken = await AsyncStorage.getItem('authToken');
         const refreshToken = await AsyncStorage.getItem('refreshToken');
         if (authToken != null && refreshToken != null) {
-            dispatch(AuthReducer.setLoginSuccess(authToken, refreshToken));
+            console.log('check auth status');
+            try {
+                await AuthApi.checkAuthTest(authToken, refreshToken)
+                    .then(response => {
+                        if (response.success) {
+                            dispatch(AuthReducer.setLoginSuccess(authToken, refreshToken));
+                            dispatch(
+                                UserReducer.setUserDetails(
+                                    response.message._id,
+                                    response.message.email,
+                                    response.message.first,
+                                    response.message.last
+                                )
+                            );
+
+                            console.log('Success: ', response.message);
+                        } else {
+                            console.log('Error: ', response);
+                        }
+                    })
+                    .catch(error => {
+                        dispatch(ErrorReducer.asyncError(error));
+                    });
+            } catch (error) {
+                dispatch(ErrorReducer.asyncError(error));
+            }
         }
         // return authToken;
     } catch (error) {
@@ -138,9 +163,9 @@ export const checkAuthTest = () => async (
         const token: string | null = await AsyncStorage.getItem('authToken');
         return AuthApi.checkAuthTest(token).then(response => {
             if (response.success) {
-                // console.log('Success: ', response.message);
+                console.log('Success: ', response.message);
             } else {
-                // console.log('Error: ', response);
+                console.log('Error: ', response);
             }
         });
     } catch (error) {

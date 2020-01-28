@@ -1,9 +1,11 @@
-import React from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
+import axios from 'axios';
 import CapaHeader from '../components/header';
 import { Colors, Container } from '../styles';
 import { AppState } from '../store/rootReducer';
+import config from '../config';
 
 const styles = StyleSheet.create({
     container: {
@@ -13,41 +15,82 @@ const styles = StyleSheet.create({
     loggedInDesc: {
         ...Colors.whiteText,
     },
+    galleryImage: {
+        width: 140,
+        height: 140,
+    },
 });
 
 interface HomeScreenProps {
     loggedIn: boolean;
     authToken: string | null;
+    userId: string;
 }
 
-class HomeScreen extends React.Component<HomeScreenProps> {
-    static navigationOptions = {
-        header: null,
-        headerStyle: {
-            backgroundColor: '#000',
-        },
+const HomeScreen = (props: HomeScreenProps) => {
+    const { authToken, userId } = props;
+    const [userPhotos, setUserPhotos] = useState(null);
+    const getPhotos = () => {
+        return axios.get(`${config.url}/api/user/${userId}/photos`, {
+            headers: {
+                Accept: 'application/json',
+                authorization: `Bearer ${authToken}`,
+            },
+        });
+    };
+    const renderPhoto = (ListItem) => {
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    // on press handler
+                }}
+            >
+                <Image
+                    resizeMode="contain"
+                    source={{ uri: ListItem.item.path }}
+                    style={styles.galleryImage}
+                />
+            </TouchableOpacity>
+        );
     };
 
-    render() {
-        const { loggedIn, authToken } = this.props;
-        return (
-            <View style={styles.container}>
-                <CapaHeader add search />
-                {loggedIn ? (
-                    <Text style={styles.loggedInDesc}>
-                        You are logged in with token: {authToken}
-                    </Text>
-                ) : null}
-            </View>
-        );
-    }
-}
+    useEffect(() => {
+        getPhotos()
+            .then(function(data) {
+                setUserPhotos(data.data.user);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, []);
+    return (
+        <View style={styles.container}>
+            <CapaHeader add search />
+            {userPhotos ? (
+                <FlatList
+                    testID="flatListGallery"
+                    numColumns={3}
+                    renderItem={photo => {
+                        return renderPhoto(photo);
+                    }}
+                    keyExtractor={(photo, index) => index.toString()}
+                    data={userPhotos}
+                />
+            ) : null}
+        </View>
+    );
+};
+
+HomeScreen.navigationOptions = () => ({
+    header: null,
+});
 
 function mapStateToProps(state: AppState) {
     return {
         errorMessage: state.auth.loginError,
         loggedIn: state.auth.loggedIn,
         authToken: state.auth.authToken,
+        userId: state.user.id,
     };
 }
 

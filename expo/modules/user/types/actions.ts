@@ -2,7 +2,7 @@ export const SET_USER_DETAILS = 'SET_USER_DETAILS';
 
 export interface SetUserDetails {
     type: typeof SET_USER_DETAILS;
-    id: number;
+    id: string;
     email: string;
     firstName: string;
     lastName: string;

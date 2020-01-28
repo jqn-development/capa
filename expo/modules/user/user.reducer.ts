@@ -2,7 +2,7 @@ import { UserActionTypes } from './types/actions';
 import { UserState } from './types/state';
 
 export const setUserDetails = (
-    id: number,
+    id: string,
     email: string,
     firstName: string,
     lastName: string
