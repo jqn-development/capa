@@ -2,7 +2,7 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const config = require('../config/auth.js');
-const Users = require('../models/Users');
+const { Users } = require('../models/Users');
 const LoginActivity = require('../models/LoginActivity');
 
 let registerUser = (first, last, email, password) => {
@@ -51,6 +51,7 @@ let loginUser = (email, password) => {
 				});
 			})
 			.catch(err => {
+				console.log('catch');
 				rej1(err);
 			});
 	});

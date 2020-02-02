@@ -1,4 +1,4 @@
-const Users = require('../models/Users');
+const { Users } = require('../models/Users');
 const Photos = require('../models/Photos');
 var ObjectId = require('mongoose').Types.ObjectId;
 
@@ -18,6 +18,7 @@ let fetchUser = (userId) => {
 let getPhotos = (userId) => {
 	return new Promise((res, rej) => {
 		return Photos.find({ 'userId': new ObjectId(userId) })
+			.populate('userRef')
 			.then(photos => {
 				if (!photos) return rej1('No matching photos.');
 				res(photos)

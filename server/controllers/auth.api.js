@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/auth.js');
 const auth = require('./auth');
 const errors = require('./error');
-const Users = require('../models/Users');
 
 router.post('/signup', (req, res) => {
 	auth
