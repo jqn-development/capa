@@ -1,5 +1,6 @@
 // Get dependencies
 const express = require('express');
+const { ApolloServer } = require('apollo-server-express');
 const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -9,10 +10,17 @@ const errorHandler = require('errorhandler');
 const lusca = require('lusca');
 const expressStatusMonitor = require('express-status-monitor');
 const bodyParser = require('body-parser');
-const mongoUtil = require('./config/mongo');
+const mongoUtil = require('./config/mongo');	
+const graphqlSchema = require('./graphql/index');
 
 //Load environment variables
 require('dotenv').config();
+
+
+const apollo = new ApolloServer({
+	schema: graphqlSchema
+});
+
 
 //Route handlers
 const authApi = require('./controllers/auth.api');
@@ -23,7 +31,7 @@ const cameraApi = require('./controllers/camera.api');
 
 //Create server
 const app = express();
-
+apollo.applyMiddleware({ app });
 //DB setup
 mongoUtil.connectToServer(err => {
 	if (err) return console.log(err);
@@ -55,6 +63,8 @@ app.use('/api/photo', photoApi);
 app.use('/api/user', userApi);
 app.use('/api/film', filmApi);
 app.use('/api/camera', cameraApi);
+
+
 let server = app.listen(app.get('port'), () => {
 	console.log(
 		'%s App is running at http://localhost:%d in %s mode',

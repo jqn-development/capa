@@ -25,7 +25,6 @@ router.use((req, res, next) => {
 });
 
 router.put('/photos', (req, res) => {
-	console.log(req.body.body);
 	photo.putPhoto(req.body.id, req.body.body).then(photo => {
 		res.send({
 			success: photo,
