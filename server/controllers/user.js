@@ -1,5 +1,5 @@
 const { Users } = require('../models/Users');
-const Photos = require('../models/Photos');
+const { Photos } = require('../models/Photos');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 let fetchUser = (userId) => {
@@ -16,6 +16,7 @@ let fetchUser = (userId) => {
 };
 
 let getPhotos = (userId) => {
+	console.log(userId);
 	return new Promise((res, rej) => {
 		return Photos.find({ 'userId': new ObjectId(userId) })
 			.populate('userRef')

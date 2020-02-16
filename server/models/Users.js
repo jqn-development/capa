@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { composeWithMongoose } =  require('graphql-compose-mongoose');
-const { schemaComposer } = require('graphql-compose');
 
 const Schema = mongoose.Schema;
 
@@ -21,7 +20,7 @@ const UsersTC = composeWithMongoose(Users, customizationOptions);
 
 // STEP 3: Add needed CRUD User operations to the GraphQL Schema
 // via graphql-compose it will be much much easier, with less typing
-schemaComposer.Query.addFields({
+const userQuery = {
   userById: UsersTC.getResolver('findById'),
   userByIds: UsersTC.getResolver('findByIds'),
   userOne: UsersTC.getResolver('findOne'),
@@ -29,9 +28,9 @@ schemaComposer.Query.addFields({
   userCount: UsersTC.getResolver('count'),
   userConnection: UsersTC.getResolver('connection'),
   userPagination: UsersTC.getResolver('pagination'),
-});
+};
 
-schemaComposer.Mutation.addFields({
+const userMutation = {
   userCreateOne: UsersTC.getResolver('createOne'),
   userCreateMany: UsersTC.getResolver('createMany'),
   userUpdateById: UsersTC.getResolver('updateById'),
@@ -40,8 +39,6 @@ schemaComposer.Mutation.addFields({
   userRemoveById: UsersTC.getResolver('removeById'),
   userRemoveOne: UsersTC.getResolver('removeOne'),
   userRemoveMany: UsersTC.getResolver('removeMany'),
-});
+};
 
-const graphqlSchema = schemaComposer.buildSchema();
-
-module.exports = { Users, usersSchema, graphqlSchema}
+module.exports = { Users, usersSchema, userQuery, userMutation, UsersTC}

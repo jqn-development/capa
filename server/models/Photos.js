@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const { usersSchema } = require('./Users');
-const { composeWithMongoose } =  require('graphql-compose-mongoose');
-const { schemaComposer } = require('graphql-compose');
+const { usersSchema, UsersTC } = require('./Users');
+	const { composeWithMongoose } =  require('graphql-compose-mongoose');
 const Schema = mongoose.Schema;
 
 const photosSchema = new Schema({
@@ -40,9 +39,19 @@ const Photos = mongoose.model('Photos', photosSchema, 'Photos');
 const customizationOptions = {}; // left it empty for simplicity, described below
 const PhotosTC = composeWithMongoose(Photos, customizationOptions);
 
+PhotosTC.addRelation('userDetails', {
+  resolver: () => UsersTC.getResolver('findById'),
+  prepareArgs: {
+    _id: source => source.userRef,
+    skip: null,
+    sort: null,
+  },
+  projection: { userRef: true },
+})
+
 // STEP 3: Add needed CRUD User operations to the GraphQL Schema
 // via graphql-compose it will be much much easier, with less typing
-schemaComposer.Query.addFields({
+const photoQuery = {
   photoById: PhotosTC.getResolver('findById'),
   photoByIds: PhotosTC.getResolver('findByIds'),
   photoOne: PhotosTC.getResolver('findOne'),
@@ -50,9 +59,9 @@ schemaComposer.Query.addFields({
   photoCount: PhotosTC.getResolver('count'),
   photoConnection: PhotosTC.getResolver('connection'),
   photoPagination: PhotosTC.getResolver('pagination'),
-});
+}
 
-schemaComposer.Mutation.addFields({
+const photoMutation = {
   photoCreateOne: PhotosTC.getResolver('createOne'),
   photoCreateMany: PhotosTC.getResolver('createMany'),
   photoUpdateById: PhotosTC.getResolver('updateById'),
@@ -61,8 +70,6 @@ schemaComposer.Mutation.addFields({
   photoRemoveById: PhotosTC.getResolver('removeById'),
   photoRemoveOne: PhotosTC.getResolver('removeOne'),
   photoRemoveMany: PhotosTC.getResolver('removeMany'),
-});
+};
 
-const graphqlSchema = schemaComposer.buildSchema();
-
-module.exports = { Photos, graphqlSchema};
+module.exports = { Photos, photoQuery, photoMutation};

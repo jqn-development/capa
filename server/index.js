@@ -1,6 +1,6 @@
 // Get dependencies
 const express = require('express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server-express');
 const path = require('path');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -10,32 +10,15 @@ const errorHandler = require('errorhandler');
 const lusca = require('lusca');
 const expressStatusMonitor = require('express-status-monitor');
 const bodyParser = require('body-parser');
-const mongoUtil = require('./config/mongo');
-//const { graphqlSchema } = require('./models/Users');
-const { graphqlSchema } = require('./models/Photos');
+const mongoUtil = require('./config/mongo');	
+const graphqlSchema = require('./graphql/index');
 
 //Load environment variables
 require('dotenv').config();
 
-const typeDefs = gql`
-	type User {
-		id: Int!
-		
-	}
-  type Query {
-    hello: String
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => 'Hello world!'
-  },
-};
 
 const apollo = new ApolloServer({
-	schema: graphqlSchema,
-	resolvers
+	schema: graphqlSchema
 });
 
 

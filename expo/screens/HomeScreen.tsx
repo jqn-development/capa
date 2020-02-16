@@ -46,7 +46,7 @@ const HomeScreen = (props: HomeScreenProps) => {
                 }}
             >
                 <Image
-                    resizeMode="contain"
+                    resizeMode="cover"
                     source={{ uri: ListItem.item.path }}
                     style={styles.galleryImage}
                 />
