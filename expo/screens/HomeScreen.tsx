@@ -83,6 +83,10 @@ const HomeScreen = (props: HomeScreenProps) => {
 
 HomeScreen.navigationOptions = () => ({
     header: null,
+    headerStyle: {
+        backgroundColor: '#000',
+        borderBottomWidth: 0,
+    },
 });
 
 function mapStateToProps(state: AppState) {

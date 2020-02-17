@@ -16,7 +16,6 @@ let fetchUser = (userId) => {
 };
 
 let getPhotos = (userId) => {
-	console.log(userId);
 	return new Promise((res, rej) => {
 		return Photos.find({ 'userId': new ObjectId(userId) })
 			.populate('userRef')
