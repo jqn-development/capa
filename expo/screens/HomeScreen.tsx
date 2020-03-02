@@ -3,6 +3,7 @@ import { StyleSheet, View, FlatList, Image, TouchableOpacity } from 'react-nativ
 import { connect } from 'react-redux';
 import axios from 'axios';
 import CapaHeader from '../components/header';
+import CapaCheckBoxIcon from '../components/CapaCheckBoxIcon';
 import { Colors, Container } from '../styles';
 import { AppState } from '../store/rootReducer';
 import config from '../config';
@@ -25,10 +26,11 @@ interface HomeScreenProps {
     loggedIn: boolean;
     authToken: string | null;
     userId: string;
+    navigation: any;
 }
 
 const HomeScreen = (props: HomeScreenProps) => {
-    const { authToken, userId } = props;
+    const { authToken, userId, navigation } = props;
     const [userPhotos, setUserPhotos] = useState(null);
     const getPhotos = () => {
         return axios.get(`${config.url}/api/user/${userId}/photos`, {
@@ -43,6 +45,7 @@ const HomeScreen = (props: HomeScreenProps) => {
             <TouchableOpacity
                 onPress={() => {
                     // on press handler
+                    navigation.navigate('PhotoScreen', { photo: ListItem });
                 }}
             >
                 <Image
@@ -56,12 +59,23 @@ const HomeScreen = (props: HomeScreenProps) => {
 
     useEffect(() => {
         getPhotos()
-            .then(function(data) {
-                setUserPhotos(data.data.user);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+                .then(function(data) {
+                    setUserPhotos(data.data.user);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        navigation.addListener ('willFocus', () => {
+            getPhotos()
+                .then(function(data) {
+                    setUserPhotos(data.data.user);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
+        );  
+        
     }, []);
     return (
         <View style={styles.container}>
@@ -83,6 +97,10 @@ const HomeScreen = (props: HomeScreenProps) => {
 
 HomeScreen.navigationOptions = () => ({
     header: null,
+    headerStyle: {
+        backgroundColor: '#000',
+        borderBottomWidth: 0,
+    },
 });
 
 function mapStateToProps(state: AppState) {

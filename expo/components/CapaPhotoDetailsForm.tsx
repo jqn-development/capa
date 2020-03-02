@@ -13,6 +13,8 @@ import {
 } from '../components/CapaAutoCompleteProvider';
 import { AppState } from '../store/rootReducer';
 import CapaPhotoSettingsFooter from '../components/CapaPhotoSettingsFooter';
+// @ts-ignore
+import { withNavigation } from 'react-navigation';
 import config from '../config';
 
 const styles = StyleSheet.create({
@@ -73,10 +75,10 @@ const renderField = ({
     );
 };
 
-const PhotoDetailsForm = (props: { photo: string; token: string; id: string; userId: string }) => {
+const PhotoDetailsForm = (props: { navigation: any; photo: string; token: string; id: string; userId: string }) => {
     const suggestionsContext = useAutoCompleteContext();
     const [activeTab, setActiveTab] = useState<string | null>(null);
-    const { photo, token, id, userId } = props;
+    const { photo, token, id, userId, navigation } = props;
     const onFocusHandle = (type: string, apiUrl: string) => {
         suggestionsContext.setActiveUrl(apiUrl);
         suggestionsContext.setEditMode(true);
@@ -109,7 +111,9 @@ const PhotoDetailsForm = (props: { photo: string; token: string; id: string; use
                         name="check"
                         color="#fff"
                         onPress={(): void => {
-                            handleSave(suggestionsContext);
+                            handleSave(suggestionsContext).then(() => {
+                                navigation.navigate('Home');
+                            });;
                         }}
                         Component={TouchableOpacity}
                     />
@@ -187,4 +191,4 @@ function mapStateToProps(state: AppState): object {
 export default connect(
     mapStateToProps,
     null
-)(PhotoDetailsForm);
+)(withNavigation(PhotoDetailsForm));

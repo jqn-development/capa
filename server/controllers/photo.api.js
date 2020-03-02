@@ -51,6 +51,7 @@ router.post('/photos', (req, res) => {
 				});
 			})
 			.catch(err => {
+				console.log(err);
 				return errors.errorHandler(res, err);
 			});
 	});
