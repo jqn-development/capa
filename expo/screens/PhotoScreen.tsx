@@ -1,30 +1,26 @@
 import React from 'react';
 import { Icon } from 'react-native-elements';
-import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, TouchableOpacity, Text } from 'react-native';
 import {
-    NavigationScreenProps,
     NavigationScreenOptions,
     NavigationScreenComponent,
     NavigationParams,
 } from 'react-navigation';
+import { CapaPhotoScreenDetail } from '../components/CapaPhotoScreenDetail';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
-import CapaCheckBoxIcon from '../components/CapaCheckBoxIcon';
 import { Colors, Container } from '../styles';
 
 const styles = StyleSheet.create({
     container: {
-        paddingLeft: vw(10),
-        paddingRight: vw(10),
-        marginBottom: vh(0),
         ...Container.flexVerticalTop,
         ...Colors.background,
     },
     imageView: {
         flex: 1,
-        width: vw(80),
+        width: vw(100),
         flexDirection: 'column',
-        justifyContent: 'center',
+        marginTop: vh(10),
     },
 });
 
@@ -33,13 +29,11 @@ export const PhotoScreen: NavigationScreenComponent = ({ navigation }: Navigatio
     return (
         <View style={styles.container}>
             <View style={styles.imageView}>
-                {
-                    // @ts-ignore
-                    <Image source={{ uri: photo.item.path }} style={{ aspectRatio: 3 / 2 }} />
-                }
+                <CapaPhotoScreenDetail data={photo.item}></CapaPhotoScreenDetail>
+                <Image source={{ uri: photo.item.path }} style={{ aspectRatio: 3 / 2 }} />
             </View>
         </View>
-  );
+    );
 };
 
 PhotoScreen.navigationOptions = (screenProps): NavigationScreenOptions => ({

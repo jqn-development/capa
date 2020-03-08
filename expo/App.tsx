@@ -7,13 +7,13 @@ import { NavigationContainerComponent } from 'react-navigation';
 import { ApolloClient } from 'apollo-client';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { RestLink } from 'apollo-link-rest';
+import { createHttpLink } from 'apollo-link-http';
+import * as Font from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
 import capaStore from './store';
 import theme from './styles/theme';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
 import SpaceMono from './assets/fonts/SpaceMono-Regular.ttf';
 
 interface State {
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const httpLink = new RestLink({
+const httpLink = new createHttpLink({
     uri: 'http://localhost:1140/graphql',
 });
 
