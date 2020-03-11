@@ -22,6 +22,17 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         marginTop: vh(10),
     },
+    text: {
+        color: 'white',
+        paddingTop: 10,
+    },
+    meta: {
+        display: 'flex',
+        alignItems: 'flex-start',
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingLeft: 20,
+    },
 });
 
 export const PhotoScreen: NavigationScreenComponent = ({ navigation }: NavigationParams) => {
@@ -31,6 +42,11 @@ export const PhotoScreen: NavigationScreenComponent = ({ navigation }: Navigatio
             <View style={styles.imageView}>
                 <CapaPhotoScreenDetail data={photo.item}></CapaPhotoScreenDetail>
                 <Image source={{ uri: photo.item.path }} style={{ aspectRatio: 3 / 2 }} />
+                <View style={styles.meta}>
+                    <Text style={styles.text}>Fashion District - Los Angeles, CA</Text>
+                    <Text style={styles.text}>Ilford HP5</Text>
+                    <Text style={styles.text}>Hasselbald 500 C/M</Text>
+                </View>
             </View>
         </View>
     );
@@ -39,8 +55,6 @@ export const PhotoScreen: NavigationScreenComponent = ({ navigation }: Navigatio
 PhotoScreen.navigationOptions = (screenProps): NavigationScreenOptions => ({
     headerStyle: {
         backgroundColor: '#000',
-        marginLeft: 15,
-        marginRight: 15,
         borderBottomWidth: 0,
     },
     headerLeft: (
