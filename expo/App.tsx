@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 });
 
 const httpLink = new createHttpLink({
-    uri: 'http://localhost:1140/graphql',
+    uri: 'http://192.168.1.42:1140/graphql',
 });
 
 const client = new ApolloClient({
