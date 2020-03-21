@@ -2,6 +2,7 @@ import config from '../../config';
 
 class AuthApi {
     static login(email: string, password: string) {
+        console.log(config.url);
         return fetch(`${config.url}/api/auth/login`, {
             method: 'POST',
             body: JSON.stringify({ email, password }),

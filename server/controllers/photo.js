@@ -1,4 +1,4 @@
-const Photos = require('../models/Photos');
+const { Photos } = require('../models/Photos');
 const { Users }  = require('../models/Users');
 
 let storePhoto = (userId, path) => {

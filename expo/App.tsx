@@ -4,12 +4,16 @@ import { AppLoading } from 'expo';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-elements';
 import { NavigationContainerComponent } from 'react-navigation';
+import { ApolloClient } from 'apollo-client';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { createHttpLink } from 'apollo-link-http';
+import * as Font from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
 import NavigationService from './navigation/service';
 import capaStore from './store';
 import theme from './styles/theme';
-import * as Font from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
 import SpaceMono from './assets/fonts/SpaceMono-Regular.ttf';
 
 interface State {
@@ -28,6 +32,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#000',
     },
+});
+
+const httpLink = new createHttpLink({
+    uri: 'http://192.168.1.42:1140/graphql',
+});
+
+const client = new ApolloClient({
+    link: httpLink,
+    cache: new InMemoryCache(),
 });
 
 export default class App extends React.Component<Props, State> {
@@ -64,18 +77,20 @@ export default class App extends React.Component<Props, State> {
             );
         }
         return (
-            <ThemeProvider theme={theme}>
-                <Provider store={store}>
-                    <View style={styles.container}>
-                        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-                        <AppNavigator
-                            ref={(navigatorRef: NavigationContainerComponent): void => {
-                                NavigationService.setTopLevelNavigator(navigatorRef);
-                            }}
-                        />
-                    </View>
-                </Provider>
-            </ThemeProvider>
+            <ApolloProvider client={client}>
+                <ThemeProvider theme={theme}>
+                    <Provider store={store}>
+                        <View style={styles.container}>
+                            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+                            <AppNavigator
+                                ref={(navigatorRef: NavigationContainerComponent): void => {
+                                    NavigationService.setTopLevelNavigator(navigatorRef);
+                                }}
+                            />
+                        </View>
+                    </Provider>
+                </ThemeProvider>
+            </ApolloProvider>
         );
     }
 }
