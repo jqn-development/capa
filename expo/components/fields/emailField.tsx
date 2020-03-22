@@ -9,7 +9,6 @@ const renderField = ({
 }: {
     field: object;
 }) => {
-    console.log(props);
     return (
         <Input
             placeholderTextColor="white"

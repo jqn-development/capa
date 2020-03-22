@@ -86,27 +86,19 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
     public componentDidMount(): void {
         const { navigation } = this.props;
         navigation.setParams({ upload: this.upload });
-        this.getPhotosAsync({ first: 100 });
+        this.getPhotosAsync({ first: 100, mediaType: ['photo'] });
     }
 
     // fetches camera roll images
     public async getPhotosAsync(params) {
         const { status } = await MediaLibrary.requestPermissionsAsync();
-        let media = await MediaLibrary.getAssetsAsync({
-            mediaType: ['photo'],
-            first: 100,
-        });
-        console.log(media);
+        let media = await MediaLibrary.getAssetsAsync(params);
         let photos = media.assets;
-        //let photos = await MediaLibrary.getAssetInfoAsync(media.assets[0]);
-        console.log(photos);
         this.imagePickerChange(photos[0].uri);
         this.setState({ photos });
     }
 
     public upload = (): void => {
-        console.log('upload called');
-        
         const { navigation } = this.props;
         const { dispatchStorePhoto } = this.props;
         const { selectedPhoto } = this.state;
