@@ -1,11 +1,6 @@
+import * as MediaLibrary from 'expo-media-library';
 import React from 'react';
-import {
-    CameraRoll,
-    TouchableOpacity,
-    View,
-    GetPhotosReturnType,
-    GetPhotosParamType,
-} from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import uuidv4 from 'uuid/v4';
@@ -91,29 +86,27 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
     public componentDidMount(): void {
         const { navigation } = this.props;
         navigation.setParams({ upload: this.upload });
-        this.getPhotosAsync({ first: 100, assetType: 'Photos' });
+        this.getPhotosAsync({ first: 100 });
     }
 
     // fetches camera roll images
-    public async getPhotosAsync(params: GetPhotosParamType): Promise<CameraRollImage[]> {
-        return new Promise(
-            (res, rej): Promise<void> =>
-                CameraRoll.getPhotos(params)
-                    .then((data: GetPhotosReturnType): void => {
-                        let photos: CameraRollImage[];
-                        if (data.edges.length > 0) {
-                            const assets = data.edges;
-                            photos = assets.map((asset): CameraRollImage => asset.node.image);
-                            this.imagePickerChange(photos[0].uri);
-                            this.setState({ photos });
-                            res(photos);
-                        }
-                    })
-                    .catch(rej)
-        );
+    public async getPhotosAsync(params) {
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        let media = await MediaLibrary.getAssetsAsync({
+            mediaType: ['photo'],
+            first: 100,
+        });
+        console.log(media);
+        let photos = media.assets;
+        //let photos = await MediaLibrary.getAssetInfoAsync(media.assets[0]);
+        console.log(photos);
+        this.imagePickerChange(photos[0].uri);
+        this.setState({ photos });
     }
 
     public upload = (): void => {
+        console.log('upload called');
+        
         const { navigation } = this.props;
         const { dispatchStorePhoto } = this.props;
         const { selectedPhoto } = this.state;

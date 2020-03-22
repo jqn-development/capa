@@ -21,7 +21,7 @@ const flexVerticalBottom: object = {
 };
 
 const absolute = {
-    position: 'absolute' as const,
+    position: 'absolute',
     top: 0,
     zIndex: 1,
     color: '#fff',

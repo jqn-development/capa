@@ -10,6 +10,7 @@ const createFormData = (photo: Photo, body: FormDataBody) => {
     data.append('file', {
         name: photo.filename,
         uri: Platform.OS === 'android' ? photo.uri : photo.uri.replace('file://', ''),
+        type: "image/jpeg",
     });
 
     Object.keys(body).forEach((key): void => {
@@ -26,7 +27,11 @@ export default class S3Api {
         body: FormDataBody,
         callback: (e: ProgressEvent) => void
     ) {
+        console.log(photo);
         const formData = createFormData(photo, body);
+        console.log('form data2:');
+        console.log(formData);
+        console.log(config.url);
         return axios.post(`${config.url}/api/photo/photos`, formData, {
             headers: {
                 Accept: 'application/json',
