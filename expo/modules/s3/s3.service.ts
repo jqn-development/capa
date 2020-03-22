@@ -46,6 +46,10 @@ export const storePhoto = (photo: Photo) => (
         })
         .catch((error: { response: { data: ResponseObject } }) => {
             // If JWT token is expired, let's refresh it
-            dispatch(handleTokenErrors(error.response.data));
+            if (error.response) {
+                dispatch(handleTokenErrors(error.response.data));
+            } else {
+                console.log(error);
+            }
         });
 };

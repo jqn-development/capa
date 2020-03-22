@@ -5,6 +5,8 @@ import { vw, vh } from 'react-native-expo-viewport-units';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Icon, Input, Header } from 'react-native-elements';
+// @ts-ignore
+import { withNavigation } from 'react-navigation';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { Colors, InputField } from '../styles';
 import {
@@ -13,8 +15,6 @@ import {
 } from '../components/CapaAutoCompleteProvider';
 import { AppState } from '../store/rootReducer';
 import CapaPhotoSettingsFooter from '../components/CapaPhotoSettingsFooter';
-// @ts-ignore
-import { withNavigation } from 'react-navigation';
 import config from '../config';
 
 const styles = StyleSheet.create({
@@ -75,7 +75,13 @@ const renderField = ({
     );
 };
 
-const PhotoDetailsForm = (props: { navigation: any; photo: string; token: string; id: string; userId: string }) => {
+const PhotoDetailsForm = (props: {
+    navigation: any;
+    photo: string;
+    token: string;
+    id: string;
+    userId: string;
+}) => {
     const suggestionsContext = useAutoCompleteContext();
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const { photo, token, id, userId, navigation } = props;
@@ -113,7 +119,7 @@ const PhotoDetailsForm = (props: { navigation: any; photo: string; token: string
                         onPress={(): void => {
                             handleSave(suggestionsContext).then(() => {
                                 navigation.navigate('Home');
-                            });;
+                            });
                         }}
                         Component={TouchableOpacity}
                     />

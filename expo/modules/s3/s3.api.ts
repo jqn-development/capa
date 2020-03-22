@@ -10,6 +10,7 @@ const createFormData = (photo: Photo, body: FormDataBody) => {
     data.append('file', {
         name: photo.filename,
         uri: Platform.OS === 'android' ? photo.uri : photo.uri.replace('file://', ''),
+        type: "image/jpeg",
     });
 
     Object.keys(body).forEach((key): void => {

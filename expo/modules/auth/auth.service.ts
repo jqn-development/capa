@@ -43,7 +43,6 @@ export const checkAuthStatus = () => async (
         const authToken = await AsyncStorage.getItem('authToken');
         const refreshToken = await AsyncStorage.getItem('refreshToken');
         if (authToken != null && refreshToken != null) {
-            console.log('check auth status');
             try {
                 await AuthApi.checkAuthTest(authToken, refreshToken)
                     .then(response => {
@@ -57,8 +56,6 @@ export const checkAuthStatus = () => async (
                                     response.message.last
                                 )
                             );
-
-                            console.log('Success: ', response.message);
                         } else {
                             console.log('Error: ', response);
                         }

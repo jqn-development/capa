@@ -1,11 +1,6 @@
+import * as MediaLibrary from 'expo-media-library';
 import React from 'react';
-import {
-    CameraRoll,
-    TouchableOpacity,
-    View,
-    GetPhotosReturnType,
-    GetPhotosParamType,
-} from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import uuidv4 from 'uuid/v4';
@@ -59,8 +54,6 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
     }: NavigationParams): NavigationScreenOptions => ({
         headerStyle: {
             backgroundColor: '#000',
-            marginLeft: 15,
-            marginRight: 15,
             borderBottomWidth: 0,
         },
         headerLeft: (
@@ -93,25 +86,16 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
     public componentDidMount(): void {
         const { navigation } = this.props;
         navigation.setParams({ upload: this.upload });
-        this.getPhotosAsync({ first: 100, groupTypes: 'All', assetType: 'Photos' });
+        this.getPhotosAsync({ first: 100, mediaType: ['photo'] });
     }
 
     // fetches camera roll images
-    public async getPhotosAsync(params: GetPhotosParamType): Promise<CameraRollImage[]> {
-        return new Promise(
-            (res, rej): Promise<void> =>
-                CameraRoll.getPhotos(params)
-                    .then((data: GetPhotosReturnType): void => {
-                        const assets = data.edges;
-                        const photos: CameraRollImage[] = assets.map(
-                            (asset): CameraRollImage => asset.node.image
-                        );
-                        this.imagePickerChange(photos[0].uri);
-                        this.setState({ photos });
-                        res(photos);
-                    })
-                    .catch(rej)
-        );
+    public async getPhotosAsync(params) {
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        let media = await MediaLibrary.getAssetsAsync(params);
+        let photos = media.assets;
+        this.imagePickerChange(photos[0].uri);
+        this.setState({ photos });
     }
 
     public upload = (): void => {
@@ -137,7 +121,7 @@ class UploadScreen extends React.Component<UploadScreenProps, UploadScreenState>
         const { uploadProgress, uploadFilename, uploadFileSize } = this.props;
         const progressProps = { uploadProgress, uploadFilename, uploadFileSize };
         return (
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, backgroundColor: '#000' }}>
                 {uploadProgress && <CapaUploadProgress {...progressProps} />}
                 {photos && (
                     <CapaImagePicker

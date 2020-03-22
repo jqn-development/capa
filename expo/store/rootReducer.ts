@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import { reducer as formReducer, FormStateMap } from 'redux-form';
 import auth from '../modules/auth/auth.reducer';
 import user from '../modules/user/user.reducer';
 import s3 from '../modules/s3/s3.reducer';
@@ -14,7 +13,6 @@ export interface RootState {
     user: UserState;
     s3: S3State;
     error: ErrorsState;
-    form: FormStateMap;
 }
 
 export const rootReducer = combineReducers<RootState>({
@@ -22,7 +20,6 @@ export const rootReducer = combineReducers<RootState>({
     user,
     s3,
     error,
-    form: formReducer,
 });
 
 export type AppState = ReturnType<typeof rootReducer>;

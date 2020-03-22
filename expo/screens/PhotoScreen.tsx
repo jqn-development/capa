@@ -6,9 +6,9 @@ import {
     NavigationScreenComponent,
     NavigationParams,
 } from 'react-navigation';
-import { CapaPhotoScreenDetail } from '../components/CapaPhotoScreenDetail';
 // @ts-ignore
 import { vw, vh } from 'react-native-expo-viewport-units';
+import { CapaPhotoScreenDetail } from '../components/CapaPhotoScreenDetail';
 import { Colors, Container } from '../styles';
 
 const styles = StyleSheet.create({
