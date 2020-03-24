@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, View, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationScreenProp, NavigationState, NavigationParams } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
@@ -10,6 +10,7 @@ import { login } from '../modules/auth/auth.service';
 import GenericField from '../components/fields/genericField';
 import { Colors, Container, InputField } from '../styles';
 import { AppState } from '../store/rootReducer';
+import { vw, vh } from 'react-native-expo-viewport-units';
 import signInGfx from '../assets/images/signIn.jpg';
 import { AuthActionTypes } from '../modules/auth/types/actions';
 
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
     },
     body: {
         ...Container.flexVerticalBottom,
-        paddingLeft: 0,
+        flexGrow: 1,
     },
     headerText: {
         fontSize: 54,
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
     },
     subheaderText: {
         marginBottom: 15,
-        fontSize: 10,
+        fontSize: 14,
         marginLeft: 20,
         ...Colors.whiteText,
     },
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingRight: 0,
         margin: 0,
+        paddingLeft: 10,
         paddingBottom: '10%',
     },
     clearButton: {
@@ -74,8 +76,8 @@ const styles = StyleSheet.create({
         fontSize: 10,
     },
     inputView: {
-        paddingHorizontal: '10%',
-        alignContent: 'flex-end',
+        marginTop: 300,
+        flex: 1,
     },
 });
 
@@ -104,18 +106,18 @@ type Props = DispatchProps & ScreenProps;
 const SignInScreen = (props: Props & FormikProps<FormValues>) => {
     const { handleSubmit, errorMessage, navigation, values, handleChange } = props;
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView behavior="padding" enabled style={{flex:1, backgroundColor: "#000"}}>
             <View style={styles.header}>
                 <Text style={styles.headerText}>CAPA</Text>
                 <Text style={styles.subheaderText}>#analog #nofilter #filmsnotdead</Text>
             </View>
+
             <View style={styles.body}>
-                <ImageBackground
+            <ImageBackground
                     resizeMode="cover" // or cover
                     style={styles.imageContainer}
                     source={signInGfx}
                 >
-                    <View style={styles.inputView}>
                         <GenericField
                             onChangeText={handleChange('email')}
                             name="email"
@@ -154,10 +156,9 @@ const SignInScreen = (props: Props & FormikProps<FormValues>) => {
                             title="NEW ACCOUNT"
                             onPress={() => navigation.navigate('SignUp')}
                         />
-                    </View>
                 </ImageBackground>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
