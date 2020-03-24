@@ -13,10 +13,8 @@ const flexVerticalTop: object = {
 };
 
 const flexVerticalBottom: object = {
-    flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    alignItems: 'flex-end',
     width: '100%',
 };
 
