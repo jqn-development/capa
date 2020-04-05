@@ -53,7 +53,10 @@ export const checkAuthStatus = () => async (
                                     response.message._id,
                                     response.message.email,
                                     response.message.first,
-                                    response.message.last
+                                    response.message.last,
+                                    response.message.username,
+                                    response.message.bio,
+                                    response.message.link
                                 )
                             );
                         } else {
@@ -126,7 +129,10 @@ export const login = (email: string, password: string) => (
                         response.id,
                         response.email,
                         response.firstName,
-                        response.lastName
+                        response.lastName,
+                        null,
+                        null,
+                        null
                     )
                 );
                 // Save Tokens
@@ -158,7 +164,7 @@ export const checkAuthTest = () => async (
 ) => {
     try {
         const token: string | null = await AsyncStorage.getItem('authToken');
-        return AuthApi.checkAuthTest(token).then(response => {
+        return AuthApi.checkAuthTest(token, null).then(response => {
             if (response.success) {
                 console.log('Success: ', response.message);
             } else {

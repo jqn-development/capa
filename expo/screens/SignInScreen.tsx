@@ -10,7 +10,6 @@ import { login } from '../modules/auth/auth.service';
 import GenericField from '../components/fields/genericField';
 import { Colors, Container, InputField } from '../styles';
 import { AppState } from '../store/rootReducer';
-import { vw, vh } from 'react-native-expo-viewport-units';
 import signInGfx from '../assets/images/signIn.jpg';
 import { AuthActionTypes } from '../modules/auth/types/actions';
 
@@ -113,49 +112,49 @@ const SignInScreen = (props: Props & FormikProps<FormValues>) => {
             </View>
 
             <View style={styles.body}>
-            <ImageBackground
+                <ImageBackground
                     resizeMode="cover" // or cover
                     style={styles.imageContainer}
                     source={signInGfx}
                 >
-                        <GenericField
-                            onChangeText={handleChange('email')}
-                            name="email"
-                            label="EMAIL"
-                            placeholder="example@email.com"
-                            value={values.email}
-                            inputContainerStyle={[
-                                InputField.input,
-                                InputField.inputNoUnderline,
-                                { marginBottom: 20 },
-                            ]}
-                        />
-                        <GenericField
-                            onChangeText={handleChange('password')}
-                            name="password"
-                            label="PASSWORD"
-                            secureTextEntry
-                            placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
-                            value={values.password}
-                            inputContainerStyle={[InputField.input, InputField.inputNoUnderline]}
-                        />
-                        <Text style={styles.errorMessage}>{errorMessage}</Text>
-                        <Button
-                            icon={<Ionicons name="md-arrow-dropright" size={26} color="white" />}
-                            style={styles.squareButtonPos}
-                            buttonStyle={styles.squareButton}
-                            testID="login"
-                            onPress={() => {
-                                handleSubmit(values);
-                            }}
-                        />
-                        <Button
-                            type="clear"
-                            buttonStyle={[styles.clearButton]}
-                            testID="newaccount"
-                            title="NEW ACCOUNT"
-                            onPress={() => navigation.navigate('SignUp')}
-                        />
+                    <GenericField
+                        onChangeText={handleChange('email')}
+                        name="email"
+                        label="EMAIL"
+                        placeholder="example@email.com"
+                        value={values.email}
+                        inputContainerStyle={[
+                            InputField.input,
+                            InputField.inputNoUnderline,
+                            { marginBottom: 20 },
+                        ]}
+                    />
+                    <GenericField
+                        onChangeText={handleChange('password')}
+                        name="password"
+                        label="PASSWORD"
+                        secureTextEntry
+                        placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;"
+                        value={values.password}
+                        inputContainerStyle={[InputField.input, InputField.inputNoUnderline]}
+                    />
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
+                    <Button
+                        icon={<Ionicons name="md-arrow-dropright" size={26} color="white" />}
+                        style={styles.squareButtonPos}
+                        buttonStyle={styles.squareButton}
+                        testID="login"
+                        onPress={() => {
+                            handleSubmit(values);
+                        }}
+                    />
+                    <Button
+                        type="clear"
+                        buttonStyle={[styles.clearButton]}
+                        testID="newaccount"
+                        title="NEW ACCOUNT"
+                        onPress={() => navigation.navigate('SignUp')}
+                    />
                 </ImageBackground>
             </View>
         </KeyboardAvoidingView>
@@ -184,7 +183,4 @@ const formikEnhancer = withFormik<Props, FormValues>({
     },
 })(SignInScreen);
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(formikEnhancer);
+export default connect(mapStateToProps, mapDispatchToProps)(formikEnhancer);

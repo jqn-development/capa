@@ -6,6 +6,9 @@ export interface SetUserDetails {
     email: string;
     firstName: string;
     lastName: string;
+    username: string | null;
+    bio: string | null;
+    link: string | null;
 }
 
 export type UserActionTypes = SetUserDetails;

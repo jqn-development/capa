@@ -5,7 +5,10 @@ export const setUserDetails = (
     id: string,
     email: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    username: string | null,
+    bio: string | null,
+    link: string | null
 ): UserActionTypes => {
     return {
         type: 'SET_USER_DETAILS',
@@ -13,6 +16,9 @@ export const setUserDetails = (
         email,
         firstName,
         lastName,
+        username,
+        bio,
+        link,
     };
 };
 
@@ -21,6 +27,9 @@ const initialState: UserState = {
     email: null,
     firstName: null,
     lastName: null,
+    username: null,
+    bio: null,
+    link: null,
 };
 
 export default function(state = initialState, action: UserActionTypes) {
@@ -32,6 +41,9 @@ export default function(state = initialState, action: UserActionTypes) {
                 email: action.email,
                 firstName: action.firstName,
                 lastName: action.lastName,
+                username: action.username,
+                bio: action.bio,
+                link: action.link,
             };
         default:
             return state;

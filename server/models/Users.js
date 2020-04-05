@@ -7,7 +7,10 @@ const usersSchema = new Schema({
 	first: String,
 	last: String,
 	email: String,
-	password: String,
+  password: String,
+  username: String,
+  bio: String,
+  link: String,
 	refreshToken: String
 });
 

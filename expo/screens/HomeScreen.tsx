@@ -78,7 +78,7 @@ const HomeScreen = (props: HomeScreenProps) => {
 
     return (
         <View style={styles.container}>
-            <CapaHeader add search />
+            <CapaHeader add search profile />
             {data ? (
                 <FlatList
                     testID="flatListGallery"

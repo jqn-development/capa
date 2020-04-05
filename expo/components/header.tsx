@@ -6,7 +6,7 @@ import { withNavigation } from 'react-navigation';
 import PropTypes from 'prop-types';
 
 const capaHeader = (props: any ) => {
-    const { navigation, search, add } = props;
+    const { navigation, search, add, profile } = props;
     return (
         <Header
             barStyle="light-content"
@@ -30,6 +30,18 @@ const capaHeader = (props: any ) => {
                             color="#fff"
                             onPress={() => {
                                 navigation.navigate('Upload');
+                            }}
+                            Component={TouchableOpacity}
+                        />
+                    )}
+                    {profile && (
+                        <Icon
+                            name="user"
+                            testID="profile"
+                            type="font-awesome"
+                            color="#fff"
+                            onPress={() => {
+                                navigation.navigate('ProfileScreen');
                             }}
                             Component={TouchableOpacity}
                         />

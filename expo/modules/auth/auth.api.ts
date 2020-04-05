@@ -41,7 +41,7 @@ class AuthApi {
             });
     }
 
-    static checkAuthTest(token: string | null, refreshToken: string) {
+    static checkAuthTest(token: string | null, refreshToken: string | null) {
         return fetch(`${config.url}/api/auth/getAll`, {
             method: 'POST',
             body: JSON.stringify({ refreshToken }),
